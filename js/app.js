@@ -1,6 +1,9 @@
 import {
   calculateCategoryResult as calculateCategoryResultEngine,
-  calculateSurveyResults as calculateSurveyResultsEngine
+  calculateSurveyResults as calculateSurveyResultsEngine,
+  resetCategoryWeight,
+  resetCriterionWeights,
+  resolveWeightConfig
 } from "./scoring.js";
 import { validateQuestionnaire } from "./validation.js";
 
@@ -64,6 +67,7 @@ if (questionnaire) {
         return {
           answers: safeState.answers && typeof safeState.answers === "object" ? safeState.answers : {},
           categoryPrefs: normaliseCategoryPrefs(safeState.categoryPrefs),
+          weightOverrides: normaliseWeightOverrides(safeState.weightOverrides, safeState.categoryPrefs),
           activeCategoryIndex: Math.min(Math.max(active, 0), MATRIX.length - 1)
         };
       }
@@ -71,12 +75,39 @@ if (questionnaire) {
       function normaliseCategoryPrefs(prefs = {}) {
         return Object.fromEntries(MATRIX.map((category, index) => {
           const current = prefs[index] || {};
-          const relevance = Number(current.relevance || 1);
           return [index, {
-            included: current.included !== false,
-            relevance: [1, 2, 3].includes(relevance) ? relevance : 1
+            included: current.included !== false
           }];
         }));
+      }
+
+      function normaliseWeightOverrides(rawOverrides = {}, legacyPrefs = {}) {
+        const overrides = { categories: {}, criteria: {} };
+        const rawCategories = rawOverrides?.categories || {};
+        const rawCriteria = rawOverrides?.criteria || {};
+
+        questionnaire.categories.forEach((category, index) => {
+          const legacyWeight = Number(legacyPrefs?.[index]?.relevance);
+          const categoryWeight = Number(rawCategories[category.id] ?? legacyWeight);
+          if (isValidWeight(categoryWeight) && categoryWeight !== category.defaultWeight) {
+            overrides.categories[category.id] = categoryWeight;
+          }
+          category.criteria.forEach(criterion => {
+            const candidate = rawCriteria[criterion.id];
+            if (!candidate || typeof candidate !== "object") return;
+            const weights = {};
+            ["gemini", "notebooklm"].forEach(tool => {
+              const value = Number(candidate[tool]);
+              if (isValidWeight(value) && value !== criterion.defaultWeights[tool]) weights[tool] = value;
+            });
+            if (Object.keys(weights).length) overrides.criteria[criterion.id] = weights;
+          });
+        });
+        return overrides;
+      }
+
+      function isValidWeight(value) {
+        return Number.isFinite(value) && value >= 1 && value <= 10;
       }
 
       function ensureActiveCategory() {
@@ -91,14 +122,26 @@ if (questionnaire) {
 
       function getCategoryPreference(index) {
         if (!state.categoryPrefs[index]) {
-          state.categoryPrefs[index] = { included: true, relevance: 1 };
+          state.categoryPrefs[index] = { included: true };
         }
         return state.categoryPrefs[index];
       }
 
+      function getEffectiveWeights() {
+        return resolveWeightConfig(questionnaire, state.weightOverrides);
+      }
+
+      function getCategoryWeight(index) {
+        return getEffectiveWeights().categories[MATRIX[index].id];
+      }
+
+      function getCriterionWeights(itemId) {
+        return getEffectiveWeights().criteria[itemId];
+      }
+
       function getCategoryMultiplier(index) {
         const pref = getCategoryPreference(index);
-        return pref.included ? Number(pref.relevance || 1) : 0;
+        return pref.included ? getCategoryWeight(index) : 0;
       }
 
       function getActiveCategories() {
@@ -130,7 +173,7 @@ if (questionnaire) {
         }, 0);
         return {
           included: pref.included,
-          relevance: pref.relevance,
+          relevance: getCategoryWeight(index),
           totalQuestions: category.items.length,
           totalResponses: category.items.length * 2,
           completedQuestions,
@@ -152,10 +195,15 @@ if (questionnaire) {
         return Number.isInteger(value) ? fmt.format(value) : fmt.format(Number(value).toFixed(1));
       }
 
+      function formatWeight(value) {
+        return Number(value).toLocaleString("es-ES", { maximumFractionDigits: 2 });
+      }
+
       function renderCategoryNav() {
         const nav = $("#categoryNav");
         nav.innerHTML = MATRIX.map((category, index) => {
           const pref = getCategoryPreference(index);
+          const categoryWeight = getCategoryWeight(index);
           return `
             <button type="button" class="cat-link" style="--cat:${category.color}" data-category-index="${index}" aria-label="Abrir categoría ${escapeAttr(category.category)}">
               <span class="cat-dot" aria-hidden="true"></span>
@@ -163,7 +211,7 @@ if (questionnaire) {
                 <span class="cat-name">${escapeHtml(category.category)}</span>
                 <span class="cat-metrics" aria-hidden="true">
                   <span class="cat-metric" id="catQuestions-${index}">0/${category.items.length}</span>
-                  <span class="cat-metric" id="catWeight-${index}">${pref.included ? pref.relevance + "×" : "Off"}</span>
+                  <span class="cat-metric" id="catWeight-${index}">${pref.included ? formatWeight(categoryWeight) + "×" : "Off"}</span>
                 </span>
               </span>
             </button>
@@ -174,17 +222,25 @@ if (questionnaire) {
       function renderCategoryControls() {
         const panel = $("#categoryConfig");
         const activeCount = getActiveCategories().length;
+        const effectiveWeights = getEffectiveWeights();
+        const modifiedCount = Object.keys(state.weightOverrides.categories).length + Object.keys(state.weightOverrides.criteria).length;
         panel.innerHTML = `
           <div class="category-config-head">
             <div>
-              <h2 id="category-config-title">Categorías incluidas y peso analítico</h2>
-              <p>Activa solo las categorías relevantes para tu caso. La puntuación final se recalcula sobre 100 tomando como máximo únicamente las categorías incluidas y el peso asignado.</p>
+              <h2 id="category-config-title">Categorías y ponderaciones</h2>
+              <p>Activa las categorías relevantes y ajusta pesos decimales entre 1 y 10. Los resultados se recalculan con la configuración efectiva.</p>
             </div>
-            <button type="button" class="btn btn-dark" id="closeConfigBtn">Cerrar</button>
+            <div class="category-config-actions">
+              <button type="button" class="btn btn-soft" id="resetAllWeights" ${modifiedCount ? "" : "disabled"}>Restaurar todos los pesos</button>
+              <button type="button" class="btn btn-dark" id="closeConfigBtn">Cerrar</button>
+            </div>
           </div>
+          <div class="weight-summary" role="status"><strong>${modifiedCount}</strong><span>${modifiedCount === 1 ? "grupo modificado" : "grupos modificados"}</span></div>
           <div class="category-config-grid">
             ${MATRIX.map((category, index) => {
               const pref = getCategoryPreference(index);
+              const categoryWeight = effectiveWeights.categories[category.id];
+              const categoryModified = Object.hasOwn(state.weightOverrides.categories, category.id);
               return `
                 <article class="category-control${pref.included ? "" : " is-off"}" style="--cat:${category.color}">
                   <div class="category-control-title">
@@ -192,23 +248,36 @@ if (questionnaire) {
                       <input type="checkbox" data-pref-index="${index}" data-pref-type="included" ${pref.included ? "checked" : ""}>
                       <span>${escapeHtml(category.category)}</span>
                     </label>
+                    ${categoryModified ? `<span class="modified-badge">Modificada</span>` : ""}
                   </div>
                   <div class="category-control-meta">
                     <span>${category.items.length} criterios · ${category.items.length * 2} respuestas</span>
-                    <label>
-                      Relevancia en el resultado
-                      <select data-pref-index="${index}" data-pref-type="relevance" ${pref.included ? "" : "disabled"}>
-                        <option value="1" ${pref.relevance === 1 ? "selected" : ""}>1× estándar</option>
-                        <option value="2" ${pref.relevance === 2 ? "selected" : ""}>2× prioritaria</option>
-                        <option value="3" ${pref.relevance === 3 ? "selected" : ""}>3× crítica</option>
-                      </select>
-                    </label>
+                    <div class="category-weight-line">
+                      <label for="categoryWeight-${index}">Peso de categoría</label>
+                      <input id="categoryWeight-${index}" class="weight-input" type="number" min="1" max="10" step="0.1" value="${categoryWeight}" data-category-weight="${index}">
+                      <button type="button" class="weight-reset" data-reset-category="${index}" ${categoryModified ? "" : "disabled"}>Restaurar</button>
+                    </div>
+                    <details class="criterion-weight-details">
+                      <summary>Ajustar pesos de ${category.items.length} criterios</summary>
+                      <div class="criterion-weight-list">
+                        ${category.items.map((item, itemIndex) => {
+                          const weights = effectiveWeights.criteria[item.id];
+                          const modified = Object.hasOwn(state.weightOverrides.criteria, item.id);
+                          return `<div class="criterion-weight-row${modified ? " is-modified" : ""}">
+                            <div class="criterion-weight-name"><strong>${index + 1}.${itemIndex + 1}</strong><span>${escapeHtml(item.criterio)}</span>${modified ? `<span class="sr-only">Modificado</span>` : ""}</div>
+                            <label>Gemini<input class="weight-input" type="number" min="1" max="10" step="0.1" value="${weights.gemini}" data-criterion-weight="${escapeAttr(item.id)}" data-weight-tool="gemini"></label>
+                            <label>NotebookLM<input class="weight-input" type="number" min="1" max="10" step="0.1" value="${weights.notebooklm}" data-criterion-weight="${escapeAttr(item.id)}" data-weight-tool="notebooklm"></label>
+                            <button type="button" class="weight-reset" data-reset-criterion="${escapeAttr(item.id)}" ${modified ? "" : "disabled"}>Restaurar</button>
+                          </div>`;
+                        }).join("")}
+                      </div>
+                    </details>
                   </div>
                 </article>
               `;
             }).join("")}
           </div>
-          <p class="normalization-note">Categorías activas: ${activeCount} de ${MATRIX.length}. Si desactivas una categoría, sus preguntas dejan de ser obligatorias y no entran en el cálculo final.</p>
+          <p class="normalization-note">Categorías activas: ${activeCount} de ${MATRIX.length}. Los pesos modificados se guardan únicamente en este dispositivo.</p>
         `;
 
         panel.querySelectorAll("input[data-pref-type='included']").forEach(input => {
@@ -225,21 +294,73 @@ if (questionnaire) {
           });
         });
 
-        panel.querySelectorAll("select[data-pref-type='relevance']").forEach(select => {
-          select.addEventListener("change", event => {
-            const index = Number(event.currentTarget.dataset.prefIndex);
-            getCategoryPreference(index).relevance = Number(event.currentTarget.value);
-            saveState();
-            renderCategoryNav();
-            renderCategoryControls();
-            renderSurvey();
-            updateProgress();
-            updateNavState();
-            refreshResultsIfVisible();
+        panel.querySelectorAll("[data-category-weight]").forEach(input => {
+          input.addEventListener("change", event => updateCategoryWeight(event.currentTarget));
+        });
+        panel.querySelectorAll("[data-criterion-weight]").forEach(input => {
+          input.addEventListener("change", event => updateCriterionWeight(event.currentTarget));
+        });
+        panel.querySelectorAll("[data-reset-category]").forEach(button => {
+          button.addEventListener("click", event => {
+            const index = Number(event.currentTarget.dataset.resetCategory);
+            state.weightOverrides = resetCategoryWeight(state.weightOverrides, MATRIX[index].id);
+            persistWeightChange();
           });
+        });
+        panel.querySelectorAll("[data-reset-criterion]").forEach(button => {
+          button.addEventListener("click", event => {
+            state.weightOverrides = resetCriterionWeights(state.weightOverrides, event.currentTarget.dataset.resetCriterion);
+            persistWeightChange();
+          });
+        });
+        $("#resetAllWeights")?.addEventListener("click", () => {
+          if (!confirm("¿Restaurar todos los pesos predeterminados? Las respuestas no se modificarán.")) return;
+          state.weightOverrides = { categories: {}, criteria: {} };
+          persistWeightChange();
         });
 
         $("#closeConfigBtn")?.addEventListener("click", () => toggleCategoryConfig(false));
+      }
+
+      function updateCategoryWeight(input) {
+        const index = Number(input.dataset.categoryWeight);
+        const category = questionnaire.categories[index];
+        const value = Number(input.value);
+        if (!validateWeightInput(input, value)) return;
+        if (value === category.defaultWeight) delete state.weightOverrides.categories[category.id];
+        else state.weightOverrides.categories[category.id] = value;
+        persistWeightChange();
+      }
+
+      function updateCriterionWeight(input) {
+        const criterionId = input.dataset.criterionWeight;
+        const tool = input.dataset.weightTool;
+        const criterion = questionnaire.categories.flatMap(category => category.criteria).find(candidate => candidate.id === criterionId);
+        const value = Number(input.value);
+        if (!criterion || !validateWeightInput(input, value)) return;
+        const current = { ...(state.weightOverrides.criteria[criterionId] || {}) };
+        if (value === criterion.defaultWeights[tool]) delete current[tool];
+        else current[tool] = value;
+        if (Object.keys(current).length) state.weightOverrides.criteria[criterionId] = current;
+        else delete state.weightOverrides.criteria[criterionId];
+        persistWeightChange();
+      }
+
+      function validateWeightInput(input, value) {
+        const valid = isValidWeight(value);
+        input.setCustomValidity(valid ? "" : "Introduce un peso entre 1 y 10.");
+        if (!valid) input.reportValidity();
+        return valid;
+      }
+
+      function persistWeightChange() {
+        saveState();
+        renderCategoryNav();
+        renderCategoryControls();
+        renderSurvey();
+        updateProgress();
+        updateNavState();
+        refreshResultsIfVisible();
       }
 
       function toggleCategoryConfig(force) {
@@ -256,7 +377,7 @@ if (questionnaire) {
         root.innerHTML = MATRIX.map((category, categoryIndex) => {
           const pref = getCategoryPreference(categoryIndex);
           const status = getCategoryStatus(categoryIndex);
-          const relevanceLabel = pref.included ? `Incluida · peso ${pref.relevance}×` : "No incluida en el resultado";
+          const relevanceLabel = pref.included ? `Incluida · peso ${formatWeight(getCategoryWeight(categoryIndex))}×` : "No incluida en el resultado";
           const previousIndex = getPreviousCategoryIndex(categoryIndex);
           const nextIndex = getNextCategoryIndex(categoryIndex);
           const isCurrent = categoryIndex === state.activeCategoryIndex;
@@ -322,21 +443,22 @@ if (questionnaire) {
       function renderQuestion(category, item, categoryIndex, itemIndex) {
         const geminiValue = state.answers[answerKey(item.id, "gemini")];
         const notebookValue = state.answers[answerKey(item.id, "notebook")];
+        const weights = getCriterionWeights(item.id);
         return `
           <article class="question-card" id="card-${item.id}" data-item-id="${item.id}">
             <div class="question-top">
               <div>
                 <h3 class="question-title">${categoryIndex + 1}.${itemIndex + 1} · ${escapeHtml(item.criterio)}</h3>
                 <p class="question-detail">${escapeHtml(item.detalle || "Criterio operativo de decisión.")}</p>
-              </div>
-              <div class="weights" aria-label="Ponderaciones de la matriz">
-                <span class="weight-chip gemini">Gemini ×${item.pesoGemini}</span>
-                <span class="weight-chip notebook">NotebookLM ×${item.pesoNotebook}</span>
-              </div>
             </div>
-            <div class="rating-panel">
-              ${renderToolRating(item, "gemini", "Gemini", item.pesoGemini, geminiValue)}
-              ${renderToolRating(item, "notebook", "NotebookLM", item.pesoNotebook, notebookValue)}
+            <div class="weights" aria-label="Ponderaciones de la matriz">
+              <span class="weight-chip gemini">Gemini ×${formatWeight(weights.gemini)}</span>
+              <span class="weight-chip notebook">NotebookLM ×${formatWeight(weights.notebooklm)}</span>
+            </div>
+          </div>
+          <div class="rating-panel">
+            ${renderToolRating(item, "gemini", "Gemini", weights.gemini, geminiValue)}
+            ${renderToolRating(item, "notebook", "NotebookLM", weights.notebooklm, notebookValue)}
             </div>
           </article>
         `;
@@ -394,7 +516,7 @@ if (questionnaire) {
           link.classList.toggle("is-muted", !status.included);
           link.classList.toggle("is-complete", status.complete);
           link.setAttribute("aria-current", index === state.activeCategoryIndex ? "true" : "false");
-          link.setAttribute("aria-label", `${MATRIX[index].category}. ${status.completedQuestions} de ${status.totalQuestions} preguntas completas. ${status.included ? "Peso " + status.relevance + " por" : "Excluida del cálculo"}.`);
+          link.setAttribute("aria-label", `${MATRIX[index].category}. ${status.completedQuestions} de ${status.totalQuestions} preguntas completas. ${status.included ? "Peso " + formatWeight(status.relevance) : "Excluida del cálculo"}.`);
         });
       }
 
@@ -433,7 +555,7 @@ if (questionnaire) {
       function calculateCategoryResults(categoryIndex) {
         const category = MATRIX[categoryIndex];
         if (!category) return null;
-        return calculateCategoryResultEngine(questionnaire, category.id, state.answers);
+        return calculateCategoryResultEngine(questionnaire, category.id, state.answers, { weightOverrides: state.weightOverrides });
       }
 
       function openCategoryDashboard(categoryIndex) {
@@ -544,9 +666,9 @@ if (questionnaire) {
           const weight = $("#catWeight-" + index);
           const section = $("#sectionProgress-" + index);
           if (questions) questions.textContent = `${status.completedQuestions}/${status.totalQuestions}`;
-          if (weight) weight.textContent = status.included ? `${status.relevance}×` : "Off";
+          if (weight) weight.textContent = status.included ? `${formatWeight(status.relevance)}×` : "Off";
           if (section) {
-            section.textContent = status.included ? `${status.completedQuestions}/${status.totalQuestions} · ${status.relevance}×` : "excluida";
+            section.textContent = status.included ? `${status.completedQuestions}/${status.totalQuestions} · ${formatWeight(status.relevance)}×` : "excluida";
             section.classList.toggle("is-complete", status.complete);
           }
         });
@@ -633,11 +755,13 @@ if (questionnaire) {
         const categorySettings = Object.fromEntries(MATRIX.map((category, index) => {
           const preference = getCategoryPreference(index);
           return [category.id, {
-            included: preference.included,
-            relevance: preference.relevance
+            included: preference.included
           }];
         }));
-        return calculateSurveyResultsEngine(questionnaire, state.answers, { categorySettings });
+        return calculateSurveyResultsEngine(questionnaire, state.answers, {
+          categorySettings,
+          weightOverrides: state.weightOverrides
+        });
       }
 
       function renderResults(results) {
@@ -670,8 +794,9 @@ if (questionnaire) {
           </div>
           <div class="result-meta-grid">
             <div class="result-meta"><strong>${results.activeCategoryCount}</strong><span>categorías incluidas</span></div>
-            <div class="result-meta"><strong>${results.categoryWeightTotal}×</strong><span>suma de pesos de categoría</span></div>
+            <div class="result-meta"><strong>${formatWeight(results.categoryWeightTotal)}×</strong><span>suma de pesos de categoría</span></div>
             <div class="result-meta"><strong>${results.excludedCategoryCount}</strong><span>categorías excluidas</span></div>
+            <div class="result-meta"><strong>${Object.keys(state.weightOverrides.categories).length + Object.keys(state.weightOverrides.criteria).length}</strong><span>grupos de pesos modificados</span></div>
           </div>
           <div class="winner">${escapeHtml(winnerText)}</div>
           <div class="breakdown-actions">

@@ -95,14 +95,14 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 ### Tarea 4.1: Editor de pesos de criterio
 
-- [ ] Cambiar pesos Gemini y NotebookLM dentro del rango aprobado.
-- [ ] Indicar valores modificados.
-- [ ] Restaurar valores predeterminados.
+- [x] Cambiar pesos Gemini y NotebookLM dentro del rango aprobado.
+- [x] Indicar valores modificados.
+- [x] Restaurar valores predeterminados.
 
 ### Tarea 4.2: Recalcular y explicar
 
-- [ ] Actualizar resultados después de modificar pesos.
-- [ ] Mostrar qué configuración produjo el resultado.
+- [x] Actualizar resultados después de modificar pesos.
+- [x] Mostrar qué configuración produjo el resultado.
 - [ ] Incluir pesos efectivos en las exportaciones.
 
 ## Fase 5 — Importación y exportación

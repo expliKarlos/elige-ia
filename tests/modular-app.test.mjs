@@ -18,4 +18,8 @@ test("la aplicación utiliza HTML, CSS, JavaScript y JSON separados", async () =
   assert.match(app, /from "\.\/validation\.js"/);
   assert.match(app, /fetch\("\.\/data\/questionnaire\.v1\.json"\)/);
   assert.doesNotMatch(app, /const MATRIX\s*=\s*\[/);
+  assert.match(app, /data-category-weight/);
+  assert.match(app, /data-criterion-weight/);
+  assert.match(app, /id="resetAllWeights"/);
+  assert.match(app, /weightOverrides/);
 });
