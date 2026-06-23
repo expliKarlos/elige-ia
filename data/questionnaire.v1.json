@@ -1,0 +1,1101 @@
+{
+  "schemaVersion": "1.0",
+  "questionnaireId": "gemini-vs-notebooklm",
+  "questionnaireVersion": "1.0.0",
+  "title": "¿Qué herramienta utilizo?",
+  "scale": [
+    {
+      "value": 1,
+      "label": "No",
+      "description": "No corresponde"
+    },
+    {
+      "value": 2,
+      "label": "Poco",
+      "description": "Corresponde poco"
+    },
+    {
+      "value": 3,
+      "label": "Bastante",
+      "description": "Corresponde bastante"
+    },
+    {
+      "value": 4,
+      "label": "Sí",
+      "description": "Sí corresponde"
+    }
+  ],
+  "categories": [
+    {
+      "id": "finalidad-pedagogica",
+      "label": "Finalidad pedagógica",
+      "color": "#FF2D55",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c01q01",
+          "label": "Creatividad abierta",
+          "description": "Conviene si se busca idear, proponer alternativas, generar ejemplos o desbloquear una tarea desde cero.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c01q02",
+          "label": "Trabajo con fuentes cerradas",
+          "description": "Conviene si el aprendizaje debe partir de documentos concretos seleccionados por el docente.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c01q03",
+          "label": "Estudio guiado",
+          "description": "Conviene si el objetivo es repasar, preguntar, resumir y comprobar comprensión sobre materiales dados.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c01q04",
+          "label": "Exploración inicial de un tema",
+          "description": "Conviene si se quiere abrir el campo antes de seleccionar fuentes o diseñar una actividad.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c01q05",
+          "label": "Profundización documental",
+          "description": "Conviene si se exige volver al texto, comparar fuentes y justificar afirmaciones.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c01q06",
+          "label": "Producción de un producto final",
+          "description": "Conviene si el alumnado debe crear presentación, informe, guion, esquema o propuesta.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "planificacion-docente",
+      "label": "Planificación docente",
+      "color": "#FF9500",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c02q01",
+          "label": "Programación de unidades",
+          "description": "Gemini ayuda más a generar secuencias desde cero; NotebookLM ayuda más si se parte de normativa o documentos del centro.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c02q02",
+          "label": "Situaciones de aprendizaje",
+          "description": "Gemini es más ágil para diseñar escenarios, retos, roles y productos.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c02q03",
+          "label": "Adaptación por niveles",
+          "description": "Gemini permite reescribir, graduar dificultad y generar versiones alternativas con rapidez.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c02q04",
+          "label": "Creación de rúbricas",
+          "description": "Gemini es más flexible para borradores; NotebookLM es mejor si la rúbrica debe derivarse de criterios ya documentados.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c02q05",
+          "label": "Generación de pruebas",
+          "description": "Gemini genera preguntas variadas; NotebookLM es más fiable si la prueba debe ceñirse a apuntes o fuentes concretas.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c02q06",
+          "label": "Comunicaciones a familias",
+          "description": "Gemini es claramente más adecuado para cartas, correos, avisos y reformulaciones.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 4
+          }
+        },
+        {
+          "id": "c02q07",
+          "label": "Análisis de normativa escolar",
+          "description": "NotebookLM es más adecuado si se cargan instrucciones, decretos, planes o protocolos.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c02q08",
+          "label": "Coordinación de departamento",
+          "description": "NotebookLM ayuda más a trabajar sobre actas, acuerdos, programaciones y documentos compartidos.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "creacion-de-materiales",
+      "label": "Creación de materiales",
+      "color": "#FFD60A",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c03q01",
+          "label": "Materiales desde cero",
+          "description": "Gemini es mejor para empezar con una hoja en blanco.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c03q02",
+          "label": "Materiales basados en apuntes",
+          "description": "NotebookLM es más adecuado si se quiere fidelidad a los documentos del docente.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c03q03",
+          "label": "Infografías, esquemas y mapas",
+          "description": "NotebookLM destaca si los mapas deben salir de fuentes; Gemini destaca si se busca creatividad visual o conceptual.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c03q04",
+          "label": "Actividades gamificadas",
+          "description": "Gemini suele ser más útil para mecánicas, narrativa, insignias, retos y dinámicas.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c03q05",
+          "label": "Materiales de repaso",
+          "description": "NotebookLM es más adecuado para guías, tarjetas y cuestionarios anclados en contenidos.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c03q06",
+          "label": "Simulaciones o prototipos",
+          "description": "Gemini es más conveniente para código, prototipos, actividades interactivas o ideas técnicas.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "investigacion-escolar",
+      "label": "Investigación escolar",
+      "color": "#34C759",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c04q01",
+          "label": "Búsqueda inicial de ideas",
+          "description": "Gemini puede ayudar a formular preguntas de investigación y enfoques.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c04q02",
+          "label": "Investigación con corpus cerrado",
+          "description": "NotebookLM es preferente si el docente proporciona fuentes fiables y delimitadas.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c04q03",
+          "label": "Comparación de fuentes",
+          "description": "NotebookLM facilita relacionar documentos, extraer citas y contrastar argumentos.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c04q04",
+          "label": "Elaboración de hipótesis",
+          "description": "Gemini es más útil para generar hipótesis; NotebookLM lo es para verificarlas con fuentes.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c04q05",
+          "label": "Citas y evidencias",
+          "description": "NotebookLM es mucho más adecuado por su trazabilidad hacia el pasaje original.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c04q06",
+          "label": "Actualidad o información cambiante",
+          "description": "Gemini puede resultar más útil si se conecta a búsqueda actualizada; requiere verificación externa.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "estudio-autonomo",
+      "label": "Estudio autónomo",
+      "color": "#00C7BE",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c05q01",
+          "label": "Comprensión de conceptos",
+          "description": "Gemini ofrece explicación conversacional; NotebookLM explica mejor cuando el concepto está en los materiales cargados.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c05q02",
+          "label": "Preparación de exámenes",
+          "description": "NotebookLM es más sólido si genera práctica desde el temario real.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c05q03",
+          "label": "Flashcards y cuestionarios",
+          "description": "NotebookLM es preferente cuando deben salir de fuentes concretas.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c05q04",
+          "label": "Tutoría conversacional",
+          "description": "Gemini es más natural para diálogo libre, repreguntas y andamiaje flexible.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c05q05",
+          "label": "Organización de apuntes",
+          "description": "NotebookLM es más adecuado para sintetizar y estructurar materiales extensos.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c05q06",
+          "label": "Repaso multimodal",
+          "description": "NotebookLM destaca en transformar fuentes en audio, vídeo, mapas o guías.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "evaluacion",
+      "label": "Evaluación",
+      "color": "#32ADE6",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c06q01",
+          "label": "Evaluación formativa",
+          "description": "Ambas pueden apoyar, pero NotebookLM deja más rastro si el feedback se basa en fuentes.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c06q02",
+          "label": "Evaluación sumativa sin ayuda",
+          "description": "No conviene usar ninguna si se evalúa desempeño individual no asistido.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          }
+        },
+        {
+          "id": "c06q03",
+          "label": "Autoevaluación",
+          "description": "NotebookLM es más adecuado para preguntas de repaso ligadas a materiales del curso.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c06q04",
+          "label": "Coevaluación guiada",
+          "description": "Gemini ayuda a reformular criterios; NotebookLM ayuda a comprobar evidencias.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c06q05",
+          "label": "Detección de comprensión real",
+          "description": "Ninguna sustituye la observación docente, defensa oral o producción en vivo.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c06q06",
+          "label": "Retroalimentación sobre escritura",
+          "description": "Gemini es más versátil; NotebookLM es mejor si el texto debe contrastarse con fuentes.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "atencion-a-la-diversidad",
+      "label": "Atención a la diversidad",
+      "color": "#5856D6",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c07q01",
+          "label": "Reformulación de textos",
+          "description": "Gemini es muy eficaz para adaptar lenguaje, extensión, nivel y tono.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c07q02",
+          "label": "Apoyo a lectura de documentos densos",
+          "description": "NotebookLM es más adecuado para resumir, mapear y preguntar sobre documentos largos.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c07q03",
+          "label": "Diferentes formatos de acceso",
+          "description": "NotebookLM destaca por guías, audio, vídeo, mapas y cuestionarios basados en fuentes.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c07q04",
+          "label": "Apoyo a funciones ejecutivas",
+          "description": "Ambas pueden ayudar a planificar, dividir tareas y organizar pasos.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c07q05",
+          "label": "Adaptación rápida para alumnado concreto",
+          "description": "Gemini es más ágil, siempre sin introducir datos personales identificables.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c07q06",
+          "label": "Accesibilidad cognitiva",
+          "description": "NotebookLM es más seguro si se parte de material cerrado; Gemini es más flexible para explicación personalizada.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "etapa-educativa",
+      "label": "Etapa educativa",
+      "color": "#AF52DE",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c08q01",
+          "label": "Primaria",
+          "description": "Mejor uso docente o muy guiado; NotebookLM es menos abierto y más controlable si el corpus está cerrado.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c08q02",
+          "label": "1.º-2.º ESO",
+          "description": "Conviene uso guiado; NotebookLM reduce dispersión y mejora trazabilidad.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c08q03",
+          "label": "3.º-4.º ESO",
+          "description": "Ambas son útiles si se enseña verificación, autoría y límites.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c08q04",
+          "label": "Bachillerato",
+          "description": "NotebookLM destaca en comentario de textos, investigación y estudio; Gemini en ensayo, argumentación y preparación oral.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c08q05",
+          "label": "Formación Profesional",
+          "description": "Gemini es fuerte para casos, simulaciones y prototipos; NotebookLM para manuales, normativa y documentación técnica.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c08q06",
+          "label": "Universidad",
+          "description": "Ambas son muy adecuadas con alfabetización informacional avanzada.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "autonomia-del-alumnado",
+      "label": "Autonomía del alumnado",
+      "color": "#BF5AF2",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c09q01",
+          "label": "Baja autonomía digital",
+          "description": "NotebookLM es algo más controlable si el docente prepara las fuentes.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c09q02",
+          "label": "Alta autonomía digital",
+          "description": "Ambas pueden integrarse en tareas complejas con trazabilidad y reflexión metacognitiva.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "fuentes-y-fiabilidad",
+      "label": "Fuentes y fiabilidad",
+      "color": "#007AFF",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c10q01",
+          "label": "Respuesta con citas",
+          "description": "NotebookLM es claramente preferente.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c10q02",
+          "label": "Verificación humana sencilla",
+          "description": "NotebookLM facilita volver al fragmento original.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c10q03",
+          "label": "Riesgo de alucinación",
+          "description": "NotebookLM reduce el riesgo cuando el corpus está bien seleccionado; no lo elimina.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c10q04",
+          "label": "Control del corpus",
+          "description": "NotebookLM permite delimitar mejor de dónde salen las respuestas.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c10q05",
+          "label": "Calidad de bibliografía",
+          "description": "Ninguna sustituye bases académicas ni evaluación experta; NotebookLM ayuda a organizar fuentes ya elegidas.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c10q06",
+          "label": "Discusión crítica de fuentes",
+          "description": "NotebookLM favorece contraste textual; Gemini puede generar preguntas críticas.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "privacidad",
+      "label": "Privacidad",
+      "color": "#FF375F",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c11q01",
+          "label": "Uso con cuenta institucional",
+          "description": "Ambas son adecuadas si están activadas, configuradas y supervisadas por el centro.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c11q02",
+          "label": "Uso con cuenta personal de alumnado",
+          "description": "No recomendable como práctica institucional ordinaria.",
+          "defaultWeights": {
+            "gemini": 3,
+            "notebooklm": 3
+          }
+        },
+        {
+          "id": "c11q03",
+          "label": "Datos personales de alumnado",
+          "description": "No debe usarse salvo base jurídica, minimización y validación expresa.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          }
+        },
+        {
+          "id": "c11q04",
+          "label": "Informes psicopedagógicos o salud",
+          "description": "No recomendable.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          }
+        },
+        {
+          "id": "c11q05",
+          "label": "Casos anonimizados o ficticios",
+          "description": "Puede usarse con prudencia si no hay identificabilidad.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c11q06",
+          "label": "Control administrativo",
+          "description": "Adecuado si dirección y TIC gestionan acceso, edad, grupos y registros.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c11q07",
+          "label": "Documentos compartidos de Drive",
+          "description": "NotebookLM exige especial cuidado con permisos y fuentes añadidas.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c11q08",
+          "label": "Datos de evaluación nominal",
+          "description": "No recomendable para corrección o análisis individual identificable.",
+          "defaultWeights": {
+            "gemini": 2,
+            "notebooklm": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "seguridad-y-edad",
+      "label": "Seguridad y edad",
+      "color": "#FF453A",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c12q01",
+          "label": "Menores de 18 años",
+          "description": "Uso posible solo con configuración institucional, límites claros y formación.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c12q02",
+          "label": "Alumnado adulto",
+          "description": "Ambas herramientas son más adecuadas por autonomía, madurez y control metacognitivo.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c12q03",
+          "label": "Contenidos sensibles",
+          "description": "Mejor evitar IA o trabajar solo con materiales curados por el docente.",
+          "defaultWeights": {
+            "gemini": 3,
+            "notebooklm": 4
+          }
+        },
+        {
+          "id": "c12q04",
+          "label": "Supervisión docente directa",
+          "description": "Aumenta la adecuación de ambas herramientas.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c12q05",
+          "label": "Uso libre sin consignas",
+          "description": "Poco recomendable, especialmente en etapas obligatorias.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "etica-digital",
+      "label": "Ética digital",
+      "color": "#AC8E68",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c13q01",
+          "label": "Prevención de plagio",
+          "description": "NotebookLM facilita rastrear fuentes, pero ambas requieren normas de autoría.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c13q02",
+          "label": "Transparencia del proceso",
+          "description": "NotebookLM permite evidenciar mejor qué fuente se usó; Gemini exige diario de uso o registro externo.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c13q03",
+          "label": "Sesgos",
+          "description": "Ambas pueden reproducir sesgos; NotebookLM permite mitigarlos si las fuentes están bien seleccionadas.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c13q04",
+          "label": "Dependencia tecnológica",
+          "description": "Riesgo relevante en ambas; Gemini puede sustituir más fácilmente el esfuerzo inicial.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c13q05",
+          "label": "Autonomía intelectual",
+          "description": "NotebookLM puede apoyar lectura crítica; Gemini puede ayudar si se usa como interlocutor, no como sustituto.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c13q06",
+          "label": "Uso acrítico",
+          "description": "Menor adecuación si el alumnado acepta respuestas sin contrastar.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "pensamiento-critico",
+      "label": "Pensamiento crítico",
+      "color": "#64D2FF",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c14q01",
+          "label": "Formulación de preguntas",
+          "description": "Gemini es muy adecuado para generar preguntas; NotebookLM para depurarlas desde fuentes.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c14q02",
+          "label": "Contraste de argumentos",
+          "description": "NotebookLM es preferente si se trabaja con textos concretos.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c14q03",
+          "label": "Detección de errores de IA",
+          "description": "Ambas sirven si la actividad consiste en revisar, corregir y justificar.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c14q04",
+          "label": "Alfabetización informacional",
+          "description": "NotebookLM es más adecuado por trazabilidad; Gemini complementa con exploración.",
+          "defaultWeights": {
+            "gemini": 7,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c14q05",
+          "label": "Metacognición",
+          "description": "Ambas son adecuadas si se exige explicar qué se pidió, qué se aceptó y qué se descartó.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "integracion-curricular",
+      "label": "Integración curricular",
+      "color": "#30D158",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c15q01",
+          "label": "Actividades competenciales",
+          "description": "Ambas pueden ser útiles si se integran en productos, retos y evidencias.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c15q02",
+          "label": "Trabajo interdisciplinar",
+          "description": "Gemini ayuda a conectar ideas; NotebookLM a organizar documentos de varias materias.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c15q03",
+          "label": "Proyectos de investigación",
+          "description": "Mejor combinación: Gemini para preguntas e hipótesis; NotebookLM para fuentes y evidencias.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 10
+          }
+        },
+        {
+          "id": "c15q04",
+          "label": "Lectura obligatoria",
+          "description": "NotebookLM es más adecuado para acompañar lectura, no para sustituirla.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c15q05",
+          "label": "Escritura creativa",
+          "description": "Gemini es más adecuado para lluvia de ideas, estilo, personajes o estructura.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c15q06",
+          "label": "Comentario histórico, literario o científico",
+          "description": "NotebookLM es preferente si se exige cita y análisis textual.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "carga-docente",
+      "label": "Carga docente",
+      "color": "#A3E635",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c16q01",
+          "label": "Ahorro de tiempo inicial",
+          "description": "Gemini suele ahorrar más tiempo en borradores rápidos.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 7
+          }
+        },
+        {
+          "id": "c16q02",
+          "label": "Tiempo de verificación",
+          "description": "NotebookLM reduce carga si las fuentes están bien seleccionadas; Gemini exige más contraste.",
+          "defaultWeights": {
+            "gemini": 5,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c16q03",
+          "label": "Preparación previa de fuentes",
+          "description": "Gemini requiere menos preparación; NotebookLM exige curación documental.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c16q04",
+          "label": "Escalabilidad en el centro",
+          "description": "Ambas son escalables si hay política común, formación y soporte TIC.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c16q05",
+          "label": "Formación necesaria",
+          "description": "Gemini exige saber preguntar y verificar; NotebookLM exige saber seleccionar fuentes y leer citas.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "direccion-escolar",
+      "label": "Dirección escolar",
+      "color": "#F97316",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c17q01",
+          "label": "Implantación institucional",
+          "description": "Ambas son adecuadas solo con política de uso, permisos, formación y revisión anual.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        },
+        {
+          "id": "c17q02",
+          "label": "Gobernanza documental",
+          "description": "NotebookLM encaja mejor con protocolos, documentos de centro y normativa interna.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 9
+          }
+        },
+        {
+          "id": "c17q03",
+          "label": "Comunicación institucional",
+          "description": "Gemini es más útil para borradores, circulares, comunicados y guías.",
+          "defaultWeights": {
+            "gemini": 9,
+            "notebooklm": 5
+          }
+        },
+        {
+          "id": "c17q04",
+          "label": "Cumplimiento y protección de datos",
+          "description": "Ninguna debe adoptarse sin revisión de condiciones, edad, retención, permisos y DPD.",
+          "defaultWeights": {
+            "gemini": 6,
+            "notebooklm": 6
+          }
+        },
+        {
+          "id": "c17q05",
+          "label": "Pilotaje controlado",
+          "description": "Ambas son adecuadas si se empieza por casos de bajo riesgo y alto valor pedagógico.",
+          "defaultWeights": {
+            "gemini": 8,
+            "notebooklm": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "casos-de-no-uso",
+      "label": "Casos de no uso",
+      "color": "#64748B",
+      "defaultWeight": 1,
+      "criteria": [
+        {
+          "id": "c18q01",
+          "label": "Prueba individual sin ayudas",
+          "description": "No conviene ninguna.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          }
+        },
+        {
+          "id": "c18q02",
+          "label": "Datos sensibles o identificables",
+          "description": "No conviene ninguna.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          }
+        },
+        {
+          "id": "c18q03",
+          "label": "Tarea básica de automatización cognitiva",
+          "description": "No conviene si impide consolidar cálculo, lectura, escritura o memoria básica.",
+          "defaultWeights": {
+            "gemini": 2,
+            "notebooklm": 2
+          }
+        },
+        {
+          "id": "c18q04",
+          "label": "Falta de dispositivos o acceso desigual",
+          "description": "No conviene implantar como obligatoria si aumenta brechas.",
+          "defaultWeights": {
+            "gemini": 3,
+            "notebooklm": 3
+          }
+        },
+        {
+          "id": "c18q05",
+          "label": "Docente sin formación mínima",
+          "description": "No conviene como uso autónomo del alumnado.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 4
+          }
+        }
+      ]
+    }
+  ]
+}

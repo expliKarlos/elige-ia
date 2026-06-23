@@ -1,0 +1,12 @@
+{
+  "name": "que-herramienta-utilizo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "extract:data": "node scripts/extract-questionnaire.mjs",
+    "validate:data": "node scripts/validate-questionnaire.mjs",
+    "test": "node --test"
+  }
+}
+
