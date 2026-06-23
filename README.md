@@ -6,6 +6,13 @@ Aplicación web estática para comparar Gemini y NotebookLM mediante un cuestion
 
 Las fases de modelo de datos, motor de cálculo y migración funcional están completas. `index.html` es la aplicación modular actual; `../eleccion_2.html` permanece como referencia histórica para las pruebas de regresión.
 
+La aplicación permite editar pesos decimales, restaurarlos y descargar o importar dos tipos de JSON:
+
+- Sesión completa: respuestas, categorías, pesos, versiones y resultados reproducibles.
+- Configuración de pesos: ajustes compartibles sin respuestas.
+
+Antes de aplicar una importación se muestra una vista previa. Los archivos incompatibles o mayores de 1 MB se rechazan sin modificar el estado local.
+
 ## Principios
 
 - Sin backend y sin cuentas de usuario.

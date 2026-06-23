@@ -103,16 +103,16 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 - [x] Actualizar resultados después de modificar pesos.
 - [x] Mostrar qué configuración produjo el resultado.
-- [ ] Incluir pesos efectivos en las exportaciones.
+- [x] Incluir pesos efectivos en las exportaciones.
 
 ## Fase 5 — Importación y exportación
 
 ### Tarea 5.1: Contrato JSON
 
-- [ ] Exportar sesión, respuestas, pesos, versiones y resultados.
-- [ ] Importar con validación y vista previa.
-- [ ] Rechazar archivos incompatibles sin modificar el estado actual.
-- [ ] Exportar e importar configuraciones de pesos separadas de las sesiones.
+- [x] Exportar sesión, respuestas, pesos, versiones y resultados.
+- [x] Importar con validación y vista previa.
+- [x] Rechazar archivos incompatibles sin modificar el estado actual.
+- [x] Exportar e importar configuraciones de pesos separadas de las sesiones.
 
 ## Fase 6 — Publicación y forks
 

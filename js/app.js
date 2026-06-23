@@ -6,6 +6,12 @@ import {
   resolveWeightConfig
 } from "./scoring.js";
 import { validateQuestionnaire } from "./validation.js";
+import {
+  createSessionDocument,
+  createWeightsDocument,
+  parseImportText,
+  serializeJson
+} from "./import-export.js";
 
 const questionnaire = await loadQuestionnaire();
 
@@ -34,6 +40,7 @@ if (questionnaire) {
       const fmt = new Intl.NumberFormat("es-ES");
       const allItems = MATRIX.flatMap(category => category.items.map(item => ({ ...item, category: category.category, color: category.color })));
       const state = normaliseState(loadState());
+      let pendingImport = null;
 
       init();
 
@@ -65,11 +72,20 @@ if (questionnaire) {
         const safeState = rawState && typeof rawState === "object" ? rawState : {};
         const active = Number.isInteger(Number(safeState.activeCategoryIndex)) ? Number(safeState.activeCategoryIndex) : 0;
         return {
-          answers: safeState.answers && typeof safeState.answers === "object" ? safeState.answers : {},
+          answers: normaliseAnswers(safeState.answers),
           categoryPrefs: normaliseCategoryPrefs(safeState.categoryPrefs),
           weightOverrides: normaliseWeightOverrides(safeState.weightOverrides, safeState.categoryPrefs),
           activeCategoryIndex: Math.min(Math.max(active, 0), MATRIX.length - 1)
         };
+      }
+
+      function normaliseAnswers(rawAnswers = {}) {
+        if (!rawAnswers || typeof rawAnswers !== "object" || Array.isArray(rawAnswers)) return {};
+        const knownKeys = new Set(allItems.flatMap(item => [answerKey(item.id, "gemini"), answerKey(item.id, "notebook")]));
+        return Object.fromEntries(Object.entries(rawAnswers).filter(([key, rawValue]) => {
+          const value = Number(rawValue);
+          return knownKeys.has(key) && Number.isInteger(value) && value >= 1 && value <= 4;
+        }).map(([key, value]) => [key, Number(value)]));
       }
 
       function normaliseCategoryPrefs(prefs = {}) {
@@ -472,7 +488,7 @@ if (questionnaire) {
             <div class="rating-grid" role="radiogroup" aria-label="${label} · ${escapeAttr(item.criterio)}">
               ${SCALE.map(option => `
                 <label class="rating-option" title="${escapeAttr(option.hint)}">
-                  <inpu
+                  <input
                     type="radio"
                     name="${item.id}-${tool}"
                     value="${option.value}"
@@ -542,12 +558,127 @@ if (questionnaire) {
           $("#contenido")?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
+        $("#exportSessionBtn").addEventListener("click", exportSession);
+        $("#exportWeightsBtn").addEventListener("click", exportWeights);
+        $("#importJsonBtn").addEventListener("click", () => $("#importJsonFile").click());
+        $("#importJsonFile").addEventListener("change", handleImportFile);
+        $("#cancelImportBtn").addEventListener("click", closeImportPreview);
+        $("#cancelImportTop").addEventListener("click", closeImportPreview);
+        $("#applyImportBtn").addEventListener("click", applyPendingImport);
+        $("#importDialog").addEventListener("close", () => {
+          pendingImport = null;
+          const importFile = $("#importJsonFile");
+          if (importFile) importFile.value = "";
+        });
+
         $("#categoryDashboard").addEventListener("click", event => {
           if (event.target === event.currentTarget || event.target.closest("[data-close-dashboard]")) closeCategoryDashboard();
         });
         document.addEventListener("keydown", event => {
           if (event.key === "Escape" && $("#categoryDashboard").classList.contains("is-visible")) closeCategoryDashboard();
         });
+      }
+
+      function exportSession() {
+        const document = createSessionDocument({
+          questionnaire,
+          state,
+          results: calculateResults()
+        });
+        downloadJson(document, `encuesta-${fileDate()}.json`);
+        setDataExchangeStatus("Sesión descargada con respuestas, pesos y resultados recalculables.");
+      }
+
+      function exportWeights() {
+        const document = createWeightsDocument({ questionnaire, weightOverrides: state.weightOverrides });
+        downloadJson(document, `pesos-${fileDate()}.json`);
+        setDataExchangeStatus("Configuración de pesos descargada.");
+      }
+
+      function downloadJson(payload, filename) {
+        const blob = new Blob([serializeJson(payload)], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = documentElement("a", { href: url, download: filename });
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      async function handleImportFile(event) {
+        const file = event.currentTarget.files?.[0];
+        if (!file) return;
+        if (file.size > 1_000_000) {
+          setDataExchangeStatus("El archivo supera el límite de 1 MB.", true);
+          event.currentTarget.value = "";
+          return;
+        }
+        try {
+          pendingImport = parseImportText(await file.text(), questionnaire);
+          renderImportPreview(pendingImport);
+          $("#importDialog").showModal();
+        } catch (error) {
+          pendingImport = null;
+          setDataExchangeStatus(error instanceof Error ? error.message : "No se ha podido validar el archivo.", true);
+          event.currentTarget.value = "";
+        }
+      }
+
+      function renderImportPreview(imported) {
+        const isSession = imported.kind === "survey-session";
+        $("#importPreviewSummary").textContent = isSession
+          ? "Se sustituirán las respuestas, la selección de categorías y los pesos locales."
+          : "Se sustituirán únicamente las modificaciones de pesos; las respuestas se conservarán.";
+        $("#importPreviewType").textContent = isSession ? "Sesión completa" : "Configuración de pesos";
+        $("#importPreviewDate").textContent = new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(new Date(imported.preview.exportedAt));
+        $("#importPreviewAnswers").textContent = isSession ? String(imported.preview.answerCount) : "No se modificarán";
+        $("#importPreviewWeights").textContent = String(imported.preview.modifiedGroups);
+      }
+
+      function applyPendingImport() {
+        if (!pendingImport) return;
+        if (pendingImport.kind === "weight-configuration") {
+          state.weightOverrides = pendingImport.weightOverrides;
+          setDataExchangeStatus("Configuración de pesos importada correctamente.");
+        } else {
+          state.answers = pendingImport.state.answers;
+          state.weightOverrides = pendingImport.state.weightOverrides;
+          state.categoryPrefs = Object.fromEntries(MATRIX.map((category, index) => [index, {
+            included: pendingImport.state.categorySelection[category.id]?.included !== false
+          }]));
+          const activeIndex = MATRIX.findIndex(category => category.id === pendingImport.state.activeCategoryId);
+          state.activeCategoryIndex = activeIndex >= 0 ? activeIndex : 0;
+          setDataExchangeStatus("Sesión importada. Los resultados se recalcularán con los datos validados.");
+        }
+        saveState();
+        $("#resultsPanel").classList.remove("is-visible");
+        $("#validationPanel").classList.remove("is-visible");
+        renderCategoryNav();
+        renderCategoryControls();
+        renderSurvey();
+        updateProgress();
+        updateNavState();
+        $("#importDialog").close();
+      }
+
+      function closeImportPreview() {
+        $("#importDialog").close();
+      }
+
+      function setDataExchangeStatus(message, isError = false) {
+        const status = $("#dataExchangeStatus");
+        status.textContent = message;
+        status.classList.toggle("is-error", isError);
+      }
+
+      function fileDate() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function documentElement(tagName, attributes) {
+        const element = document.createElement(tagName);
+        Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));
+        return element;
       }
 
       let dashboardReturnFocus = null;

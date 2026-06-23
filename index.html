@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Encuesta ponderada para elegir entre Gemini y NotebookLM.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>¿Qué herramienta utilizo? · Gemini vs NotebookLM</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23003DA5'/%3E%3Cpath d='M32 10l5.4 14.7 15.6.6-12.3 9.6 4.2 15L32 41.3 19.1 50l4.2-15L11 25.3l15.6-.6z' fill='none' stroke='%23F0B323' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./css/app.css">
@@ -52,6 +53,21 @@
       </div>
     </div>
 
+    <section class="data-exchange" aria-labelledby="data-exchange-title">
+      <div>
+        <p class="data-exchange-kicker">Datos bajo tu control</p>
+        <h2 id="data-exchange-title">Guardar, compartir o recuperar</h2>
+        <p>Los archivos se procesan únicamente en este navegador y no se envían a ningún servidor.</p>
+      </div>
+      <div class="data-exchange-actions">
+        <button type="button" class="btn btn-ghost" id="exportSessionBtn">Descargar sesión JSON</button>
+        <button type="button" class="btn btn-ghost" id="exportWeightsBtn">Descargar pesos JSON</button>
+        <button type="button" class="btn btn-primary" id="importJsonBtn">Importar JSON</button>
+        <input class="sr-only" type="file" id="importJsonFile" accept="application/json,.json" aria-label="Seleccionar archivo JSON para importar">
+      </div>
+      <p class="data-exchange-status" id="dataExchangeStatus" role="status" aria-live="polite"></p>
+    </section>
+
     <section class="category-config" id="categoryConfig" aria-labelledby="category-config-title"></section>
 
     <main id="contenido" class="layout">
@@ -73,6 +89,27 @@
       <div id="categoryDashboardContent"></div>
     </section>
   </div>
+
+  <dialog class="import-dialog" id="importDialog" aria-labelledby="importDialogTitle">
+    <div class="import-dialog-head">
+      <div><p>Vista previa segura</p><h2 id="importDialogTitle">Confirmar importación</h2></div>
+      <button type="button" class="btn dialog-close" id="cancelImportTop" aria-label="Cerrar importación">×</button>
+    </div>
+    <div class="import-dialog-body">
+      <p id="importPreviewSummary"></p>
+      <dl class="import-preview-grid">
+        <div><dt>Tipo</dt><dd id="importPreviewType"></dd></div>
+        <div><dt>Fecha del archivo</dt><dd id="importPreviewDate"></dd></div>
+        <div><dt>Respuestas</dt><dd id="importPreviewAnswers"></dd></div>
+        <div><dt>Pesos modificados</dt><dd id="importPreviewWeights"></dd></div>
+      </dl>
+      <p class="import-warning">La importación sustituirá únicamente los datos indicados en esta vista previa. Los resultados se recalcularán localmente.</p>
+      <div class="import-dialog-actions">
+        <button type="button" class="btn btn-soft" id="cancelImportBtn">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="applyImportBtn">Aplicar importación</button>
+      </div>
+    </div>
+  </dialog>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>

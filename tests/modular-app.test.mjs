@@ -22,4 +22,11 @@ test("la aplicación utiliza HTML, CSS, JavaScript y JSON separados", async () =
   assert.match(app, /data-criterion-weight/);
   assert.match(app, /id="resetAllWeights"/);
   assert.match(app, /weightOverrides/);
+  assert.match(app, /from "\.\/import-export\.js"/);
+  assert.match(html, /id="exportSessionBtn"/);
+  assert.match(html, /id="exportWeightsBtn"/);
+  assert.match(html, /id="importJsonFile"/);
+  assert.match(html, /id="importDialog"/);
+  assert.match(app, /<input\s+type="radio"/);
+  assert.doesNotMatch(app, /<inpu(?:\s|>)/);
 });
