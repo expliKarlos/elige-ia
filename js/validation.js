@@ -92,4 +92,3 @@ function requireWeight(value, path, errors) {
     errors.push(`${path} debe ser un número entre ${WEIGHT_MINIMUM} y ${WEIGHT_MAXIMUM}.`);
   }
 }
-

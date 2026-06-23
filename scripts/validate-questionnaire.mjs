@@ -17,4 +17,3 @@ if (!validation.valid) {
   );
   console.log(`Cuestionario válido: ${questionnaire.categories.length} categorías y ${criterionCount} criterios.`);
 }
-
