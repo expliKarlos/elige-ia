@@ -182,7 +182,8 @@ export function scoreTo100(value, maximum) {
 - Cambiar la escala de respuesta o la fórmula de cálculo.
 - Cambiar límites permitidos para los pesos.
 - Incorporar telemetría, servicios externos o almacenamiento remoto.
-- Elegir una licencia pública.
+- Cambiar la licencia GNU AGPLv3 adoptada para el proyecto.
+- Retirar o sustituir la identidad visual La Salle.
 
 ### No hacer
 
@@ -202,13 +203,12 @@ export function scoreTo100(value, maximum) {
 - El motor reproduce los resultados de la versión standalone.
 - Las pruebas automatizadas y la validación de datos pasan sin errores.
 
-## Preguntas abiertas para aprobación
-
-1. ¿Se publicará con una licencia abierta? Decisión aplazada; recomendación inicial: MIT para el código y CC BY 4.0 para el contenido, sujeta a autorización institucional.
-2. ¿Los forks podrán cambiar toda la identidad visual o debe mantenerse obligatoriamente la marca La Salle? Hasta nueva decisión, la implementación conservará la identidad actual.
-
 ## Decisiones aprobadas
 
 - Pesos de criterio: números decimales entre 1 y 10, ambos incluidos.
 - Intercambio: exclusivamente JSON; XML queda fuera de alcance.
 - Exportaciones: sesión completa y configuración de pesos por separado.
+- Marca: la implementación mantendrá por ahora la identidad visual La Salle.
+- Licencia del código: GNU Affero General Public License, versión 3 (`AGPL-3.0-only`).
+
+La licencia del código no concede por sí misma derechos de uso sobre nombres, logotipos ni otros signos identificativos de La Salle. Su tratamiento deberá documentarse separadamente para la publicación y los forks.

@@ -40,4 +40,10 @@ node --test
 
 ## Decisiones pendientes
 
-Los pesos admitirán valores decimales entre 1 y 10. JSON cubrirá tanto sesiones completas como configuraciones independientes de pesos. La licencia y la política de marca se resolverán antes de la publicación pública.
+Los pesos admitirán valores decimales entre 1 y 10. JSON cubrirá tanto sesiones completas como configuraciones independientes de pesos. El proyecto mantendrá por ahora la identidad visual La Salle.
+
+## Licencia
+
+El código se distribuye bajo la [GNU Affero General Public License, versión 3](LICENSE), identificador SPDX `AGPL-3.0-only`.
+
+La licencia se aplica al software. Los nombres, logotipos y demás elementos identificativos de La Salle conservan sus derechos correspondientes y no quedan relicenciados automáticamente por la AGPL.

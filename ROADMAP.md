@@ -13,7 +13,8 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 - [x] Aprobar pesos decimales entre 1 y 10.
 - [x] Confirmar JSON como único formato de intercambio.
 - [x] Confirmar exportación independiente de pesos.
-- [ ] Resolver licencia y política de marca antes de la publicación pública.
+- [x] Adoptar GNU AGPLv3 para el código.
+- [x] Mantener por ahora la identidad visual La Salle.
 
 ### Punto de control
 
@@ -123,7 +124,7 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 ### Tarea 6.2: Experiencia de fork
 
-- [ ] Documentar personalización de datos y marca.
+- [ ] Documentar personalización de datos y tratamiento independiente de la marca.
 - [ ] Confirmar rutas relativas bajo nombres de repositorio diferentes.
 - [ ] Añadir guía de ejecución local y solución de problemas.
 
