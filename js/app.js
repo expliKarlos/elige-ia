@@ -31,9 +31,9 @@ if (questionnaire) {
       const fmt = new Intl.NumberFormat("es-ES");
       const allItems = MATRIX.flatMap(category => category.items.map(item => ({ ...item, category: category.category, color: category.color })));
       const state = normaliseState(loadState());
-  
+
       init();
-  
+
       function init() {
         $("#statCats").textContent = MATRIX.length;
         $("#statQuestions").textContent = allItems.length;
@@ -45,7 +45,7 @@ if (questionnaire) {
         updateProgress();
         updateNavState();
       }
-  
+
       function loadState() {
         try {
           return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { answers: {} };
@@ -53,11 +53,11 @@ if (questionnaire) {
           return { answers: {} };
         }
       }
-  
+
       function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
-  
+
       function normaliseState(rawState) {
         const safeState = rawState && typeof rawState === "object" ? rawState : {};
         const active = Number.isInteger(Number(safeState.activeCategoryIndex)) ? Number(safeState.activeCategoryIndex) : 0;
@@ -67,7 +67,7 @@ if (questionnaire) {
           activeCategoryIndex: Math.min(Math.max(active, 0), MATRIX.length - 1)
         };
       }
-  
+
       function normaliseCategoryPrefs(prefs = {}) {
         return Object.fromEntries(MATRIX.map((category, index) => {
           const current = prefs[index] || {};
@@ -78,39 +78,39 @@ if (questionnaire) {
           }];
         }));
       }
-  
+
       function ensureActiveCategory() {
         if (!Number.isInteger(state.activeCategoryIndex) || state.activeCategoryIndex < 0 || state.activeCategoryIndex >= MATRIX.length) {
           state.activeCategoryIndex = 0;
         }
       }
-  
+
       function answerKey(itemId, tool) {
         return `${itemId}:${tool}`;
       }
-  
+
       function getCategoryPreference(index) {
         if (!state.categoryPrefs[index]) {
           state.categoryPrefs[index] = { included: true, relevance: 1 };
         }
         return state.categoryPrefs[index];
       }
-  
+
       function getCategoryMultiplier(index) {
         const pref = getCategoryPreference(index);
         return pref.included ? Number(pref.relevance || 1) : 0;
       }
-  
+
       function getActiveCategories() {
         return MATRIX
           .map((category, index) => ({ category, index, multiplier: getCategoryMultiplier(index) }))
           .filter(row => row.multiplier > 0);
       }
-  
+
       function getExpectedResponseCount() {
         return getActiveCategories().reduce((sum, row) => sum + row.category.items.length * 2, 0);
       }
-  
+
       function getCompletedResponseCount() {
         return getActiveCategories().reduce((sum, row) => {
           return sum + row.category.items.reduce((itemSum, item) => {
@@ -120,7 +120,7 @@ if (questionnaire) {
           }, 0);
         }, 0);
       }
-  
+
       function getCategoryStatus(index) {
         const category = MATRIX[index];
         const pref = getCategoryPreference(index);
@@ -138,20 +138,20 @@ if (questionnaire) {
           complete: completedQuestions === category.items.length && category.items.length > 0
         };
       }
-  
+
       function isQuestionComplete(item) {
         return Boolean(state.answers[answerKey(item.id, "gemini")]) && Boolean(state.answers[answerKey(item.id, "notebook")]);
       }
-  
+
       function score100(value, max) {
         if (!max) return 0;
         return Math.round((value / max) * 1000) / 10;
       }
-  
+
       function formatScore(value) {
         return Number.isInteger(value) ? fmt.format(value) : fmt.format(Number(value).toFixed(1));
       }
-  
+
       function renderCategoryNav() {
         const nav = $("#categoryNav");
         nav.innerHTML = MATRIX.map((category, index) => {
@@ -170,7 +170,7 @@ if (questionnaire) {
           `;
         }).join("");
       }
-  
+
       function renderCategoryControls() {
         const panel = $("#categoryConfig");
         const activeCount = getActiveCategories().length;
@@ -210,7 +210,7 @@ if (questionnaire) {
           </div>
           <p class="normalization-note">Categorías activas: ${activeCount} de ${MATRIX.length}. Si desactivas una categoría, sus preguntas dejan de ser obligatorias y no entran en el cálculo final.</p>
         `;
-  
+
         panel.querySelectorAll("input[data-pref-type='included']").forEach(input => {
           input.addEventListener("change", event => {
             const index = Number(event.currentTarget.dataset.prefIndex);
@@ -224,7 +224,7 @@ if (questionnaire) {
             refreshResultsIfVisible();
           });
         });
-  
+
         panel.querySelectorAll("select[data-pref-type='relevance']").forEach(select => {
           select.addEventListener("change", event => {
             const index = Number(event.currentTarget.dataset.prefIndex);
@@ -238,10 +238,10 @@ if (questionnaire) {
             refreshResultsIfVisible();
           });
         });
-  
+
         $("#closeConfigBtn")?.addEventListener("click", () => toggleCategoryConfig(false));
       }
-  
+
       function toggleCategoryConfig(force) {
         const panel = $("#categoryConfig");
         const shouldShow = typeof force === "boolean" ? force : !panel.classList.contains("is-visible");
@@ -249,7 +249,7 @@ if (questionnaire) {
         $("#configBtn")?.setAttribute("aria-expanded", String(shouldShow));
         if (shouldShow) panel.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-  
+
       function renderSurvey() {
         ensureActiveCategory();
         const root = $("#surveyRoot");
@@ -289,7 +289,7 @@ if (questionnaire) {
             </article>
           `;
         }).join("");
-  
+
         root.querySelectorAll('input[type="radio"]').forEach(input => {
           input.addEventListener("change", event => {
             const target = event.currentTarget;
@@ -302,23 +302,23 @@ if (questionnaire) {
             refreshResultsIfVisible();
           });
         });
-  
+
         root.querySelectorAll(".step-prev, .step-next").forEach(button => {
           button.addEventListener("click", event => {
             const targetIndex = Number(event.currentTarget.dataset.goto);
             if (Number.isInteger(targetIndex)) setActiveCategory(targetIndex, { scroll: true });
           });
         });
-  
+
         root.querySelectorAll(".step-finish").forEach(button => {
           button.addEventListener("click", finalizeSurvey);
         });
-  
+
         root.querySelectorAll(".evaluate-category").forEach(button => {
           button.addEventListener("click", event => openCategoryDashboard(Number(event.currentTarget.dataset.categoryEvaluate)));
         });
       }
-  
+
       function renderQuestion(category, item, categoryIndex, itemIndex) {
         const geminiValue = state.answers[answerKey(item.id, "gemini")];
         const notebookValue = state.answers[answerKey(item.id, "notebook")];
@@ -341,7 +341,7 @@ if (questionnaire) {
           </article>
         `;
       }
-  
+
       function renderToolRating(item, tool, label, weight, selectedValue) {
         const toolColor = tool === "gemini" ? "var(--gemini)" : "var(--notebook)";
         return `
@@ -350,7 +350,7 @@ if (questionnaire) {
             <div class="rating-grid" role="radiogroup" aria-label="${label} · ${escapeAttr(item.criterio)}">
               ${SCALE.map(option => `
                 <label class="rating-option" title="${escapeAttr(option.hint)}">
-                  <input
+                  <inpu
                     type="radio"
                     name="${item.id}-${tool}"
                     value="${option.value}"
@@ -365,15 +365,15 @@ if (questionnaire) {
           </fieldset>
         `;
       }
-  
+
       function getPreviousCategoryIndex(currentIndex) {
         return currentIndex > 0 ? currentIndex - 1 : null;
       }
-  
+
       function getNextCategoryIndex(currentIndex) {
         return currentIndex < MATRIX.length - 1 ? currentIndex + 1 : null;
       }
-  
+
       function setActiveCategory(index, options = {}) {
         if (!Number.isInteger(index) || index < 0 || index >= MATRIX.length) return;
         state.activeCategoryIndex = index;
@@ -385,7 +385,7 @@ if (questionnaire) {
           $("#surveyRoot")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
-  
+
       function updateNavState() {
         $$(".cat-link").forEach(link => {
           const index = Number(link.dataset.categoryIndex);
@@ -397,14 +397,14 @@ if (questionnaire) {
           link.setAttribute("aria-label", `${MATRIX[index].category}. ${status.completedQuestions} de ${status.totalQuestions} preguntas completas. ${status.included ? "Peso " + status.relevance + " por" : "Excluida del cálculo"}.`);
         });
       }
-  
+
       function bindGlobalEvents() {
         $("#categoryNav").addEventListener("click", event => {
           const button = event.target.closest(".cat-link");
           if (!button) return;
           setActiveCategory(Number(button.dataset.categoryIndex), { scroll: true });
         });
-  
+
         $("#configBtn").addEventListener("click", () => toggleCategoryConfig());
         $("#finishBtn").addEventListener("click", finalizeSurvey);
         $("#resetBtn").addEventListener("click", () => {
@@ -419,7 +419,7 @@ if (questionnaire) {
           updateNavState();
           $("#contenido")?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
-  
+
         $("#categoryDashboard").addEventListener("click", event => {
           if (event.target === event.currentTarget || event.target.closest("[data-close-dashboard]")) closeCategoryDashboard();
         });
@@ -427,15 +427,15 @@ if (questionnaire) {
           if (event.key === "Escape" && $("#categoryDashboard").classList.contains("is-visible")) closeCategoryDashboard();
         });
       }
-  
+
       let dashboardReturnFocus = null;
-  
+
       function calculateCategoryResults(categoryIndex) {
         const category = MATRIX[categoryIndex];
         if (!category) return null;
         return calculateCategoryResultEngine(questionnaire, category.id, state.answers);
       }
-  
+
       function openCategoryDashboard(categoryIndex) {
         const category = MATRIX[categoryIndex];
         const status = getCategoryStatus(categoryIndex);
@@ -454,12 +454,12 @@ if (questionnaire) {
           card?.querySelector("input:not(:checked)")?.focus({ preventScroll: true });
           return;
         }
-  
+
         if (note) {
           note.textContent = "Categoría completa. Abriendo comparativa normalizada sobre 100.";
           note.classList.remove("is-warning");
         }
-  
+
         const results = calculateCategoryResults(categoryIndex);
         const modal = $("#categoryDashboard");
         const diff = results.diff;
@@ -492,11 +492,11 @@ if (questionnaire) {
         document.body.classList.add("modal-open");
         $(".category-dashboard-dialog", modal).focus();
       }
-  
+
       function renderCategoryScoreCard(label, tool, score, raw, maximum) {
         return `<article class="category-score-card" style="--tool:var(--${tool})"><h3>${label}</h3><div class="category-score-value">${formatScore(score)}<small>/100</small></div><div class="category-score-meta">${fmt.format(raw)} puntos ponderados de ${fmt.format(maximum)} posibles</div><div class="bar" aria-hidden="true"><span style="width:${Math.min(score, 100)}%"></span></div></article>`;
       }
-  
+
       function renderSingleCategoryRadar(results) {
         const rows = results.criteria;
         const size = 600;
@@ -520,7 +520,7 @@ if (questionnaire) {
         }).join("");
         return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="singleRadarTitle singleRadarDesc"><title id="singleRadarTitle">Radar de ${escapeHtml(results.category)}</title><desc id="singleRadarDesc">Comparación de Gemini y NotebookLM por criterio, normalizada de cero a cien.</desc>${grid}${axes}<polygon points="${pointsFor("geminiScore100")}" fill="rgba(124,58,237,.30)" stroke="var(--gemini)" stroke-width="4"/><polygon points="${pointsFor("notebookScore100")}" fill="rgba(14,165,233,.25)" stroke="var(--notebook)" stroke-width="4"/>${labels}</svg>`;
       }
-  
+
       function closeCategoryDashboard() {
         const modal = $("#categoryDashboard");
         modal.classList.remove("is-visible");
@@ -529,7 +529,7 @@ if (questionnaire) {
         dashboardReturnFocus?.focus();
         dashboardReturnFocus = null;
       }
-  
+
       function updateProgress() {
         const totalExpectedResponses = getExpectedResponseCount();
         const completedResponses = getCompletedResponseCount();
@@ -537,7 +537,7 @@ if (questionnaire) {
         $("#progressText").textContent = `${completedResponses} de ${totalExpectedResponses} respuestas activas completadas`;
         $("#progressPercent").textContent = `${percent}%`;
         $("#progressFill").style.width = `${percent}%`;
-  
+
         MATRIX.forEach((category, index) => {
           const status = getCategoryStatus(index);
           const questions = $("#catQuestions-" + index);
@@ -551,30 +551,30 @@ if (questionnaire) {
           }
         });
       }
-  
+
       function finalizeSurvey() {
         const activeCategories = getActiveCategories();
         $("#resultsPanel").classList.remove("is-visible");
         $$(".question-card").forEach(card => card.classList.remove("is-pending"));
-  
+
         if (!activeCategories.length) {
           showCategorySelectionWarning();
           return;
         }
-  
+
         const pending = getPendingResponses();
         if (pending.length) {
           showValidation(pending);
           return;
         }
-  
+
         const results = calculateResults();
         renderResults(results);
         $("#validationPanel").classList.remove("is-visible");
         $("#resultsPanel").classList.add("is-visible");
         $("#resultsPanel").scrollIntoView({ behavior: "smooth", block: "start" });
       }
-  
+
       function showCategorySelectionWarning() {
         const panel = $("#validationPanel");
         panel.innerHTML = `
@@ -586,7 +586,7 @@ if (questionnaire) {
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
         $("#openConfigFromWarning").addEventListener("click", () => toggleCategoryConfig(true));
       }
-  
+
       function getPendingResponses() {
         const pending = [];
         MATRIX.forEach((category, categoryIndex) => {
@@ -602,7 +602,7 @@ if (questionnaire) {
         });
         return pending;
       }
-  
+
       function showValidation(pending) {
         const panel = $("#validationPanel");
         const first = pending[0];
@@ -628,7 +628,7 @@ if (questionnaire) {
           }, 60);
         });
       }
-  
+
       function calculateResults() {
         const categorySettings = Object.fromEntries(MATRIX.map((category, index) => {
           const preference = getCategoryPreference(index);
@@ -639,16 +639,16 @@ if (questionnaire) {
         }));
         return calculateSurveyResultsEngine(questionnaire, state.answers, { categorySettings });
       }
-  
+
       function renderResults(results) {
         const diff = results.diff;
         let winnerText = "Resultado equilibrado: ambas herramientas tienen un encaje similar según las respuestas introducidas.";
         if (diff >= 3) winnerText = `Gemini queda por encima por ${formatScore(diff)} puntos sobre 100. Conviene revisar especialmente tareas creativas, conversacionales o de prototipado.`;
         if (diff <= -3) winnerText = `NotebookLM queda por encima por ${formatScore(Math.abs(diff))} puntos sobre 100. Conviene revisar especialmente tareas con fuentes, citas, estudio guiado y trazabilidad.`;
-  
+
         const activeRows = results.categories.filter(row => row.included);
         const excludedRows = results.categories.filter(row => !row.included);
-  
+
         $("#resultsPanel").innerHTML = `
           <div class="results-head">
             <h2 id="results-title">Resultados normalizados sobre 100</h2>
@@ -690,7 +690,7 @@ if (questionnaire) {
             ${renderCategoryTable(activeRows, excludedRows)}
           </section>
         `;
-  
+
         $("#breakdownBtn")?.addEventListener("click", event => {
           const details = $("#categoryDetails");
           const isHidden = details.hasAttribute("hidden");
@@ -700,7 +700,7 @@ if (questionnaire) {
           if (isHidden) details.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       }
-  
+
       function renderRadarChart(rows) {
         if (!rows.length) {
           return `<p>No hay categorías incluidas para dibujar el radar.</p>`;
@@ -729,7 +729,7 @@ if (questionnaire) {
         }).join("");
         const geminiPoints = rows.map((row, index) => pointFor(index, row.geminiScore100).map(n => n.toFixed(1)).join(",")).join(" ");
         const notebookPoints = rows.map((row, index) => pointFor(index, row.notebookScore100).map(n => n.toFixed(1)).join(",")).join(" ");
-  
+
         return `
           <svg viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="radarTitle radarDesc">
             <title id="radarTitle">Radar comparativo por categoría</title>
@@ -748,7 +748,7 @@ if (questionnaire) {
           </svg>
         `;
       }
-  
+
       function renderCategoryTable(activeRows, excludedRows) {
         const active = activeRows.map(row => `
           <tr>
@@ -789,7 +789,7 @@ if (questionnaire) {
           </div>
         `;
       }
-  
+
       function refreshResultsIfVisible() {
         const panel = $("#resultsPanel");
         if (!panel.classList.contains("is-visible")) return;
@@ -800,7 +800,7 @@ if (questionnaire) {
         renderResults(calculateResults());
         panel.classList.add("is-visible");
       }
-  
+
       function escapeHtml(value) {
         return String(value)
           .replace(/&/g, "&amp;")
@@ -809,7 +809,7 @@ if (questionnaire) {
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
       }
-  
+
       function escapeAttr(value) {
         return escapeHtml(value).replace(/`/g, "&#096;");
       }
