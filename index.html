@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Encuesta ponderada para elegir entre Gemini y NotebookLM.">
+  <title>¿Qué herramienta utilizo? · Gemini vs NotebookLM</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23003DA5'/%3E%3Cpath d='M32 10l5.4 14.7 15.6.6-12.3 9.6 4.2 15L32 41.3 19.1 50l4.2-15L11 25.3l15.6-.6z' fill='none' stroke='%23F0B323' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+<a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app-shell">
+    <header class="hero" aria-labelledby="page-title">
+      <svg class="brand-star" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <path d="M60 8 73.2 43.8 111 45.4 81.3 68.8 91.5 105.2 60 84.3 28.5 105.2 38.7 68.8 9 45.4 46.8 43.8Z" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+      <div class="eyebrow">Matriz operativa · Encuesta interactiva</div>
+      <h1 id="page-title">¿Qué herramienta utilizo?</h1>
+      <p>Evalúa cada criterio por separado para las dos herramientas. La encuesta se muestra por categorías para reducir longitud visual. El resultado se normaliza automáticamente a una escala de 0 a 100.</p>
+      <div class="hero-stats" aria-label="Resumen de la encuesta">
+        <div class="stat-tile"><strong id="statCats">0</strong><span>categorías</span></div>
+        <div class="stat-tile"><strong id="statQuestions">0</strong><span>preguntas</span></div>
+        <div class="stat-tile"><strong>2</strong><span>herramientas</span></div>
+        <div class="stat-tile"><strong>0–100</strong><span>resultado final</span></div>
+      </div>
+    </header>
+
+    <section class="scale-card" aria-labelledby="scale-title">
+      <h2 id="scale-title">Escala de valoración</h2>
+      <div class="scale-list">
+        <div class="scale-item"><strong>1</strong><span>No corresponde</span></div>
+        <div class="scale-item"><strong>2</strong><span>Corresponde poco</span></div>
+        <div class="scale-item"><strong>3</strong><span>Corresponde bastante</span></div>
+        <div class="scale-item"><strong>4</strong><span>Sí corresponde</span></div>
+      </div>
+    </section>
+
+    <div class="toolbar" aria-label="Estado y acciones de la encuesta">
+      <div class="toolbar-inner">
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progressText">0 de 0 respuestas completadas</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <button type="button" class="btn btn-ghost" id="configBtn" aria-expanded="false" aria-controls="categoryConfig">Categorías y pesos</button>
+        <button type="button" class="btn btn-ghost" id="resetBtn">Reiniciar</button>
+        <button type="button" class="btn btn-primary" id="finishBtn">Finalizar encuesta</button>
+      </div>
+    </div>
+
+    <section class="category-config" id="categoryConfig" aria-labelledby="category-config-title"></section>
+
+    <main id="contenido" class="layout">
+      <aside class="category-nav" aria-labelledby="nav-title">
+        <h2 id="nav-title">Categorías</h2>
+        <div class="cat-list" id="categoryNav"></div>
+      </aside>
+
+      <div>
+        <section class="validation-panel" id="validationPanel" role="alert" aria-live="assertive"></section>
+        <section class="results" id="resultsPanel" aria-labelledby="results-title"></section>
+        <section class="survey" id="surveyRoot" aria-label="Preguntas de la encuesta por categoría"></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="category-dashboard" id="categoryDashboard" aria-hidden="true">
+    <section class="category-dashboard-dialog" role="dialog" aria-modal="true" aria-labelledby="categoryDashboardTitle" tabindex="-1">
+      <div id="categoryDashboardContent"></div>
+    </section>
+  </div>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

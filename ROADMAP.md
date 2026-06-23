@@ -76,20 +76,20 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 ### Tarea 3.1: Montar la interfaz desde JSON
 
-- [ ] Crear `index.html`, `css/app.css` y `js/app.js`.
-- [ ] Conservar identidad La Salle, categorías y comportamiento responsive.
-- [ ] Mostrar un error recuperable si el JSON no puede cargarse.
+- [x] Crear `index.html`, `css/app.css` y `js/app.js`.
+- [x] Conservar identidad La Salle, categorías y comportamiento responsive.
+- [x] Mostrar un error recuperable si el JSON no puede cargarse.
 
 ### Tarea 3.2: Recuperar los flujos de encuesta
 
-- [ ] Navegación, progreso, validación y reinicio.
-- [ ] Resultado global y dashboards parciales.
-- [ ] Persistencia local con versión de cuestionario.
+- [x] Navegación, progreso, validación y reinicio.
+- [x] Resultado global y dashboards parciales.
+- [x] Persistencia local con versión de cuestionario.
 
 ### Punto de control
 
-- [ ] El flujo principal funciona de extremo a extremo.
-- [ ] No hay errores de consola en escritorio ni móvil.
+- [x] El flujo principal funciona de extremo a extremo.
+- [x] No hay errores de consola en escritorio ni móvil.
 
 ## Fase 4 — Edición de pesos
 

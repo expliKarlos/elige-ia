@@ -4,7 +4,7 @@ Aplicación web estática para comparar Gemini y NotebookLM mediante un cuestion
 
 ## Estado
 
-El proyecto está en fase de especificación y planificación. La referencia funcional actual permanece fuera de esta carpeta en `../eleccion_2.html` y no se modificará durante la modularización inicial.
+Las fases de modelo de datos, motor de cálculo y migración funcional están completas. `index.html` es la aplicación modular actual; `../eleccion_2.html` permanece como referencia histórica para las pruebas de regresión.
 
 ## Principios
 
@@ -30,8 +30,6 @@ python -m http.server 8000
 ```
 
 Abrir después `http://localhost:8000`.
-
-Cuando se complete la primera implementación:
 
 ```powershell
 node scripts/validate-questionnaire.mjs
