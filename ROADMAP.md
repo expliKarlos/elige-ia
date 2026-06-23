@@ -57,20 +57,20 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 ### Tarea 2.1: Extraer normalización y ponderación
 
-- [ ] Implementar funciones puras sin DOM ni almacenamiento.
-- [ ] Cubrir resultados globales y por categoría.
-- [ ] Comparar resultados con casos capturados de `eleccion_2.html`.
+- [x] Implementar funciones puras sin DOM ni almacenamiento.
+- [x] Cubrir resultados globales y por categoría.
+- [x] Comparar resultados con casos capturados de `eleccion_2.html`.
 
 ### Tarea 2.2: Definir configuración efectiva de pesos
 
-- [ ] Combinar valores predeterminados y personalizados.
-- [ ] Restaurar pesos por criterio, categoría o cuestionario completo.
-- [ ] Evitar resultados no finitos o máximos inválidos.
+- [x] Combinar valores predeterminados y personalizados.
+- [x] Restaurar pesos por criterio, categoría o cuestionario completo.
+- [x] Evitar resultados no finitos o máximos inválidos.
 
 ### Punto de control
 
-- [ ] El motor reproduce los resultados del standalone.
-- [ ] Las pruebas unitarias pasan con entradas límite.
+- [x] El motor reproduce los resultados del standalone.
+- [x] Las pruebas unitarias pasan con entradas límite.
 
 ## Fase 3 — Aplicación modular funcional
 
