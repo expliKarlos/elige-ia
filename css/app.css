@@ -344,7 +344,7 @@ body {
   background-attachment: fixed;
 }
 
-/* Cabecera / Hero Avant-Garde (Estilo Mesa Clara) */
+/* Cabecera / Hero (Estilo Mesa Clara) */
 .hero {
   min-height: 380px;
   display: flex;
@@ -368,7 +368,7 @@ body {
   overflow: hidden;
 }
 
-/* Esferas de luz flotantes y fluidas (Efecto Avant-Garde) */
+/* Esferas de luz flotantes y fluidas */
 .hero::before, .hero::after {
   display: block !important;
   content: "" !important;
@@ -399,7 +399,7 @@ body {
   animation-delay: -7.5s;
 }
 
-/* Elementos de Dibujo Técnico y Blueprint (Avant-Garde) */
+/* Elementos de dibujo técnico y blueprint */
 .blueprint-crosshair {
   position: absolute;
   font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", monospace;
