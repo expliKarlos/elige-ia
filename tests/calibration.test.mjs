@@ -5,6 +5,7 @@ import {
   calculateCalibrationMetrics,
   validateCalibrationDataset
 } from "../js/calibration.js";
+import { renderCalibrationReport } from "../js/calibration-report.js";
 
 function observedCase(overrides = {}) {
   return {
@@ -50,6 +51,23 @@ test("distingue muestra válida de suficiencia metodológica", () => {
   assert.match(validation.warnings.join("\n"), /30 casos reales/);
 });
 
+test("rechaza casos con recomendaciones automáticas o expertas ausentes", () => {
+  const entry = observedCase({
+    detailed: { status: "ready" },
+    expertRatings: [
+      { evaluatorId: "pedagogy", recommendation: "notebooklm" },
+      { evaluatorId: "technology" },
+      { evaluatorId: "privacy", recommendation: "notebooklm" }
+    ]
+  });
+
+  const validation = validateCalibrationDataset({ schemaVersion: "1.0", cases: [entry] });
+
+  assert.equal(validation.valid, false);
+  assert.match(validation.errors.join("\n"), /detailed\.recommendation/);
+  assert.match(validation.errors.join("\n"), /expertRatings\[1\]\.recommendation/);
+});
+
 test("calcula acuerdo, errores, concordancia, riesgos y sensibilidad con denominadores explícitos", () => {
   const dataset = {
     schemaVersion: "1.0",
@@ -88,4 +106,31 @@ test("no convierte la ausencia de casos reales en porcentajes engañosos", () =>
   assert.deepEqual(metrics.automaticConsensusAgreement, { numerator: 0, denominator: 0, rate: null });
   assert.deepEqual(metrics.criticalContraindicationDetection, { numerator: 0, denominator: 0, rate: null });
   assert.equal(metrics.acceptance.overall, "insufficient_evidence");
+});
+
+test("el informe técnico conserva el contrato y explicita la evidencia insuficiente", () => {
+  const dataset = { schemaVersion: "1.0", cases: [] };
+  const validation = validateCalibrationDataset(dataset);
+  const metrics = calculateCalibrationMetrics(dataset);
+  const report = renderCalibrationReport({
+    generatedAt: "2026-06-24T00:00:00.000Z",
+    validation,
+    metrics,
+    technicalChecks: { referenceCases: 7, matrixCombinations: 36, automatedTests: 52 }
+  });
+
+  for (const section of [
+    "technical-summary",
+    "key-findings",
+    "scope-data-and-metric-definitions",
+    "methodology",
+    "limitations-uncertainty-and-robustness-checks",
+    "recommended-next-steps",
+    "further-questions"
+  ]) {
+    assert.match(report, new RegExp(`data-contract-section="${section}"`));
+  }
+  assert.match(report, /Evidencia de campo insuficiente/);
+  assert.match(report, /No evaluable/);
+  assert.doesNotMatch(report, /NaN|null%/);
 });

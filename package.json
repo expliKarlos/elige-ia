@@ -8,6 +8,7 @@
     "extract:data": "node scripts/extract-questionnaire.mjs",
     "validate:data": "node scripts/validate-questionnaire.mjs",
     "check:source": "node scripts/check-source.mjs",
+    "calibrate": "node scripts/run-calibration.mjs",
     "build": "node scripts/build-static.mjs",
     "test": "node --test",
     "test:e2e": "playwright test",

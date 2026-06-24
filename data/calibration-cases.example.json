@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "datasetId": "elige-ia-field-calibration",
+  "datasetVersion": "1.0.0",
+  "status": "awaiting-field-data",
+  "asOf": "2026-06-24",
+  "minimumObservedCases": 30,
+  "minimumIndependentEvaluators": 3,
+  "recommendationVocabulary": [
+    "gemini",
+    "notebooklm",
+    "both",
+    "neither",
+    "insufficient_information"
+  ],
+  "privacy": {
+    "personalDataAllowed": false,
+    "studentDocumentsAllowed": false,
+    "freeTextMustBeAnonymized": true
+  },
+  "cases": []
+}

@@ -44,6 +44,42 @@ Estos valores son objetivos operativos iniciales, no propiedades demostradas del
 
 Los casos se almacenarán anonimizados. No se incluirán nombres, cuentas, documentos del alumnado ni información sensible. Cada registro contendrá versión del cuestionario, pesos efectivos, respuestas, resultado, recomendación experta y observaciones.
 
+### Formato operativo
+
+El contrato versionado se mantiene en `data/calibration-cases.example.json`. Los casos reales se guardan en `data/calibration-cases.local.json`, excluido de Git para impedir su publicación accidental. Solo los registros con `provenance: "observed"` participan en las métricas de campo. Los escenarios construidos pueden utilizarse para regresión, pero nunca cuentan como casos reales.
+
+Cada caso observado utiliza esta forma mínima:
+
+```json
+{
+  "id": "case-001",
+  "provenance": "observed",
+  "scenario": "Descripción anonimizada del caso educativo",
+  "expertRatings": [
+    { "evaluatorId": "pedagogy", "recommendation": "notebooklm" },
+    { "evaluatorId": "technology", "recommendation": "notebooklm" },
+    { "evaluatorId": "privacy", "recommendation": "notebooklm" }
+  ],
+  "detailed": { "status": "ready", "recommendation": "notebooklm" },
+  "reduced": { "status": "ready", "recommendation": "notebooklm" },
+  "incomplete": false,
+  "criticalContraindication": { "expected": false, "detected": false },
+  "weightSensitivity": { "withinFivePercentChanged": false, "nearThreshold": false }
+}
+```
+
+Valores admitidos para una recomendación: `gemini`, `notebooklm`, `both`, `neither` e `insufficient_information`.
+
+### Ejecución reproducible
+
+```powershell
+Copy-Item data/calibration-cases.example.json data/calibration-cases.local.json
+$env:CALIBRATION_DATASET = "data/calibration-cases.local.json"
+npm run calibrate
+```
+
+El comando valida la muestra y genera `reports/calibration/results.v1.json` y `reports/calibration/report.html`. Si un denominador es cero, la métrica se marca como no evaluable en lugar de producir un porcentaje artificial.
+
 ## Cierre de la calibración
 
 Para retirar la marca provisional se requiere:

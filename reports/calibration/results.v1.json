@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-06-24T00:00:00.000Z",
+  "source": "data/calibration-cases.example.json",
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "La calibración requiere al menos 30 casos reales; hay 0."
+    ],
+    "caseCount": 0,
+    "realCaseCount": 0,
+    "readyForFieldCalibration": false
+  },
+  "metrics": {
+    "realCaseCount": 0,
+    "expertAgreement": {
+      "numerator": 0,
+      "denominator": 0,
+      "rate": null
+    },
+    "automaticConsensusAgreement": {
+      "numerator": 0,
+      "denominator": 0,
+      "rate": null
+    },
+    "detailedReducedConcordance": {
+      "numerator": 0,
+      "denominator": 0,
+      "rate": null
+    },
+    "criticalContraindicationDetection": {
+      "numerator": 0,
+      "denominator": 0,
+      "rate": null
+    },
+    "falsePositiveCases": 0,
+    "falseNegativeCases": 0,
+    "incompleteDefinitiveCases": 0,
+    "weightSensitivityViolations": 0,
+    "acceptance": {
+      "overall": "insufficient_evidence",
+      "criteria": {
+        "minimumSample": "not_met",
+        "criticalDetection": "not_evaluable",
+        "incompleteSafety": "met",
+        "expertAgreement": "not_evaluable",
+        "reducedConcordance": "not_evaluable",
+        "weightStability": "met"
+      }
+    }
+  },
+  "technicalChecks": {
+    "referenceCases": 7,
+    "matrixCombinations": 36,
+    "automatedTests": 54
+  },
+  "evidenceLevel": "technical-precalibration-only",
+  "visualOmissionReason": "No se genera un gráfico hasta disponer de métricas de campo con denominadores distintos de cero."
+}

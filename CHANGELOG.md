@@ -2,6 +2,10 @@
 
 ## [Sin publicar]
 
+### Añadido
+
+- Pipeline reproducible de calibración con métricas, controles de privacidad e informe técnico.
+
 ## [0.1.1] - 2026-06-24
 
 ### Corregido
