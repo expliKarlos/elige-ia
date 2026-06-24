@@ -28,13 +28,14 @@ test("las dos interfaces explican el reescalado real y muestran la puntuación b
   }
 });
 
-test("el desglose compara baremaciones por criterio y conserva la necesidad declarada", () => {
+test("el desglose usa un radar de baremaciones 1–10 con dos herramientas", () => {
   assert.match(app, /renderCategoryBreakdownSections/);
   assert.match(app, /class="category-breakdown-card"/);
-  assert.match(app, /renderSingleCategoryComparison\(categoryResults\)/);
-  assert.match(app, /Necesidad[^<]*\$\{row\.need}\/4/);
-  assert.match(app, /\$\{formatWeight\(row\.geminiWeight\)}\/10/);
-  assert.match(app, /\$\{formatWeight\(row\.notebooklmWeight\)}\/10/);
+  assert.match(app, /renderSingleCategoryRadar\(categoryResults\)/);
+  assert.match(app, /pointsFor\("geminiWeight"\)/);
+  assert.match(app, /pointsFor\("notebooklmWeight"\)/);
+  assert.match(app, /Baremación de Gemini y NotebookLM por criterio en escala de uno a diez/);
+  assert.doesNotMatch(app, /pointsFor\("need"\)/);
 });
 
 test("el informe puede enviarse a PDF sin imprimir la navegación", () => {

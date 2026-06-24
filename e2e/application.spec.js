@@ -35,7 +35,7 @@ test("el modo detallado permite limitar el informe a una categoría", async ({ p
   await expect(page.locator("#progressText")).toContainText("0 de 6");
 });
 
-test("el informe de categoría compara baremaciones y muestra la necesidad", async ({ page }) => {
+test("el informe de categoría compara las baremaciones en un radar 1–10", async ({ page }) => {
   await page.goto("/index.html");
   await expect(page.locator(".question-card")).toHaveCount(103);
   for (const criterionId of ["c01q01", "c01q02", "c01q03", "c01q04", "c01q05", "c01q06"]) {
@@ -43,10 +43,9 @@ test("el informe de categoría compara baremaciones y muestra la necesidad", asy
   }
   await page.locator('[data-category-evaluate="0"]').click();
   await expect(page.locator("#categoryDashboard")).toHaveClass(/is-visible/);
-  await expect(page.locator("#categoryDashboard .criterion-comparison-row")).toHaveCount(6);
-  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("Necesidad 4/4");
-  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("9/10");
-  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("5/10");
+  await expect(page.locator("#categoryDashboard .category-radar svg")).toHaveCount(1);
+  await expect(page.locator("#categoryDashboard .category-radar svg polygon[data-series]")).toHaveCount(2);
+  await expect(page.locator("#categoryDashboard .category-radar svg")).toContainText("Baremación de Gemini y NotebookLM por criterio en escala de uno a diez");
   await expectNoSeriousAxeViolations(page, "comparativa de baremaciones por categoría");
 });
 

@@ -805,11 +805,11 @@ if (questionnaire && interpretationMatrix) {
             </div>
             ${renderCategoryInterpretationSummary(interpretation)}
             <div class="category-radar-panel">
-              <div class="category-radar">${renderSingleCategoryComparison(results, "dashboard")}</div>
+              <div class="category-radar">${renderSingleCategoryRadar(results, "dashboard")}</div>
               <aside class="category-radar-copy">
                 <h3>Baremaciones por criterio</h3>
-                <p>Las barras comparan el peso asignado a cada herramienta en la matriz (1–10). La etiqueta de necesidad conserva tu respuesta original (1–4).</p>
-                <div class="dashboard-legend"><span><i style="--legend:var(--gemini)"></i>Gemini · 1–10</span><span><i style="--legend:var(--notebook)"></i>NotebookLM · 1–10</span><span><i class="need-marker"></i>Necesidad · 1–4</span></div>
+                <p>El radar compara el peso asignado a cada herramienta en la matriz, sobre una escala común de 1 a 10. Tus respuestas de necesidad intervienen en el resultado, pero no se dibujan como una tercera serie.</p>
+                <div class="dashboard-legend"><span><i style="--legend:var(--gemini)"></i>Gemini · 1–10</span><span><i style="--legend:var(--notebook)"></i>NotebookLM · 1–10</span></div>
               </aside>
             </div>
           </div>`;
@@ -837,26 +837,33 @@ if (questionnaire && interpretationMatrix) {
           </section>`;
       }
 
-      function renderSingleCategoryComparison(results, contextId = "breakdown") {
+      function renderSingleCategoryRadar(results, contextId = "breakdown") {
         const rows = results.criteria;
         const idSuffix = `${contextId}-${String(results.categoryId).replace(/[^a-z0-9-]/gi, "-")}`;
-        return `
-          <figure class="criterion-comparison" aria-labelledby="comparisonTitle-${idSuffix}">
-            <figcaption id="comparisonTitle-${idSuffix}">Baremación de Gemini y NotebookLM por criterio</figcaption>
-            <div class="comparison-scale" aria-hidden="true"><span>0</span><span>5</span><span>10</span></div>
-            ${rows.map(row => `
-              <article class="criterion-comparison-row">
-                <header><strong>${escapeHtml(row.criterion)}</strong><span>Necesidad ${row.need}/4</span></header>
-                <div class="comparison-series">
-                  <span class="series-label">Gemini</span>
-                  <span class="series-track" aria-hidden="true"><i class="is-gemini" style="width:${row.geminiWeight * 10}%"></i></span>
-                  <strong>${formatWeight(row.geminiWeight)}/10</strong>
-                  <span class="series-label">NotebookLM</span>
-                  <span class="series-track" aria-hidden="true"><i class="is-notebook" style="width:${row.notebooklmWeight * 10}%"></i></span>
-                  <strong>${formatWeight(row.notebooklmWeight)}/10</strong>
-                </div>
-              </article>`).join("")}
-          </figure>`;
+        const titleId = `singleRadarTitle-${idSuffix}`;
+        const descriptionId = `singleRadarDesc-${idSuffix}`;
+        const size = 600;
+        const center = 300;
+        const radius = 190;
+        const angleFor = index => -Math.PI / 2 + (Math.PI * 2 * index) / rows.length;
+        const pointFor = (index, value, extra = 0) => {
+          const angle = angleFor(index);
+          const distance = ((value || 0) / 10) * radius + extra;
+          return [center + Math.cos(angle) * distance, center + Math.sin(angle) * distance];
+        };
+        const pointsFor = key => rows.map((row, index) => pointFor(index, row[key]).map(value => value.toFixed(1)).join(",")).join(" ");
+        const levels = [2, 4, 6, 8, 10];
+        const grid = levels.map(level => `<polygon points="${rows.map((row, index) => pointFor(index, level).map(value => value.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="rgba(255,255,255,.18)" />`).join("");
+        const levelLabels = levels.map(level => `<text x="${center + 6}" y="${(center - radius * level / 10 + 12).toFixed(1)}" fill="rgba(255,255,255,.62)" font-size="10" font-weight="800">${level}</text>`).join("");
+        const axes = rows.map((row, index) => { const [x, y] = pointFor(index, 10); return `<line x1="${center}" y1="${center}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.16)" />`; }).join("");
+        const labels = rows.map((row, index) => {
+          const [x, y] = pointFor(index, 10, 40);
+          const anchor = x < center - 14 ? "end" : x > center + 14 ? "start" : "middle";
+          const labelX = anchor === "end" ? Math.max(x, 150) : anchor === "start" ? Math.min(x, 450) : x;
+          const label = row.criterion.length > 24 ? row.criterion.slice(0, 22) + "…" : row.criterion;
+          return `<text x="${labelX.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" fill="#FFFFFF" font-size="11" font-weight="800"><title>${escapeHtml(row.criterion)}</title>${escapeHtml(label)}</text>`;
+        }).join("");
+        return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="${titleId} ${descriptionId}"><title id="${titleId}">Radar de baremaciones de ${escapeHtml(results.category)}</title><desc id="${descriptionId}">Baremación de Gemini y NotebookLM por criterio en escala de uno a diez.</desc>${grid}${levelLabels}${axes}<polygon data-series="gemini" points="${pointsFor("geminiWeight")}" fill="rgba(124,58,237,.30)" stroke="var(--gemini)" stroke-width="4"/><polygon data-series="notebooklm" points="${pointsFor("notebooklmWeight")}" fill="rgba(14,165,233,.25)" stroke="var(--notebook)" stroke-width="4"/>${labels}</svg>`;
       }
 
       function closeCategoryDashboard() {
@@ -1119,11 +1126,11 @@ if (questionnaire && interpretationMatrix) {
               </div>
               ${renderCategoryInterpretationSummary(interpretation)}
               <div class="category-breakdown-radar">
-                <div class="category-radar">${renderSingleCategoryComparison(categoryResults)}</div>
+                <div class="category-radar">${renderSingleCategoryRadar(categoryResults)}</div>
                 <aside>
                   <h4>Baremaciones por criterio</h4>
-                  <p>Para cada criterio de ${escapeHtml(row.category)}, las barras muestran la baremación de cada herramienta sobre 10 y la etiqueta conserva la necesidad indicada sobre 4.</p>
-                  <div class="dashboard-legend"><span><i style="--legend:var(--gemini)"></i>Gemini · 1–10</span><span><i style="--legend:var(--notebook)"></i>NotebookLM · 1–10</span><span><i class="need-marker"></i>Necesidad · 1–4</span></div>
+                  <p>Para cada criterio de ${escapeHtml(row.category)}, el radar compara la baremación de Gemini y NotebookLM sobre 10. Las respuestas de necesidad se usan en el cálculo, pero no forman una tercera serie.</p>
+                  <div class="dashboard-legend"><span><i style="--legend:var(--gemini)"></i>Gemini · 1–10</span><span><i style="--legend:var(--notebook)"></i>NotebookLM · 1–10</span></div>
                 </aside>
               </div>
             </article>`;
