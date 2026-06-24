@@ -54,3 +54,12 @@ test("las dos interfaces enlazan el repositorio público desde el pie", async ()
     assert.match(html, /<footer class="app-footer">[\s\S]*href="https:\/\/github\.com\/expliKarlos\/elige-ia"[\s\S]*>expliKarlos\/elige-ia<\/a>[\s\S]*<\/footer>/);
   }
 });
+
+test("las páginas no muestran la denominación Avant-Garde", async () => {
+  const pages = await Promise.all([
+    readFile(new URL("../index.html", import.meta.url), "utf8"),
+    readFile(new URL("../index-reducida.html", import.meta.url), "utf8")
+  ]);
+
+  for (const html of pages) assert.doesNotMatch(html, /Avant-Garde/i);
+});
