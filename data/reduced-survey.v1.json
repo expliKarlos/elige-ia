@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "2.0.0",
   "mode": "category-weighted",
   "title": "Diagnóstico rápido por categorías",
   "scale": [
-    { "value": 1, "label": "No encaja", "description": "La herramienta apenas responde a las necesidades de esta categoría." },
-    { "value": 2, "label": "Encaje limitado", "description": "Responde parcialmente, con carencias relevantes." },
-    { "value": 3, "label": "Buen encaje", "description": "Responde de forma suficiente a la mayoría de las necesidades." },
-    { "value": 4, "label": "Encaje excelente", "description": "Responde de forma sólida y completa a esta categoría." }
+    { "value": 1, "label": "No lo necesito", "description": "Esta necesidad no forma parte del caso." },
+    { "value": 2, "label": "Lo necesito poco", "description": "La necesidad aparece, pero tiene poca importancia." },
+    { "value": 3, "label": "Lo necesito bastante", "description": "La necesidad es relevante para resolver el caso." },
+    { "value": 4, "label": "Es imprescindible", "description": "La necesidad es esencial y condiciona la decisión." }
   ],
   "safetyChecks": [
     {

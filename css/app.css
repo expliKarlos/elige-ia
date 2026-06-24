@@ -206,8 +206,10 @@
     .weight-chip { display: inline-flex; align-items: center; min-height: 30px; padding: 4px 9px; border-radius: 999px; font-size: .78rem; font-weight: 950; }
     .weight-chip.gemini { color: #4C1D95; background: #EDE9FE; }
     .weight-chip.notebook { color: #075985; background: #E0F2FE; }
-    .rating-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px 22px 22px; }
+    .rating-panel { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 12px 22px 22px; }
     .tool-box { min-width: 0; margin: 0; padding: 14px; border: 1px solid color-mix(in srgb, var(--tool) 30%, #CBD5E1); border-radius: 18px; background: linear-gradient(180deg, color-mix(in srgb, var(--tool) 8%, #fff), #fff); }
+    .need-box { --tool: var(--ink); }
+    .question-criterion { margin: 0 0 6px; color: var(--muted); font-size: .76rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
     .tool-label { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 12px; padding: 0; color: #111827; font-weight: 950; }
     .tool-label span { display: inline-flex; align-items: center; gap: 8px; }
     .mark { width: 10px; height: 10px; border-radius: 999px; background: var(--tool); box-shadow: 0 0 0 5px color-mix(in srgb, var(--tool) 18%, transparent); }

@@ -1,6 +1,6 @@
 # ¿Qué herramienta utilizo? · expliCarlos
 
-Aplicación web estática para comparar Gemini y NotebookLM mediante un cuestionario ponderado. El objetivo es que pueda publicarse en GitHub Pages, ejecutarse localmente y personalizarse mediante forks sin depender de un backend.
+Aplicación web estática para comparar Gemini y NotebookLM mediante un cuestionario ponderado de necesidades. Cada respuesta del usuario se aplica a las matrices de pesos de ambas herramientas. El proyecto puede publicarse en GitHub Pages, ejecutarse localmente y personalizarse mediante forks sin depender de un backend.
 
 ## Estado
 
@@ -10,6 +10,8 @@ La aplicación permite editar pesos decimales, restaurarlos y descargar o import
 
 - Sesión completa: respuestas, categorías, pesos, versiones y resultados reproducibles.
 - Configuración de pesos: ajustes compartibles sin respuestas.
+
+La evaluación detallada formula 103 preguntas directas y recoge una sola respuesta por criterio. El diagnóstico reducido resume el proceso en 18 respuestas de categoría y cinco controles de seguridad. El usuario no puntúa las herramientas: expresa la importancia de cada necesidad y el motor calcula ambas alternativas con sus pesos específicos.
 
 El informe final incluye una interpretación conjunta, un desglose secuencial con resultados y radar para cada categoría y una vista de impresión preparada para guardarse como PDF sin la navegación lateral.
 

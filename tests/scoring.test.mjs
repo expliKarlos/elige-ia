@@ -24,6 +24,20 @@ function createAnswers(valueFor) {
   ));
 }
 
+function createSharedAnswers(valueFor) {
+  return Object.fromEntries(questionnaire.categories.flatMap(category =>
+    category.criteria.map(criterion => [criterion.id, valueFor(criterion)])
+  ));
+}
+
+test("aplica una única necesidad a las dos matrices de pesos", () => {
+  const answers = createSharedAnswers((criterion) => criterion.id === "c01q01" ? 4 : 1);
+  const result = calculateSurveyResults(questionnaire, answers);
+
+  assert.notEqual(result.geminiScore100, result.notebookScore100);
+  assert.equal(result.categories[0].criteria, undefined);
+});
+
 test("reescalada las respuestas completas desde el intervalo bruto 25–100 al intervalo real 0–100", () => {
   const minimum = calculateSurveyResults(questionnaire, createAnswers(() => 1));
   const middle = calculateSurveyResults(questionnaire, createAnswers(() => 2));

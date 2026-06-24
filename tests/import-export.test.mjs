@@ -19,8 +19,7 @@ test("exporta e importa una sesión completa reproducible", () => {
   const firstCriterion = firstCategory.criteria[0];
   const state = {
     answers: {
-      [`${firstCriterion.id}:gemini`]: 4,
-      [`${firstCriterion.id}:notebook`]: 2
+      [firstCriterion.id]: 4
     },
     categoryPrefs: { 0: { included: true }, 1: { included: false } },
     activeCategoryIndex: 1,

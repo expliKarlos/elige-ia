@@ -207,6 +207,8 @@ function rawScoreTo100(value, maximum) {
 }
 
 function readAnswer(answers, criterionId, tool) {
+  const sharedValue = Number(answers?.[criterionId] || 0);
+  if (Number.isFinite(sharedValue) && sharedValue >= 1 && sharedValue <= 4) return sharedValue;
   const value = Number(answers?.[`${criterionId}:${ANSWER_TOOL[tool]}`] || 0);
   return Number.isFinite(value) && value >= 1 && value <= 4 ? value : 0;
 }

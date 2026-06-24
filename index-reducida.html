@@ -29,12 +29,12 @@
         <span class="hero-title-top"><span class="hero-title-name">Gemini</span><span class="hero-title-vs">vs</span><span class="hero-title-name">NotebookLM</span></span>
         <span class="hero-main-title">Evaluación reducida</span>
       </h1>
-      <p class="hero-description">Valora el encaje general de cada herramienta por categoría y ajusta cuánto debe influir cada ámbito en el resultado.</p>
+      <p class="hero-description">Indica la importancia de cada categoría en tu caso y ajusta cuánto debe influir cada ámbito en el resultado.</p>
       <div class="hero-stats" aria-label="Resumen del diagnóstico">
         <div class="stat-tile"><strong id="statCats">18</strong><span>categorías</span></div>
-        <div class="stat-tile"><strong>36</strong><span>valoraciones</span></div>
+        <div class="stat-tile"><strong>18</strong><span>respuestas de necesidad</span></div>
         <div class="stat-tile"><strong>5</strong><span>controles críticos</span></div>
-        <div class="stat-tile"><strong>≈ 8 min</strong><span>duración estimada</span></div>
+        <div class="stat-tile"><strong>≈ 5 min</strong><span>duración estimada</span></div>
       </div>
     </header>
 
@@ -42,7 +42,7 @@
       <div><span aria-hidden="true">Q</span></div>
       <div>
         <h2 id="quick-notice-title">Un diagnóstico orientativo, no una evaluación detallada</h2>
-        <p>Esta versión resume cada categoría en una sola valoración por herramienta. Sirve para orientar la elección inicial; si el resultado es ajustado, condicionado o de alto impacto, conviene completar la evaluación detallada.</p>
+        <p>Esta versión resume cada categoría en una única respuesta de necesidad, aplicada a las matrices de ambas herramientas. Sirve para orientar la elección inicial; si el resultado es ajustado, condicionado o de alto impacto, conviene completar la evaluación detallada.</p>
       </div>
       <a class="btn btn-ghost" href="./index.html">Ir a la versión completa</a>
     </section>
@@ -50,7 +50,7 @@
     <div class="toolbar reduced-toolbar" aria-label="Progreso y acciones">
       <div class="toolbar-inner">
         <div class="progress-wrap">
-          <div class="progress-meta"><span id="progressText">0 de 41 respuestas</span><span id="progressPercent">0%</span></div>
+          <div class="progress-meta"><span id="progressText">0 de 23 respuestas</span><span id="progressPercent">0%</span></div>
           <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
         </div>
         <button type="button" class="btn btn-ghost" id="resetReducedBtn">Reiniciar</button>
@@ -65,8 +65,8 @@
       <section class="reduced-intro" aria-labelledby="instructions-title">
         <p class="section-kicker">PASO 1</p>
         <h2 id="instructions-title">Valora cada categoría</h2>
-        <p>Indica cuánto encaja cada herramienta con tus necesidades. El peso expresa la importancia de la categoría: 1 significa influencia mínima y 10 influencia máxima.</p>
-        <div class="compact-scale" id="reducedScale" aria-label="Escala de valoración"></div>
+        <p>Indica cuánto necesitas cada categoría. El peso expresa su influencia en el resultado: 1 significa influencia mínima y 10 influencia máxima.</p>
+        <div class="compact-scale" id="reducedScale" role="group" aria-label="Escala de valoración"></div>
       </section>
 
       <section class="reduced-survey" id="reducedSurveyRoot" aria-label="Valoración por categorías" aria-busy="true"></section>

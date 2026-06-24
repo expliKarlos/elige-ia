@@ -36,18 +36,22 @@ export function calculateReducedResults(questionnaire, ratings, options = {}) {
     };
 
     if (included) {
-      const gemini = readRating(ratings, category.id, "gemini");
-      const notebookLm = readRating(ratings, category.id, "notebooklm");
+      const sharedNeed = readSharedRating(ratings, category.id);
+      const usesSharedNeed = sharedNeed !== null;
+      const gemini = usesSharedNeed ? sharedNeed : readRating(ratings, category.id, "gemini");
+      const notebookLm = usesSharedNeed ? sharedNeed : readRating(ratings, category.id, "notebooklm");
+      const toolWeights = usesSharedNeed ? categoryToolWeights(category) : { gemini: 1, notebooklm: 1 };
       const geminiRawScore100 = rawScoreTo100(gemini, MAXIMUM_RATING);
       const notebookRawScore100 = rawScoreTo100(notebookLm, MAXIMUM_RATING);
       row.geminiRawScore100 = roundToTenth(geminiRawScore100);
       row.notebookRawScore100 = roundToTenth(notebookRawScore100);
       row.geminiScore100 = normalizeRawScore100(geminiRawScore100);
       row.notebookScore100 = normalizeRawScore100(notebookRawScore100);
-      totals.gemini += gemini * weight;
-      totals.notebook += notebookLm * weight;
-      totals.maxGemini += MAXIMUM_RATING * weight;
-      totals.maxNotebook += MAXIMUM_RATING * weight;
+      row.need = usesSharedNeed ? sharedNeed : null;
+      totals.gemini += gemini * weight * toolWeights.gemini;
+      totals.notebook += notebookLm * weight * toolWeights.notebooklm;
+      totals.maxGemini += MAXIMUM_RATING * weight * toolWeights.gemini;
+      totals.maxNotebook += MAXIMUM_RATING * weight * toolWeights.notebooklm;
       totals.categoryWeightTotal += weight;
       totals.activeCategoryCount += 1;
     } else {
@@ -83,6 +87,8 @@ export function validateReducedResponses({
 
   questionnaire.categories.forEach((category) => {
     if (categorySettings[category.id]?.included === false) return;
+    const sharedValue = Number(ratings[category.id]);
+    if (Number.isInteger(sharedValue) && sharedValue >= 1 && sharedValue <= 4) return;
     ["gemini", "notebooklm"].forEach((tool) => {
       const value = Number(ratings[`${category.id}:${tool}`]);
       if (!Number.isInteger(value) || value < 1 || value > 4) {
@@ -106,11 +112,23 @@ export function createReducedRiskAnswers(safetyAnswers) {
   return Object.fromEntries(Object.entries(safetyAnswers).flatMap(([criterionId, answer]) => {
     if (!["yes", "no"].includes(answer)) return [];
     const value = answer === "yes" ? 4 : 1;
-    return [
-      [`${criterionId}:gemini`, value],
-      [`${criterionId}:notebook`, value]
-    ];
+    return [[criterionId, value]];
   }));
+}
+
+function readSharedRating(ratings, categoryId) {
+  const value = Number(ratings[categoryId]);
+  return Number.isInteger(value) && value >= 1 && value <= 4 ? value : null;
+}
+
+function categoryToolWeights(category) {
+  if (!Array.isArray(category.criteria) || category.criteria.length === 0) {
+    throw new TypeError(`La categoría ${category.id} debe incluir criterios ponderados.`);
+  }
+  return category.criteria.reduce((totals, criterion) => ({
+    gemini: totals.gemini + Number(criterion.defaultWeights?.gemini || 0),
+    notebooklm: totals.notebooklm + Number(criterion.defaultWeights?.notebooklm || 0)
+  }), { gemini: 0, notebooklm: 0 });
 }
 
 function readRating(ratings, categoryId, tool) {

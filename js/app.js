@@ -29,6 +29,7 @@ if (questionnaire && interpretationMatrix) {
     items: category.criteria.map(criterion => ({
       id: criterion.id,
       criterio: criterion.label,
+      pregunta: criterion.question,
       detalle: criterion.description,
       pesoGemini: criterion.defaultWeights.gemini,
       pesoNotebook: criterion.defaultWeights.notebooklm
@@ -87,11 +88,22 @@ if (questionnaire && interpretationMatrix) {
 
       function normaliseAnswers(rawAnswers = {}) {
         if (!rawAnswers || typeof rawAnswers !== "object" || Array.isArray(rawAnswers)) return {};
-        const knownKeys = new Set(allItems.flatMap(item => [answerKey(item.id, "gemini"), answerKey(item.id, "notebook")]));
-        return Object.fromEntries(Object.entries(rawAnswers).filter(([key, rawValue]) => {
-          const value = Number(rawValue);
-          return knownKeys.has(key) && Number.isInteger(value) && value >= 1 && value <= 4;
-        }).map(([key, value]) => [key, Number(value)]));
+        const answers = {};
+        allItems.forEach(item => {
+          const sharedValue = Number(rawAnswers[answerKey(item.id)]);
+          if (isValidAnswer(sharedValue)) {
+            answers[answerKey(item.id)] = sharedValue;
+            return;
+          }
+          const geminiValue = Number(rawAnswers[`${item.id}:gemini`]);
+          const notebookValue = Number(rawAnswers[`${item.id}:notebook`]);
+          if (isValidAnswer(geminiValue) && geminiValue === notebookValue) answers[answerKey(item.id)] = geminiValue;
+        });
+        return answers;
+      }
+
+      function isValidAnswer(value) {
+        return Number.isInteger(Number(value)) && Number(value) >= 1 && Number(value) <= 4;
       }
 
       function normaliseCategoryPrefs(prefs = {}) {
@@ -142,8 +154,8 @@ if (questionnaire && interpretationMatrix) {
         }
       }
 
-      function answerKey(itemId, tool) {
-        return `${itemId}:${tool}`;
+      function answerKey(itemId) {
+        return itemId;
       }
 
       function getCategoryPreference(index) {
@@ -177,16 +189,12 @@ if (questionnaire && interpretationMatrix) {
       }
 
       function getExpectedResponseCount() {
-        return getActiveCategories().reduce((sum, row) => sum + row.category.items.length * 2, 0);
+        return getActiveCategories().reduce((sum, row) => sum + row.category.items.length, 0);
       }
 
       function getCompletedResponseCount() {
         return getActiveCategories().reduce((sum, row) => {
-          return sum + row.category.items.reduce((itemSum, item) => {
-            const g = state.answers[answerKey(item.id, "gemini")] ? 1 : 0;
-            const n = state.answers[answerKey(item.id, "notebook")] ? 1 : 0;
-            return itemSum + g + n;
-          }, 0);
+          return sum + row.category.items.filter(item => isQuestionComplete(item)).length;
         }, 0);
       }
 
@@ -194,14 +202,12 @@ if (questionnaire && interpretationMatrix) {
         const category = MATRIX[index];
         const pref = getCategoryPreference(index);
         const completedQuestions = category.items.filter(item => isQuestionComplete(item)).length;
-        const completedResponses = category.items.reduce((sum, item) => {
-          return sum + (state.answers[answerKey(item.id, "gemini")] ? 1 : 0) + (state.answers[answerKey(item.id, "notebook")] ? 1 : 0);
-        }, 0);
+        const completedResponses = completedQuestions;
         return {
           included: pref.included,
           relevance: getCategoryWeight(index),
           totalQuestions: category.items.length,
-          totalResponses: category.items.length * 2,
+          totalResponses: category.items.length,
           completedQuestions,
           completedResponses,
           complete: completedQuestions === category.items.length && category.items.length > 0
@@ -209,7 +215,7 @@ if (questionnaire && interpretationMatrix) {
       }
 
       function isQuestionComplete(item) {
-        return Boolean(state.answers[answerKey(item.id, "gemini")]) && Boolean(state.answers[answerKey(item.id, "notebook")]);
+        return Boolean(state.answers[answerKey(item.id)]);
       }
 
       function score100(value, max) {
@@ -478,7 +484,7 @@ if (questionnaire && interpretationMatrix) {
         root.querySelectorAll('input[type="radio"]').forEach(input => {
           input.addEventListener("change", event => {
             const target = event.currentTarget;
-            state.answers[answerKey(target.dataset.itemId, target.dataset.tool)] = Number(target.value);
+            state.answers[answerKey(target.dataset.itemId)] = Number(target.value);
             saveState();
             $("#validationPanel").classList.remove("is-visible");
             target.closest(".question-card")?.classList.remove("is-pending");
@@ -505,14 +511,14 @@ if (questionnaire && interpretationMatrix) {
       }
 
       function renderQuestion(category, item, categoryIndex, itemIndex) {
-        const geminiValue = state.answers[answerKey(item.id, "gemini")];
-        const notebookValue = state.answers[answerKey(item.id, "notebook")];
+        const selectedValue = state.answers[answerKey(item.id)];
         const weights = getCriterionWeights(item.id);
         return `
           <article class="question-card" id="card-${item.id}" data-item-id="${item.id}">
             <div class="question-top">
               <div>
-                <h3 class="question-title">${categoryIndex + 1}.${itemIndex + 1} · ${escapeHtml(item.criterio)}</h3>
+                <p class="question-criterion">${categoryIndex + 1}.${itemIndex + 1} · ${escapeHtml(item.criterio)}</p>
+                <h3 class="question-title">Pregunta ${itemIndex + 1}: ${escapeHtml(item.pregunta)}</h3>
                 <p class="question-detail">${escapeHtml(item.detalle || "Criterio operativo de decisión.")}</p>
             </div>
             <div class="weights" aria-label="Ponderaciones de la matriz">
@@ -521,27 +527,24 @@ if (questionnaire && interpretationMatrix) {
             </div>
           </div>
           <div class="rating-panel">
-            ${renderToolRating(item, "gemini", "Gemini", weights.gemini, geminiValue)}
-            ${renderToolRating(item, "notebook", "NotebookLM", weights.notebooklm, notebookValue)}
+            ${renderNeedRating(item, selectedValue)}
             </div>
           </article>
         `;
       }
 
-      function renderToolRating(item, tool, label, weight, selectedValue) {
-        const toolColor = tool === "gemini" ? "var(--gemini)" : "var(--notebook)";
+      function renderNeedRating(item, selectedValue) {
         return `
-          <fieldset class="tool-box" style="--tool:${toolColor}">
-            <legend class="tool-label"><span><span class="mark" aria-hidden="true"></span>${label}</span><span>Peso ${weight}</span></legend>
-            <div class="rating-grid" role="radiogroup" aria-label="${label} · ${escapeAttr(item.criterio)}">
+          <fieldset class="tool-box need-box">
+            <legend class="tool-label">Importancia de esta necesidad en tu caso</legend>
+            <div class="rating-grid" role="radiogroup" aria-label="${escapeAttr(item.pregunta)}">
               ${SCALE.map(option => `
                 <label class="rating-option" title="${escapeAttr(option.hint)}">
                   <input
                     type="radio"
-                    name="${item.id}-${tool}"
+                    name="${item.id}"
                     value="${option.value}"
                     data-item-id="${item.id}"
-                    data-tool="${tool}"
                     ${Number(selectedValue) === option.value ? "checked" : ""}
                   >
                   <span>${option.label}<small>${option.value}</small></span>
@@ -931,12 +934,7 @@ if (questionnaire && interpretationMatrix) {
         MATRIX.forEach((category, categoryIndex) => {
           if (getCategoryMultiplier(categoryIndex) === 0) return;
           category.items.forEach((item, itemIndex) => {
-            const missingTools = [];
-            if (!state.answers[answerKey(item.id, "gemini")]) missingTools.push("Gemini");
-            if (!state.answers[answerKey(item.id, "notebook")]) missingTools.push("NotebookLM");
-            if (missingTools.length) {
-              pending.push({ ...item, category: category.category, categoryIndex, itemIndex, missingTools });
-            }
+            if (!state.answers[answerKey(item.id)]) pending.push({ ...item, category: category.category, categoryIndex, itemIndex });
           });
         });
         return pending;
@@ -953,7 +951,7 @@ if (questionnaire && interpretationMatrix) {
           <p>Quedan ${pending.length} preguntas incompletas. El botón abre la categoría correspondiente y enfoca la primera pregunta pendiente.</p>
           <button type="button" class="btn btn-primary" id="goFirstPending">Ir a la primera pendiente</button>
           <ul class="validation-list">
-            ${pending.slice(0, 10).map(item => `<li><strong>${escapeHtml(item.category)}:</strong> ${escapeHtml(item.criterio)} · falta ${item.missingTools.join(" y ")}</li>`).join("")}
+            ${pending.slice(0, 10).map(item => `<li><strong>${escapeHtml(item.category)}:</strong> ${escapeHtml(item.pregunta)}</li>`).join("")}
             ${pending.length > 10 ? `<li>… y ${pending.length - 10} preguntas más.</li>` : ""}
           </ul>
         `;

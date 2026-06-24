@@ -47,6 +47,11 @@ export function validateQuestionnaire(questionnaire) {
 
       requireUniqueIdentifier(criterion.id, `${criterionPath}.id`, criterionIds, errors);
       requireNonEmptyString(criterion.label, `${criterionPath}.label`, errors);
+      requireNonEmptyString(criterion.question, `${criterionPath}.question`, errors);
+      if (typeof criterion.question === "string"
+        && (!criterion.question.startsWith("¿") || !criterion.question.endsWith("?"))) {
+        errors.push(`${criterionPath}.question debe ser una pregunta directa entre signos de interrogación.`);
+      }
       if (typeof criterion.description !== "string") {
         errors.push(`${criterionPath}.description debe ser texto.`);
       }

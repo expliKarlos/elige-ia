@@ -16,7 +16,9 @@ test("la encuesta completa restaura su estado inicial", async ({ page }) => {
   await expect(page.locator(".cat-link")).toHaveCount(18);
   await expect(page.locator("#categoryWeight-1")).toHaveValue("1");
   await expect(page.locator(".weight-summary strong")).toHaveText("0");
-  await expect(page.locator("#progressText")).toContainText("0 de 206");
+  await expect(page.locator("#progressText")).toContainText("0 de 103");
+  await expect(page.locator(".question-card").first().getByRole("radio")).toHaveCount(4);
+  await expect(page.locator(".question-card").first().getByRole("heading", { level: 3 })).toContainText("¿Necesitas que tus resultados sean creativos?");
   await expectNoSeriousAxeViolations(page, "encuesta completa con configuración abierta");
 });
 
@@ -24,14 +26,13 @@ test("la versión reducida completa el diagnóstico y detecta bloqueos", async (
   await page.goto("/index-reducida.html");
   await expect(page.locator(".reduced-category")).toHaveCount(18);
   await expect(page.locator(".safety-check")).toHaveCount(5);
-  for (const input of await page.locator('input[data-rating][data-tool="gemini"][value="3"]').all()) await input.check();
-  for (const input of await page.locator('input[data-rating][data-tool="notebooklm"][value="4"]').all()) await input.check();
+  for (const input of await page.locator('input[data-rating][value="3"]').all()) await input.check();
   for (const input of await page.locator('input[data-safety-id][value="no"]').all()) await input.check();
 
-  await expect(page.locator("#progressText")).toHaveText("41 de 41 respuestas");
+  await expect(page.locator("#progressText")).toHaveText("23 de 23 respuestas");
   await page.getByRole("button", { name: "Obtener diagnóstico", exact: true }).click();
   await expect(page.locator("#reducedResults")).toHaveClass(/is-visible/);
-  await expect(page.locator(".score-value")).toHaveText(["66,7", "100"]);
+  await expect(page.locator(".score-value")).toHaveText(["66,7", "66,7"]);
   await expect(page.locator(".score-sub").first()).toContainText("Puntuación bruta 75");
   await expect(page.locator(".reduced-radar svg")).toHaveCount(1);
   await expectNoSeriousAxeViolations(page, "resultado del diagnóstico reducido");
