@@ -43,3 +43,14 @@ test("la aplicación utiliza HTML, CSS, JavaScript y JSON separados", async () =
   assert.match(app, /<input\s+type="radio"/);
   assert.doesNotMatch(app, /<inpu(?:\s|>)/);
 });
+
+test("las dos interfaces enlazan el repositorio público desde el pie", async () => {
+  const pages = await Promise.all([
+    readFile(new URL("../index.html", import.meta.url), "utf8"),
+    readFile(new URL("../index-reducida.html", import.meta.url), "utf8")
+  ]);
+
+  for (const html of pages) {
+    assert.match(html, /<footer class="app-footer">[\s\S]*href="https:\/\/github\.com\/expliKarlos\/elige-ia"[\s\S]*>expliKarlos\/elige-ia<\/a>[\s\S]*<\/footer>/);
+  }
+});
