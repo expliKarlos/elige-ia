@@ -29,7 +29,7 @@ const metrics = calculateCalibrationMetrics(dataset);
 const technicalChecks = {
   referenceCases: matrix.referenceCases.length,
   matrixCombinations: matrix.jointSuitabilityMatrix.length,
-  automatedTests: 55
+  automatedTests: 57
 };
 const results = {
   schemaVersion: "1.0",

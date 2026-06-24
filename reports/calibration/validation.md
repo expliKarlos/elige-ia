@@ -1,40 +1,39 @@
 # Validación del informe de calibración
 
-## Evaluación general: Compartible con salvedades
+## Evaluación general: muestra suficiente, aceptación pendiente
 
-El informe es reproducible, usa denominadores explícitos y diferencia correctamente coherencia técnica de validez de campo. Puede compartirse para iniciar la recogida de evidencia, pero no permite afirmar que el instrumento esté calibrado.
+El informe es reproducible y utiliza 50 casos observados, tres dictámenes por caso y denominadores explícitos. La muestra supera el mínimo de 30, pero todavía no permite declarar la calibración completa porque faltan evidencias de contraindicaciones críticas y pruebas de sensibilidad de pesos.
 
 ## Revisión metodológica
 
-- Pregunta: determinar si pesos, bandas y recomendaciones concuerdan con casos educativos reales.
-- Fuente disponible a 24 de junio de 2026: repositorio, matriz provisional y conjunto de campo vacío.
 - Unidad de análisis: caso educativo observado y anonimizado.
-- Muestra requerida: 30 casos y 3 evaluadores independientes por caso.
+- Público objetivo: profesorado, gestores educativos y personal de administración.
+- La distribución de autonomía representa ese público profesional y no pretende equilibrar artificialmente la autonomía del alumnado.
 - Comparación principal: recomendación detallada frente a mayoría experta estricta.
+- Muestra: 50 casos observados y 1 ejemplo construido excluido de las métricas.
 
-## Problemas encontrados
+## Resultados
 
-1. **Alta — No hay casos reales.** Las métricas de acuerdo, concordancia y detección no son evaluables.
-2. **Alta — No hay dictámenes expertos.** No existe consenso contra el que contrastar la aplicación.
-3. **Media — La muestra futura puede introducir sesgo de selección.** Deben representarse etapas, autonomía, tipos de tarea y resultados favorables a ambas, una o ninguna herramienta.
+- Acuerdo entre evaluadores: 68,0% (102/150 pares).
+- Casos con mayoría experta estricta: 46/50.
+- Acuerdo automático frente al consenso: 100,0% (46/46).
+- Concordancia detallada-reducida: 100,0% (50/50).
+- Casos sin mayoría estricta: EDU-15, EDU-31, EDU-35 y EDU-48.
+- Falsos positivos y falsos negativos frente al consenso disponible: 0.
 
-## Comprobaciones de cálculo
+## Evidencia pendiente
 
-- Denominadores cero: verificado; producen `rate: null` y “No evaluable”.
-- Acuerdo entre evaluadores: verificado mediante pares de valoraciones.
-- Consenso: verificado; exige mayoría estricta con al menos tres evaluadores.
-- Falsos positivos y negativos: verificados sobre conjuntos de herramientas recomendadas.
-- Sensibilidad de pesos: verificada; solo incumple cuando cambia la recomendación fuera de un umbral con variaciones inferiores al 5%.
+1. **Alta — Contraindicaciones críticas no codificadas.** No puede calcularse su tasa de detección.
+2. **Alta — Sensibilidad de pesos no ejecutada.** Hay 0 de 50 casos con prueba registrada.
+3. **Media — Identidad de evaluadores.** Los códigos EV-01, EV-02 y EV-03 presuponen que las tres columnas representan evaluadores independientes.
 
-## Revisión visual
+## Comprobaciones
 
-- Todos los segmentos contractuales son visibles y están ordenados.
-- La tabla mantiene valores, criterios y denominadores legibles.
-- No se incluye gráfico: con cero observaciones sería decorativo o engañoso.
-- La captura de página completa confirma ausencia de texto cortado o desbordamientos.
+- Los denominadores cero producen “No evaluable”.
+- El consenso exige mayoría estricta con al menos tres evaluadores.
+- La ausencia de pruebas de sensibilidad ya no se interpreta como estabilidad aprobada.
+- El conjunto privado de casos queda excluido del control de versiones.
 
-## Salvedades obligatorias
+## Conclusión
 
-- La ejecución actual es una precalibración técnica, no una validación institucional.
-- Los siete casos de referencia prueban coherencia interna y no cuentan como casos reales.
-- No deben modificarse pesos o umbrales hasta observar discrepancias repetidas en la muestra de campo.
+No deben modificarse pesos o umbrales: los 46 casos con consenso coinciden con la recomendación detallada. La siguiente fase debe completar las dos evidencias pendientes y revisar cualitativamente los cuatro desacuerdos expertos.
