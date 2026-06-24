@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import vm from "node:vm";
 
 import { validateQuestionnaire } from "../js/validation.js";
 
@@ -100,28 +100,8 @@ test("el validador rechaza metadatos de riesgo ambiguos", () => {
   assert.match(validation.errors.join("\n"), /triggerAnswerMinimum/);
 });
 
-test("el JSON conserva textos, colores e importancias de eleccion_2.html", async () => {
+test("el JSON conserva la instantánea histórica de textos, colores e importancias", async () => {
   const questionnaire = await loadQuestionnaire();
-  const source = await readFile(new URL("../../eleccion_2.html", import.meta.url), "utf8");
-  const matrixStart = source.indexOf("const MATRIX =");
-  const matrixEnd = source.indexOf("const SCALE =", matrixStart);
-  const expressionStart = source.indexOf("[", matrixStart);
-  const matrixExpression = source.slice(expressionStart, matrixEnd).trim().replace(/;\s*$/, "");
-  const matrix = vm.runInNewContext(`(${matrixExpression})`, Object.create(null));
-
-  const legacyData = Array.from(matrix, category => ({
-    label: category.category,
-    color: category.color,
-    criteria: Array.from(category.items, item => ({
-      id: item.id,
-      label: item.criterio,
-      description: item.detalle || "",
-      defaultWeights: {
-        gemini: item.pesoGemini,
-        notebooklm: item.pesoNotebook
-      }
-    }))
-  }));
   const extractedData = questionnaire.categories.map(category => ({
     label: category.label,
     color: category.color,
@@ -133,5 +113,9 @@ test("el JSON conserva textos, colores e importancias de eleccion_2.html", async
     }))
   }));
 
-  assert.deepEqual(extractedData, legacyData);
+  const digest = createHash("sha256")
+    .update(JSON.stringify(extractedData))
+    .digest("hex");
+
+  assert.equal(digest, "928d9eb04fe89513c587fd962c96061e8d742a7c0fbd52e69b3afacfc575fcd8");
 });
