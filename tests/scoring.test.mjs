@@ -24,12 +24,16 @@ function createAnswers(valueFor) {
   ));
 }
 
-test("normaliza respuestas mínimas y máximas sobre 100", () => {
+test("reescalada las respuestas completas desde el intervalo bruto 25–100 al intervalo real 0–100", () => {
   const minimum = calculateSurveyResults(questionnaire, createAnswers(() => 1));
   const maximum = calculateSurveyResults(questionnaire, createAnswers(() => 4));
 
-  assert.equal(minimum.geminiScore100, 25);
-  assert.equal(minimum.notebookScore100, 25);
+  assert.equal(minimum.geminiRawScore100, 25);
+  assert.equal(minimum.notebookRawScore100, 25);
+  assert.equal(minimum.geminiScore100, 0);
+  assert.equal(minimum.notebookScore100, 0);
+  assert.equal(maximum.geminiRawScore100, 100);
+  assert.equal(maximum.notebookRawScore100, 100);
   assert.equal(maximum.geminiScore100, 100);
   assert.equal(maximum.notebookScore100, 100);
 });
@@ -56,7 +60,8 @@ test("calcula una categoría de forma independiente", () => {
   const result = calculateCategoryResult(questionnaire, category.id, answers);
 
   assert.equal(result.geminiScore100, 100);
-  assert.equal(result.notebookScore100, 50);
+  assert.equal(result.notebookRawScore100, 50);
+  assert.equal(result.notebookScore100, 33.3);
   assert.equal(result.criteria.length, category.criteria.length);
 });
 
@@ -116,6 +121,8 @@ function legacyCalculation(source, answers, categorySettings) {
       maxNotebook: 0,
       geminiScore100: 0,
       notebookScore100: 0,
+      geminiRawScore100: 0,
+      notebookRawScore100: 0,
       diff: 0
     };
 
@@ -130,9 +137,13 @@ function legacyCalculation(source, answers, categorySettings) {
         row.maxGemini += 4 * criterion.defaultWeights.gemini * multiplier;
         row.maxNotebook += 4 * criterion.defaultWeights.notebooklm * multiplier;
       });
-      row.geminiScore100 = score(row.gemini, row.maxGemini);
-      row.notebookScore100 = score(row.notebook, row.maxNotebook);
-      row.diff = rounded(row.geminiScore100 - row.notebookScore100);
+      const geminiRawScore100 = rawScore(row.gemini, row.maxGemini);
+      const notebookRawScore100 = rawScore(row.notebook, row.maxNotebook);
+      row.geminiRawScore100 = rounded(geminiRawScore100);
+      row.notebookRawScore100 = rounded(notebookRawScore100);
+      row.geminiScore100 = normalizedScore(geminiRawScore100);
+      row.notebookScore100 = normalizedScore(notebookRawScore100);
+      row.diff = rounded((geminiRawScore100 - notebookRawScore100) / 0.75);
       totals.gemini += row.gemini;
       totals.notebook += row.notebook;
       totals.maxGemini += row.maxGemini;
@@ -143,14 +154,22 @@ function legacyCalculation(source, answers, categorySettings) {
     totals.categories.push(row);
   });
 
-  totals.geminiScore100 = score(totals.gemini, totals.maxGemini);
-  totals.notebookScore100 = score(totals.notebook, totals.maxNotebook);
-  totals.diff = rounded(totals.geminiScore100 - totals.notebookScore100);
+  const geminiRawScore100 = rawScore(totals.gemini, totals.maxGemini);
+  const notebookRawScore100 = rawScore(totals.notebook, totals.maxNotebook);
+  totals.geminiRawScore100 = rounded(geminiRawScore100);
+  totals.notebookRawScore100 = rounded(notebookRawScore100);
+  totals.geminiScore100 = normalizedScore(geminiRawScore100);
+  totals.notebookScore100 = normalizedScore(notebookRawScore100);
+  totals.diff = rounded((geminiRawScore100 - notebookRawScore100) / 0.75);
   return totals;
 }
 
-function score(value, maximum) {
-  return maximum ? rounded((value / maximum) * 100) : 0;
+function rawScore(value, maximum) {
+  return maximum ? (value / maximum) * 100 : 0;
+}
+
+function normalizedScore(raw) {
+  return rounded(Math.min(Math.max(((raw - 25) / 75) * 100, 0), 100));
 }
 
 function rounded(value) {

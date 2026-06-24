@@ -22,9 +22,11 @@ test("calcula el resultado reducido ponderando categorías, no criterios", () =>
     "b:notebooklm": 4
   });
 
-  assert.equal(results.geminiScore100, 62.5);
-  assert.equal(results.notebookScore100, 81.3);
-  assert.equal(results.diff, -18.8);
+  assert.equal(results.geminiRawScore100, 62.5);
+  assert.equal(results.notebookRawScore100, 81.3);
+  assert.equal(results.geminiScore100, 50);
+  assert.equal(results.notebookScore100, 75);
+  assert.equal(results.diff, -25);
   assert.equal(results.activeCategoryCount, 2);
   assert.equal(results.categories[1].weight, 3);
 });
@@ -42,7 +44,8 @@ test("permite modificar pesos decimales y excluir categorías", () => {
     }
   });
 
-  assert.equal(results.geminiScore100, 50);
+  assert.equal(results.geminiRawScore100, 50);
+  assert.equal(results.geminiScore100, 33.3);
   assert.equal(results.notebookScore100, 100);
   assert.equal(results.activeCategoryCount, 1);
   assert.equal(results.excludedCategoryCount, 1);
