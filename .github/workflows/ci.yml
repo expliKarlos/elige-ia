@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   quality:
-    name: Validación, pruebas y navegador
+    name: quality
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
