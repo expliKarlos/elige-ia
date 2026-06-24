@@ -60,6 +60,51 @@
 
     .app-shell { width: min(100% - 32px, var(--max)); margin: 0 auto; padding: 22px 0 48px; }
 
+    .mode-switch {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: .5rem;
+      margin-bottom: .75rem;
+      color: var(--exp-azul-tinta);
+      font-size: .82rem;
+      font-weight: 850;
+    }
+    .mode-switch > span { margin-right: .25rem; color: var(--muted); }
+    .mode-switch a {
+      min-width: 6.5rem;
+      padding: .6rem .9rem;
+      border: 1px solid rgba(31,58,95,.2);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      text-align: center;
+      text-decoration: none;
+    }
+    .mode-switch a[aria-current="page"] { color: #fff; background: var(--exp-azul-tinta); }
+    .mode-switch a:focus-visible { outline: none; box-shadow: var(--focus); }
+
+    .scope-notice {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.25rem;
+      align-items: center;
+      margin-top: 18px;
+      padding: clamp(1.25rem, 3vw, 2rem);
+      border: 1px solid rgba(31,58,95,.12);
+      border-left: 6px solid var(--exp-terracota);
+      border-radius: 12px 28px 12px 28px;
+      color: var(--exp-grafito);
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px);
+    }
+    .scope-notice h2 { margin: .25rem 0 0; color: var(--exp-azul-tinta); font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -.04em; }
+    .scope-notice p { max-width: 850px; margin: .65rem 0 0; color: var(--muted); font-weight: 650; line-height: 1.55; }
+    .scope-notice .scope-kicker { margin: 0; color: var(--exp-azul-tinta); font-size: .75rem; font-weight: 900; letter-spacing: .1em; }
+    .scope-actions { display: grid; gap: .65rem; min-width: 15rem; text-align: center; }
+    .scope-actions strong { font-size: .9rem; }
+    .btn-scope { color: #fff; background: var(--exp-azul-tinta); }
+
     .hero {
       position: relative;
       overflow: hidden;
@@ -287,6 +332,10 @@
       .hero-stats, .scale-list, .score-grid, .rating-panel, .category-config-grid, .result-meta-grid, .radar-panel { grid-template-columns: 1fr; }
       .toolbar-inner { grid-template-columns: 1fr; }
       .toolbar .btn { width: 100%; }
+      .mode-switch { display: grid; grid-template-columns: 1fr 1fr; }
+      .mode-switch > span { grid-column: 1 / -1; text-align: center; }
+      .scope-notice { grid-template-columns: 1fr; }
+      .scope-actions { min-width: 0; }
       .category-config-head, .category-head, .question-top, .category-stepper { grid-template-columns: 1fr; }
       .category-badge, .weights { justify-self: start; justify-content: flex-start; }
       .rating-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

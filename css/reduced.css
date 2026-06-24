@@ -9,6 +9,11 @@
   max-width: 1240px;
 }
 
+.reduced-mode .mode-switch { color: var(--exp-azul-tinta); }
+.reduced-mode .mode-switch > span { color: var(--muted); }
+.reduced-mode .mode-switch a { border-color: rgba(31, 58, 95, .2); background: rgba(255,255,255,.72); }
+.reduced-mode .mode-switch a[aria-current="page"] { color: #fff; background: var(--exp-azul-tinta); }
+
 .reduced-hero {
   min-height: 0;
 }

@@ -281,8 +281,8 @@ if (questionnaire && interpretationMatrix) {
         panel.innerHTML = `
           <div class="category-config-head">
             <div>
-              <h2 id="category-config-title">Categorías y ponderaciones</h2>
-              <p>Activa las categorías relevantes y ajusta pesos decimales entre 1 y 10. Los resultados se recalculan con la configuración efectiva.</p>
+              <h2 id="category-config-title">Elige las categorías del informe</h2>
+              <p>Activa una, varias o todas las categorías. Cada categoría conserva sus preguntas completas. Los pesos avanzados son opcionales.</p>
             </div>
             <div class="category-config-actions">
               <button type="button" class="btn btn-ghost" id="toggleAllCategoriesBtn">${toggleAllLabel}</button>
@@ -306,7 +306,7 @@ if (questionnaire && interpretationMatrix) {
                     ${categoryModified ? `<span class="modified-badge">Modificada</span>` : ""}
                   </div>
                   <div class="category-control-meta">
-                    <span>${category.items.length} criterios · ${category.items.length * 2} respuestas</span>
+                    <span>${category.items.length} criterios · ${category.items.length} respuestas</span>
                     <div class="category-weight-line">
                       <label for="categoryWeight-${index}">Peso de categoría</label>
                       <input id="categoryWeight-${index}" class="weight-input" type="number" min="1" max="10" step="0.1" value="${categoryWeight}" data-category-weight="${index}">
@@ -601,6 +601,7 @@ if (questionnaire && interpretationMatrix) {
         });
 
         $("#configBtn").addEventListener("click", () => toggleCategoryConfig());
+        $("#openCategorySelectionBtn")?.addEventListener("click", () => toggleCategoryConfig(true));
         $("#finishBtn").addEventListener("click", finalizeSurvey);
         $("#resetBtn").addEventListener("click", () => {
           const shouldReset = confirm("¿Quieres reiniciar la encuesta? Se borrarán las respuestas y se restaurarán todas las categorías y pesos predeterminados.");
@@ -875,10 +876,15 @@ if (questionnaire && interpretationMatrix) {
       function updateProgress() {
         const totalExpectedResponses = getExpectedResponseCount();
         const completedResponses = getCompletedResponseCount();
+        const activeCategoryCount = getActiveCategories().length;
         const percent = totalExpectedResponses ? Math.round((completedResponses / totalExpectedResponses) * 100) : 0;
         $("#progressText").textContent = `${completedResponses} de ${totalExpectedResponses} respuestas activas completadas`;
         $("#progressPercent").textContent = `${percent}%`;
         $("#progressFill").style.width = `${percent}%`;
+        const selectedCategoryCount = $("#selectedCategoryCount");
+        if (selectedCategoryCount) {
+          selectedCategoryCount.textContent = `${activeCategoryCount} ${activeCategoryCount === 1 ? "categoría seleccionada" : "categorías seleccionadas"}`;
+        }
 
         MATRIX.forEach((category, index) => {
           const status = getCategoryStatus(index);

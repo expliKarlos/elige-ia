@@ -51,6 +51,30 @@ test("la interfaz detallada recoge una única necesidad por criterio", async () 
   assert.match(source, /state\.answers\[answerKey\(target\.dataset\.itemId\)\]/);
 });
 
+test("ambas páginas permiten cambiar de modo desde la parte superior", async () => {
+  const [detailed, reduced] = await Promise.all([
+    readFile(new URL("../index.html", import.meta.url), "utf8"),
+    readFile(new URL("../index-reducida.html", import.meta.url), "utf8")
+  ]);
+  assert.match(detailed, /class="mode-switch"/);
+  assert.match(detailed, /href="\.\/index-reducida\.html"/);
+  assert.match(detailed, /aria-current="page"[^>]*>Detallado/);
+  assert.match(reduced, /class="mode-switch"/);
+  assert.match(reduced, /href="\.\/index\.html"/);
+  assert.match(reduced, /aria-current="page"[^>]*>Rápido/);
+});
+
+test("el modo detallado hace explícita la selección de una o varias categorías", async () => {
+  const [html, app] = await Promise.all([
+    readFile(new URL("../index.html", import.meta.url), "utf8"),
+    readFile(new URL("../js/app.js", import.meta.url), "utf8")
+  ]);
+  assert.match(html, /id="openCategorySelectionBtn"/);
+  assert.match(html, /informe solo de esa categoría/i);
+  assert.match(app, /openCategorySelectionBtn/);
+  assert.doesNotMatch(app, /category\.items\.length \* 2} respuestas/);
+});
+
 test("las dos interfaces enlazan el repositorio público desde el pie", async () => {
   const pages = await Promise.all([
     readFile(new URL("../index.html", import.meta.url), "utf8"),

@@ -2,6 +2,16 @@
 
 ## [Sin publicar]
 
+### Añadido
+
+- Selector superior para cambiar entre el diagnóstico rápido y la evaluación detallada.
+- Elección explícita de una, varias o todas las categorías antes de responder el modo detallado.
+- Contador dinámico de categorías y preguntas incluidas en el informe.
+
+### Corregido
+
+- El modo detallado ya no muestra el contador histórico de dos respuestas por criterio.
+
 ## [0.3.0] - 2026-06-24
 
 ### Añadido

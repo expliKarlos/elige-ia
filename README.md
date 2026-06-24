@@ -13,6 +13,8 @@ La aplicación permite editar pesos decimales, restaurarlos y descargar o import
 
 La evaluación detallada formula 103 preguntas directas y recoge una sola respuesta por criterio. El diagnóstico reducido resume el proceso en 18 respuestas de categoría y cinco controles de seguridad. El usuario no puntúa las herramientas: expresa la importancia de cada necesidad y el motor calcula ambas alternativas con sus pesos específicos.
 
+El selector situado sobre la cabecera permite alternar entre los modos rápido y detallado. En el modo detallado se puede elegir una sola categoría, varias o todas; el progreso y el informe se limitan automáticamente al alcance seleccionado. Cada categoría completa puede evaluarse también mediante su informe individual.
+
 El informe final incluye una interpretación conjunta, un desglose secuencial con resultados y radar para cada categoría y una vista de impresión preparada para guardarse como PDF sin la navegación lateral.
 
 Antes de aplicar una importación se muestra una vista previa. Los archivos incompatibles o mayores de 1 MB se rechazan sin modificar el estado local.

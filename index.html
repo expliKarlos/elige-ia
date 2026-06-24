@@ -13,6 +13,11 @@
 <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
   <div class="app-shell">
+    <nav class="mode-switch" aria-label="Tipo de evaluación">
+      <span>Elige el nivel de detalle</span>
+      <a href="./index-reducida.html">Rápido</a>
+      <a href="./index.html" aria-current="page">Detallado</a>
+    </nav>
     <header class="hero" aria-labelledby="page-title">
       <!-- Elementos visuales de dibujo técnico -->
       <div class="blueprint-crosshair tl" aria-hidden="true">+</div>
@@ -56,6 +61,18 @@
         <div class="stat-tile"><strong>0–100</strong><span>resultado final</span></div>
       </div>
     </header>
+
+    <section class="scope-notice" aria-labelledby="scope-notice-title">
+      <div>
+        <p class="scope-kicker">ALCANCE PERSONALIZABLE</p>
+        <h2 id="scope-notice-title">Profundiza solo donde lo necesitas</h2>
+        <p>Cada categoría contiene todas sus preguntas originales, con una única respuesta de necesidad entre 1 y 4. Puedes elegir una categoría y obtener el informe solo de esa categoría, o seleccionar varias para compararlas en un informe conjunto.</p>
+      </div>
+      <div class="scope-actions">
+        <strong id="selectedCategoryCount" role="status">18 categorías seleccionadas</strong>
+        <button type="button" class="btn btn-scope" id="openCategorySelectionBtn" aria-controls="categoryConfig">Elegir categorías</button>
+      </div>
+    </section>
 
     <section class="scale-card" aria-labelledby="scale-title" style="display: none;">
       <!-- La escala de valoración ahora está integrada contextualmente en las opciones de respuesta -->
