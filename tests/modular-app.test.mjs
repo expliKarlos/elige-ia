@@ -44,6 +44,13 @@ test("la aplicación utiliza HTML, CSS, JavaScript y JSON separados", async () =
   assert.doesNotMatch(app, /<inpu(?:\s|>)/);
 });
 
+test("la interfaz detallada recoge una única necesidad por criterio", async () => {
+  const source = await readFile(new URL("../js/app.js", import.meta.url), "utf8");
+  assert.match(source, /function renderNeedRating/);
+  assert.doesNotMatch(source, /data-tool=/);
+  assert.match(source, /state\.answers\[answerKey\(target\.dataset\.itemId\)\]/);
+});
+
 test("las dos interfaces enlazan el repositorio público desde el pie", async () => {
   const pages = await Promise.all([
     readFile(new URL("../index.html", import.meta.url), "utf8"),

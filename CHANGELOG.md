@@ -2,6 +2,24 @@
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-06-24
+
+### Añadido
+
+- Preguntas directas y orientadas a la necesidad para los 103 criterios.
+- Contrato documentado de respuesta única aplicado a las matrices de ambas herramientas.
+
+### Cambiado
+
+- La evaluación detallada solicita 103 respuestas en lugar de 206 valoraciones por herramienta.
+- El diagnóstico reducido solicita 18 respuestas de categoría y conserva cinco controles de seguridad independientes.
+- Las sesiones y exportaciones utilizan claves compartidas de criterio; solo se migran respuestas históricas coincidentes.
+
+### Corregido
+
+- El generador del cuestionario conserva preguntas y metadatos de riesgo al regenerar los datos.
+- Corregido un atributo ARIA no permitido en la escala del diagnóstico reducido.
+
 ## [0.2.0] - 2026-06-24
 
 ### Añadido

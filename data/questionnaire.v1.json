@@ -1,28 +1,28 @@
 {
   "schemaVersion": "1.0",
   "questionnaireId": "gemini-vs-notebooklm",
-  "questionnaireVersion": "1.1.0",
+  "questionnaireVersion": "2.0.0",
   "title": "¿Qué herramienta utilizo?",
   "scale": [
     {
       "value": 1,
-      "label": "No",
-      "description": "No corresponde"
+      "label": "No lo necesito",
+      "description": "Esta necesidad no forma parte del caso."
     },
     {
       "value": 2,
-      "label": "Poco",
-      "description": "Corresponde poco"
+      "label": "Lo necesito poco",
+      "description": "La necesidad aparece, pero tiene poca importancia."
     },
     {
       "value": 3,
-      "label": "Bastante",
-      "description": "Corresponde bastante"
+      "label": "Lo necesito bastante",
+      "description": "La necesidad es relevante para resolver el caso."
     },
     {
       "value": 4,
-      "label": "Sí",
-      "description": "Sí corresponde"
+      "label": "Es imprescindible",
+      "description": "La necesidad es esencial y condiciona la decisión."
     }
   ],
   "categories": [
@@ -39,7 +39,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas que tus resultados sean creativos?"
         },
         {
           "id": "c01q02",
@@ -48,7 +49,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas trabajar únicamente con fuentes seleccionadas?"
         },
         {
           "id": "c01q03",
@@ -57,7 +59,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas apoyo para repasar y comprobar la comprensión?"
         },
         {
           "id": "c01q04",
@@ -66,7 +69,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Necesitas explorar un tema antes de definir el enfoque?"
         },
         {
           "id": "c01q05",
@@ -75,7 +79,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas comparar documentos y justificar las conclusiones?"
         },
         {
           "id": "c01q06",
@@ -84,7 +89,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas crear un producto final como una presentación, informe o propuesta?"
         }
       ]
     },
@@ -101,7 +107,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas preparar la programación de una unidad?"
         },
         {
           "id": "c02q02",
@@ -110,7 +117,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas diseñar una situación de aprendizaje?"
         },
         {
           "id": "c02q03",
@@ -119,7 +127,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas adaptar una actividad a distintos niveles?"
         },
         {
           "id": "c02q04",
@@ -128,7 +137,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Necesitas crear una rúbrica de evaluación?"
         },
         {
           "id": "c02q05",
@@ -137,7 +147,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas generar preguntas o pruebas de evaluación?"
         },
         {
           "id": "c02q06",
@@ -146,7 +157,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 4
-          }
+          },
+          "question": "¿Necesitas redactar comunicaciones para las familias?"
         },
         {
           "id": "c02q07",
@@ -155,7 +167,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas analizar normativa o instrucciones educativas?"
         },
         {
           "id": "c02q08",
@@ -164,7 +177,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas trabajar con actas, acuerdos o documentos de departamento?"
         }
       ]
     },
@@ -181,7 +195,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas crear materiales partiendo de cero?"
         },
         {
           "id": "c03q02",
@@ -190,7 +205,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas crear materiales fieles a tus propios apuntes?"
         },
         {
           "id": "c03q03",
@@ -199,7 +215,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas elaborar infografías, esquemas o mapas conceptuales?"
         },
         {
           "id": "c03q04",
@@ -208,7 +225,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas diseñar actividades gamificadas?"
         },
         {
           "id": "c03q05",
@@ -217,7 +235,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas preparar materiales de repaso?"
         },
         {
           "id": "c03q06",
@@ -226,7 +245,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 4
-          }
+          },
+          "question": "¿Necesitas crear simulaciones, prototipos o actividades interactivas?"
         }
       ]
     },
@@ -243,7 +263,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Necesitas encontrar ideas iniciales para una investigación?"
         },
         {
           "id": "c04q02",
@@ -252,7 +273,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas investigar utilizando un conjunto cerrado de fuentes?"
         },
         {
           "id": "c04q03",
@@ -261,7 +283,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas comparar y relacionar distintas fuentes?"
         },
         {
           "id": "c04q04",
@@ -270,7 +293,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas formular o comprobar hipótesis?"
         },
         {
           "id": "c04q05",
@@ -279,7 +303,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas respaldar los resultados con citas y evidencias?"
         },
         {
           "id": "c04q06",
@@ -288,7 +313,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas trabajar con información actual o cambiante?"
         }
       ]
     },
@@ -305,7 +331,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas comprender conceptos mediante explicaciones?"
         },
         {
           "id": "c05q02",
@@ -314,7 +341,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas preparar un examen a partir del temario real?"
         },
         {
           "id": "c05q03",
@@ -323,7 +351,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas crear tarjetas de estudio o cuestionarios?"
         },
         {
           "id": "c05q04",
@@ -332,7 +361,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas una tutoría conversacional con preguntas y repreguntas?"
         },
         {
           "id": "c05q05",
@@ -341,7 +371,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas organizar y sintetizar apuntes extensos?"
         },
         {
           "id": "c05q06",
@@ -350,7 +381,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas repasar contenidos en distintos formatos?"
         }
       ]
     },
@@ -367,7 +399,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas proporcionar evaluación formativa durante el aprendizaje?"
         },
         {
           "id": "c06q02",
@@ -376,7 +409,8 @@
           "defaultWeights": {
             "gemini": 1,
             "notebooklm": 1
-          }
+          },
+          "question": "¿Necesitas evaluar un desempeño individual sin ayudas externas?"
         },
         {
           "id": "c06q03",
@@ -385,7 +419,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas facilitar la autoevaluación del alumnado?"
         },
         {
           "id": "c06q04",
@@ -394,7 +429,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas organizar una coevaluación guiada?"
         },
         {
           "id": "c06q05",
@@ -403,7 +439,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas comprobar la comprensión real del alumnado?"
         },
         {
           "id": "c06q06",
@@ -412,7 +449,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas ofrecer retroalimentación sobre textos escritos?"
         }
       ]
     },
@@ -429,7 +467,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas reformular textos para hacerlos más accesibles?"
         },
         {
           "id": "c07q02",
@@ -438,7 +477,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas facilitar la lectura de documentos densos?"
         },
         {
           "id": "c07q03",
@@ -447,7 +487,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas ofrecer el contenido en diferentes formatos de acceso?"
         },
         {
           "id": "c07q04",
@@ -456,7 +497,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas ayudar a planificar, organizar y dividir una tarea?"
         },
         {
           "id": "c07q05",
@@ -465,7 +507,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas adaptar rápidamente una actividad para un caso concreto?"
         },
         {
           "id": "c07q06",
@@ -474,7 +517,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas mejorar la accesibilidad cognitiva de los materiales?"
         }
       ]
     },
@@ -491,7 +535,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 7
-          }
+          },
+          "question": "¿La herramienta se utilizará en Educación Primaria?"
         },
         {
           "id": "c08q02",
@@ -500,7 +545,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 8
-          }
+          },
+          "question": "¿La herramienta se utilizará en 1.º o 2.º de ESO?"
         },
         {
           "id": "c08q03",
@@ -509,7 +555,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿La herramienta se utilizará en 3.º o 4.º de ESO?"
         },
         {
           "id": "c08q04",
@@ -518,7 +565,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿La herramienta se utilizará en Bachillerato?"
         },
         {
           "id": "c08q05",
@@ -527,7 +575,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 9
-          }
+          },
+          "question": "¿La herramienta se utilizará en Formación Profesional?"
         },
         {
           "id": "c08q06",
@@ -536,7 +585,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 9
-          }
+          },
+          "question": "¿La herramienta se utilizará en la Universidad?"
         }
       ]
     },
@@ -553,7 +603,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 7
-          }
+          },
+          "question": "¿El alumnado tiene poca autonomía digital?"
         },
         {
           "id": "c09q02",
@@ -562,7 +613,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 9
-          }
+          },
+          "question": "¿El alumnado tiene suficiente autonomía digital para tareas complejas?"
         }
       ]
     },
@@ -579,7 +631,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas que las respuestas incluyan citas verificables?"
         },
         {
           "id": "c10q02",
@@ -588,7 +641,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas comprobar fácilmente cada respuesta en la fuente original?"
         },
         {
           "id": "c10q03",
@@ -597,7 +651,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas reducir al máximo el riesgo de información inventada?"
         },
         {
           "id": "c10q04",
@@ -606,7 +661,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas controlar exactamente las fuentes utilizadas?"
         },
         {
           "id": "c10q05",
@@ -615,7 +671,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas organizar una bibliografía previamente seleccionada?"
         },
         {
           "id": "c10q06",
@@ -624,7 +681,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas comparar y discutir críticamente las fuentes?"
         }
       ]
     },
@@ -641,54 +699,58 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Se utilizará una cuenta institucional gestionada por el centro?"
         },
         {
           "id": "c11q02",
           "label": "Uso con cuenta personal de alumnado",
           "description": "No recomendable como práctica institucional ordinaria.",
+          "defaultWeights": {
+            "gemini": 3,
+            "notebooklm": 3
+          },
+          "question": "¿El alumnado utilizará cuentas personales?",
           "risk": {
             "polarity": "risk",
             "severity": "conditional",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "El uso institucional con cuentas personales del alumnado requiere revisar política, edad y permisos."
-          },
-          "defaultWeights": {
-            "gemini": 3,
-            "notebooklm": 3
           }
         },
         {
           "id": "c11q03",
           "label": "Datos personales de alumnado",
           "description": "No debe usarse salvo base jurídica, minimización y validación expresa.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          },
+          "question": "¿El caso incluye datos personales identificables del alumnado?",
           "risk": {
             "polarity": "contraindication",
             "severity": "blocking",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "No introducir datos personales del alumnado sin base jurídica, minimización y validación expresa."
-          },
-          "defaultWeights": {
-            "gemini": 1,
-            "notebooklm": 1
           }
         },
         {
           "id": "c11q04",
           "label": "Informes psicopedagógicos o salud",
           "description": "No recomendable.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          },
+          "question": "¿El caso incluye informes psicopedagógicos o información de salud?",
           "risk": {
             "polarity": "contraindication",
             "severity": "blocking",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "No utilizar informes psicopedagógicos o datos de salud."
-          },
-          "defaultWeights": {
-            "gemini": 1,
-            "notebooklm": 1
           }
         },
         {
@@ -698,7 +760,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Trabajarás únicamente con casos anonimizados o ficticios?"
         },
         {
           "id": "c11q06",
@@ -707,7 +770,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas control administrativo sobre accesos, grupos y registros?"
         },
         {
           "id": "c11q07",
@@ -716,22 +780,24 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas utilizar documentos compartidos desde Google Drive?"
         },
         {
           "id": "c11q08",
           "label": "Datos de evaluación nominal",
           "description": "No recomendable para corrección o análisis individual identificable.",
+          "defaultWeights": {
+            "gemini": 2,
+            "notebooklm": 2
+          },
+          "question": "¿El caso incluye datos nominales de evaluación?",
           "risk": {
             "polarity": "contraindication",
             "severity": "blocking",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "No utilizar datos nominales de evaluación para corrección o análisis individual identificable."
-          },
-          "defaultWeights": {
-            "gemini": 2,
-            "notebooklm": 2
           }
         }
       ]
@@ -749,7 +815,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 7
-          }
+          },
+          "question": "¿La herramienta será utilizada por menores de 18 años?"
         },
         {
           "id": "c12q02",
@@ -758,7 +825,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 9
-          }
+          },
+          "question": "¿La herramienta será utilizada por alumnado adulto?"
         },
         {
           "id": "c12q03",
@@ -767,7 +835,8 @@
           "defaultWeights": {
             "gemini": 3,
             "notebooklm": 4
-          }
+          },
+          "question": "¿El caso aborda contenidos especialmente sensibles?"
         },
         {
           "id": "c12q04",
@@ -776,7 +845,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Habrá supervisión docente directa durante el uso?"
         },
         {
           "id": "c12q05",
@@ -785,7 +855,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 4
-          }
+          },
+          "question": "¿Se permitirá un uso libre sin consignas claras?"
         }
       ]
     },
@@ -802,7 +873,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas prevenir el plagio y acreditar la autoría?"
         },
         {
           "id": "c13q02",
@@ -811,7 +883,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas dejar constancia transparente del proceso seguido?"
         },
         {
           "id": "c13q03",
@@ -820,7 +893,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Necesitas controlar o analizar posibles sesgos?"
         },
         {
           "id": "c13q04",
@@ -829,7 +903,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Existe riesgo de generar dependencia de la tecnología?"
         },
         {
           "id": "c13q05",
@@ -838,7 +913,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas proteger y desarrollar la autonomía intelectual?"
         },
         {
           "id": "c13q06",
@@ -847,7 +923,8 @@
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Existe riesgo de que las respuestas se acepten sin contrastarlas?"
         }
       ]
     },
@@ -864,7 +941,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas formular y mejorar preguntas?"
         },
         {
           "id": "c14q02",
@@ -873,7 +951,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas contrastar argumentos utilizando textos concretos?"
         },
         {
           "id": "c14q03",
@@ -882,7 +961,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas detectar, corregir y justificar errores de la IA?"
         },
         {
           "id": "c14q04",
@@ -891,7 +971,8 @@
           "defaultWeights": {
             "gemini": 7,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas desarrollar alfabetización informacional?"
         },
         {
           "id": "c14q05",
@@ -900,7 +981,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas que el alumnado reflexione sobre sus decisiones y su proceso?"
         }
       ]
     },
@@ -917,7 +999,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas diseñar actividades orientadas a competencias?"
         },
         {
           "id": "c15q02",
@@ -926,7 +1009,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas conectar contenidos de distintas materias?"
         },
         {
           "id": "c15q03",
@@ -935,7 +1019,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas desarrollar un proyecto de investigación completo?"
         },
         {
           "id": "c15q04",
@@ -944,7 +1029,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas acompañar el trabajo con una lectura obligatoria?"
         },
         {
           "id": "c15q05",
@@ -953,7 +1039,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas apoyar una actividad de escritura creativa?"
         },
         {
           "id": "c15q06",
@@ -962,7 +1049,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 10
-          }
+          },
+          "question": "¿Necesitas realizar un comentario histórico, literario o científico con evidencias?"
         }
       ]
     },
@@ -979,7 +1067,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 7
-          }
+          },
+          "question": "¿Necesitas ahorrar tiempo al preparar el primer borrador?"
         },
         {
           "id": "c16q02",
@@ -988,7 +1077,8 @@
           "defaultWeights": {
             "gemini": 5,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas reducir el tiempo dedicado a verificar resultados?"
         },
         {
           "id": "c16q03",
@@ -997,7 +1087,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Puedes dedicar tiempo a seleccionar y preparar las fuentes?"
         },
         {
           "id": "c16q04",
@@ -1006,7 +1097,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas extender el uso de la herramienta a todo el centro?"
         },
         {
           "id": "c16q05",
@@ -1015,7 +1107,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 7
-          }
+          },
+          "question": "¿El equipo dispone de la formación necesaria para utilizar la herramienta?"
         }
       ]
     },
@@ -1032,7 +1125,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas implantar la herramienta de forma institucional?"
         },
         {
           "id": "c17q02",
@@ -1041,7 +1135,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 9
-          }
+          },
+          "question": "¿Necesitas trabajar con protocolos y documentos internos del centro?"
         },
         {
           "id": "c17q03",
@@ -1050,7 +1145,8 @@
           "defaultWeights": {
             "gemini": 9,
             "notebooklm": 5
-          }
+          },
+          "question": "¿Necesitas redactar comunicaciones institucionales?"
         },
         {
           "id": "c17q04",
@@ -1059,7 +1155,8 @@
           "defaultWeights": {
             "gemini": 6,
             "notebooklm": 6
-          }
+          },
+          "question": "¿Necesitas garantizar el cumplimiento normativo y la protección de datos?"
         },
         {
           "id": "c17q05",
@@ -1068,7 +1165,8 @@
           "defaultWeights": {
             "gemini": 8,
             "notebooklm": 8
-          }
+          },
+          "question": "¿Necesitas comenzar con un piloto controlado?"
         }
       ]
     },
@@ -1082,80 +1180,85 @@
           "id": "c18q01",
           "label": "Prueba individual sin ayudas",
           "description": "No conviene ninguna.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          },
+          "question": "¿Es una prueba individual en la que no se permiten ayudas?",
           "risk": {
             "polarity": "contraindication",
             "severity": "blocking",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "Una prueba individual sin ayudas excluye el uso de ambas herramientas."
-          },
-          "defaultWeights": {
-            "gemini": 1,
-            "notebooklm": 1
           }
         },
         {
           "id": "c18q02",
           "label": "Datos sensibles o identificables",
           "description": "No conviene ninguna.",
+          "defaultWeights": {
+            "gemini": 1,
+            "notebooklm": 1
+          },
+          "question": "¿La tarea requiere introducir datos sensibles o identificables?",
           "risk": {
             "polarity": "contraindication",
             "severity": "blocking",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "La presencia de datos sensibles o identificables excluye el uso de ambas herramientas."
-          },
-          "defaultWeights": {
-            "gemini": 1,
-            "notebooklm": 1
           }
         },
         {
           "id": "c18q03",
           "label": "Tarea básica de automatización cognitiva",
           "description": "No conviene si impide consolidar cálculo, lectura, escritura o memoria básica.",
+          "defaultWeights": {
+            "gemini": 2,
+            "notebooklm": 2
+          },
+          "question": "¿La IA impediría practicar una habilidad cognitiva básica?",
           "risk": {
             "polarity": "risk",
             "severity": "conditional",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "Evitar el uso si sustituye la consolidación de capacidades cognitivas básicas."
-          },
-          "defaultWeights": {
-            "gemini": 2,
-            "notebooklm": 2
           }
         },
         {
           "id": "c18q04",
           "label": "Falta de dispositivos o acceso desigual",
           "description": "No conviene implantar como obligatoria si aumenta brechas.",
+          "defaultWeights": {
+            "gemini": 3,
+            "notebooklm": 3
+          },
+          "question": "¿La actividad podría aumentar la brecha de acceso o de dispositivos?",
           "risk": {
             "polarity": "risk",
             "severity": "conditional",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "No implantar como obligatoria si aumenta la brecha de acceso."
-          },
-          "defaultWeights": {
-            "gemini": 3,
-            "notebooklm": 3
           }
         },
         {
           "id": "c18q05",
           "label": "Docente sin formación mínima",
           "description": "No conviene como uso autónomo del alumnado.",
+          "defaultWeights": {
+            "gemini": 4,
+            "notebooklm": 4
+          },
+          "question": "¿El uso se realizará sin una formación docente mínima?",
           "risk": {
             "polarity": "risk",
             "severity": "conditional",
             "triggerAnswerMinimum": 3,
             "scope": "both_tools",
             "message": "Sin formación docente mínima no procede el uso autónomo por el alumnado."
-          },
-          "defaultWeights": {
-            "gemini": 4,
-            "notebooklm": 4
           }
         }
       ]

@@ -30,6 +30,16 @@ test("todos los identificadores son únicos y los pesos están entre 1 y 10", as
   assert.equal(validation.valid, true);
 });
 
+test("todos los criterios incluyen una pregunta directa y amigable", async () => {
+  const questionnaire = await loadQuestionnaire();
+  const criteria = questionnaire.categories.flatMap((category) => category.criteria);
+
+  assert.equal(questionnaire.questionnaireVersion, "2.0.0");
+  assert.ok(criteria.every((criterion) => criterion.question.startsWith("¿")));
+  assert.ok(criteria.every((criterion) => criterion.question.endsWith("?")));
+  assert.equal(criteria[0].question, "¿Necesitas que tus resultados sean creativos?");
+});
+
 test("los criterios sensibles declaran polaridad, severidad y umbral", async () => {
   const questionnaire = await loadQuestionnaire();
   const risks = questionnaire.categories.flatMap((category) => category.criteria).filter((criterion) => criterion.risk);
@@ -53,6 +63,7 @@ test("el validador acepta pesos decimales y rechaza valores fuera de rango", () 
       criteria: [{
         id: "criterion",
         label: "Criterio",
+        question: "¿Necesitas este criterio?",
         description: "Descripción",
         defaultWeights: { gemini: 2.5, notebooklm: 10 }
       }]
@@ -80,6 +91,7 @@ test("el validador rechaza metadatos de riesgo ambiguos", () => {
       criteria: [{
         id: "criterion",
         label: "Criterio",
+        question: "¿Necesitas este criterio?",
         description: "Descripción",
         defaultWeights: { gemini: 2, notebooklm: 2 },
         risk: {

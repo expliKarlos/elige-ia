@@ -145,20 +145,36 @@ function sanitizeWeightOverrides(rawWeights = {}, questionnaire) {
 
 function sanitizeAnswers(rawAnswers = {}, questionnaire) {
   requireObject(rawAnswers, "data.answers");
-  const knownKeys = new Set(questionnaire.categories.flatMap(category =>
-    category.criteria.flatMap(criterion => [
-      `${criterion.id}:gemini`,
-      `${criterion.id}:notebook`
-    ])
+  const criterionIds = new Set(questionnaire.categories.flatMap(category =>
+    category.criteria.map(criterion => criterion.id)
   ));
+  const knownKeys = new Set([...criterionIds].flatMap(criterionId => [
+    criterionId,
+    `${criterionId}:gemini`,
+    `${criterionId}:notebook`
+  ]));
   const answers = {};
+  const legacyAnswers = {};
   Object.entries(rawAnswers).forEach(([key, rawValue]) => {
     if (!knownKeys.has(key)) throw new Error(`La respuesta "${key}" es desconocida.`);
     const value = Number(rawValue);
     if (!Number.isInteger(value) || value < 1 || value > 4) {
       throw new Error(`La respuesta "${key}" debe ser un entero entre 1 y 4.`);
     }
-    answers[key] = value;
+    if (criterionIds.has(key)) {
+      answers[key] = value;
+      return;
+    }
+    const [criterionId, tool] = key.split(":");
+    legacyAnswers[criterionId] ||= {};
+    legacyAnswers[criterionId][tool] = value;
+  });
+  Object.entries(legacyAnswers).forEach(([criterionId, tools]) => {
+    if (answers[criterionId] !== undefined) return;
+    if (tools.gemini === undefined || tools.notebook === undefined || tools.gemini !== tools.notebook) {
+      throw new Error(`Las respuestas históricas de "${criterionId}" no pueden convertirse en una necesidad única.`);
+    }
+    answers[criterionId] = tools.gemini;
   });
   return answers;
 }

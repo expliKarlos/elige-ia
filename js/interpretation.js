@@ -286,6 +286,8 @@ function contains(range, value) {
 }
 
 function readAnswer(answers, criterionId, tool) {
+  const sharedValue = Number(answers[criterionId] || 0);
+  if (Number.isInteger(sharedValue) && sharedValue >= 1 && sharedValue <= 4) return sharedValue;
   const value = Number(answers[`${criterionId}:${tool}`] || 0);
   return Number.isInteger(value) && value >= 1 && value <= 4 ? value : 0;
 }

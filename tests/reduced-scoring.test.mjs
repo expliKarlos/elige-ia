@@ -9,10 +9,21 @@ import {
 
 const questionnaire = {
   categories: [
-    { id: "a", label: "Categoría A", color: "#123456", defaultWeight: 1 },
-    { id: "b", label: "Categoría B", color: "#654321", defaultWeight: 3 }
+    { id: "a", label: "Categoría A", color: "#123456", defaultWeight: 1, criteria: [
+      { defaultWeights: { gemini: 9, notebooklm: 3 } }
+    ] },
+    { id: "b", label: "Categoría B", color: "#654321", defaultWeight: 3, criteria: [
+      { defaultWeights: { gemini: 2, notebooklm: 10 } }
+    ] }
   ]
 };
+
+test("aplica una necesidad de categoría a las matrices de ambas herramientas", () => {
+  const results = calculateReducedResults(questionnaire, { a: 4, b: 1 });
+
+  assert.notEqual(results.geminiScore100, results.notebookScore100);
+  assert.equal(results.categories[0].need, 4);
+});
 
 test("calcula el resultado reducido ponderando categorías, no criterios", () => {
   const results = calculateReducedResults(questionnaire, {
@@ -71,10 +82,8 @@ test("traduce los controles de seguridad al formato del intérprete", () => {
     c11q03: "yes",
     c18q02: "no"
   }), {
-    "c11q03:gemini": 4,
-    "c11q03:notebook": 4,
-    "c18q02:gemini": 1,
-    "c18q02:notebook": 1
+    c11q03: 4,
+    c18q02: 1
   });
 });
 

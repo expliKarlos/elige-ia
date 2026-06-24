@@ -275,6 +275,10 @@
   background: color-mix(in srgb, var(--tool) 5%, #fff);
 }
 
+.reduced-need {
+  --tool: var(--exp-azul-tinta);
+}
+
 .reduced-tool legend {
   padding: 0 .25rem;
   color: var(--exp-grafito);
@@ -312,6 +316,13 @@
   font-weight: 850;
   line-height: 1.15;
   cursor: pointer;
+}
+
+.reduced-rating-option span small {
+  display: block;
+  margin-top: .2rem;
+  font-size: .65rem;
+  font-weight: 750;
 }
 
 .reduced-rating-option input:checked + span {

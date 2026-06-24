@@ -7,8 +7,7 @@ import {
 
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
-const STORAGE_KEY = "gemini-notebooklm-reduced-v1";
-const TOOL_LABELS = { gemini: "Gemini", notebooklm: "NotebookLM" };
+const STORAGE_KEY = "gemini-notebooklm-reduced-v2";
 
 const applicationData = await loadApplicationData();
 
@@ -66,23 +65,22 @@ if (applicationData) {
           <ul>${category.criteria.map((criterion) => `<li>${escapeHtml(criterion.label)}</li>`).join("")}</ul>
         </details>
         <div class="reduced-ratings">
-          ${renderToolRating(category, "gemini", setting.included)}
-          ${renderToolRating(category, "notebooklm", setting.included)}
+          ${renderNeedRating(category, setting.included)}
         </div>
       </article>`;
   }
 
-  function renderToolRating(category, tool, enabled) {
-    const selected = Number(state.ratings[`${category.id}:${tool}`]);
-    const cssTool = tool === "gemini" ? "gemini" : "notebook";
+  function renderNeedRating(category, enabled) {
+    const selected = Number(state.ratings[category.id]);
+    const prompt = `¿Qué importancia tienen para tu caso las necesidades de ${category.label.toLowerCase()}?`;
     return `
-      <fieldset class="reduced-tool" style="--tool:var(--${cssTool})" ${enabled ? "" : "disabled"}>
-        <legend>${TOOL_LABELS[tool]}</legend>
+      <fieldset class="reduced-tool reduced-need" ${enabled ? "" : "disabled"}>
+        <legend>${escapeHtml(prompt)}</legend>
         <div class="reduced-rating-grid">
           ${config.scale.map((option) => `
             <label class="reduced-rating-option" title="${escapeAttr(option.description)}">
-              <input type="radio" name="${escapeAttr(category.id)}-${tool}" value="${option.value}" data-rating data-category-id="${escapeAttr(category.id)}" data-tool="${tool}" ${selected === option.value ? "checked" : ""}>
-              <span>${option.value}<small class="sr-only"> · ${escapeHtml(option.label)}</small></span>
+              <input type="radio" name="${escapeAttr(category.id)}" value="${option.value}" data-rating data-category-id="${escapeAttr(category.id)}" ${selected === option.value ? "checked" : ""}>
+              <span>${option.value}<small>${escapeHtml(option.label)}</small></span>
             </label>`).join("")}
         </div>
       </fieldset>`;
@@ -118,7 +116,7 @@ if (applicationData) {
   function handleSurveyChange(event) {
     const target = event.target;
     if (target.matches("[data-rating]")) {
-      state.ratings[`${target.dataset.categoryId}:${target.dataset.tool}`] = Number(target.value);
+      state.ratings[target.dataset.categoryId] = Number(target.value);
       target.closest(".reduced-category")?.classList.remove("is-pending");
       persistAndRefresh();
       return;
@@ -172,10 +170,8 @@ if (applicationData) {
 
   function updateProgress() {
     const included = questionnaire.categories.filter((category) => getCategorySetting(category).included);
-    const total = included.length * 2 + safetyCriterionIds.length;
-    const categoryCompleted = included.reduce((count, category) => count
-      + Number(isValidRating(state.ratings[`${category.id}:gemini`]))
-      + Number(isValidRating(state.ratings[`${category.id}:notebooklm`])), 0);
+    const total = included.length + safetyCriterionIds.length;
+    const categoryCompleted = included.filter((category) => isValidRating(state.ratings[category.id])).length;
     const safetyCompleted = safetyCriterionIds.filter((id) => ["yes", "no"].includes(state.safetyAnswers[id])).length;
     const completed = categoryCompleted + safetyCompleted;
     const percent = total ? Math.round((completed / total) * 100) : 0;
@@ -445,10 +441,17 @@ function loadState() {
 
 function normaliseState(raw, questionnaire, safetyCriterionIds) {
   const knownCategories = new Set(questionnaire.categories.map((category) => category.id));
-  const ratings = Object.fromEntries(Object.entries(raw?.ratings || {}).filter(([key, value]) => {
-    const [categoryId, tool] = key.split(":");
-    return knownCategories.has(categoryId) && ["gemini", "notebooklm"].includes(tool) && isValidRating(value);
-  }).map(([key, value]) => [key, Number(value)]));
+  const rawRatings = raw?.ratings || {};
+  const ratings = {};
+  knownCategories.forEach((categoryId) => {
+    if (isValidRating(rawRatings[categoryId])) {
+      ratings[categoryId] = Number(rawRatings[categoryId]);
+      return;
+    }
+    const geminiValue = Number(rawRatings[`${categoryId}:gemini`]);
+    const notebookValue = Number(rawRatings[`${categoryId}:notebooklm`]);
+    if (isValidRating(geminiValue) && geminiValue === notebookValue) ratings[categoryId] = geminiValue;
+  });
   const safetyAnswers = Object.fromEntries(Object.entries(raw?.safetyAnswers || {}).filter(([id, value]) => (
     safetyCriterionIds.includes(id) && ["yes", "no"].includes(value)
   )));
