@@ -28,10 +28,13 @@ test("las dos interfaces explican el reescalado real y muestran la puntuación b
   }
 });
 
-test("el desglose encadena resultados y radar para cada categoría", () => {
+test("el desglose compara baremaciones por criterio y conserva la necesidad declarada", () => {
   assert.match(app, /renderCategoryBreakdownSections/);
   assert.match(app, /class="category-breakdown-card"/);
-  assert.match(app, /renderSingleCategoryRadar\(categoryResults\)/);
+  assert.match(app, /renderSingleCategoryComparison\(categoryResults\)/);
+  assert.match(app, /Necesidad[^<]*\$\{row\.need}\/4/);
+  assert.match(app, /\$\{formatWeight\(row\.geminiWeight\)}\/10/);
+  assert.match(app, /\$\{formatWeight\(row\.notebooklmWeight\)}\/10/);
 });
 
 test("el informe puede enviarse a PDF sin imprimir la navegación", () => {

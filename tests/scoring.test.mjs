@@ -82,6 +82,18 @@ test("calcula una categoría de forma independiente", () => {
   assert.equal(result.criteria.length, category.criteria.length);
 });
 
+test("expone por criterio la necesidad y las baremaciones de ambas herramientas", () => {
+  const category = questionnaire.categories[0];
+  const answers = Object.fromEntries(category.criteria.map((criterion, index) => [criterion.id, index === 0 ? 4 : 1]));
+  const result = calculateCategoryResult(questionnaire, category.id, answers);
+  const creativity = result.criteria[0];
+
+  assert.equal(creativity.need, 4);
+  assert.equal(creativity.geminiWeight, 9);
+  assert.equal(creativity.notebooklmWeight, 5);
+  assert.notEqual(creativity.geminiWeight, creativity.notebooklmWeight);
+});
+
 test("combina pesos decimales y permite restaurarlos sin mutar la configuración", () => {
   const defaults = createDefaultWeightConfig(questionnaire);
   const categoryId = questionnaire.categories[0].id;

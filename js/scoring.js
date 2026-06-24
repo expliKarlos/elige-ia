@@ -78,6 +78,9 @@ export function calculateCategoryResult(questionnaire, categoryId, answers, opti
     result.criteria.push({
       criterion: criterion.label,
       criterionId: criterion.id,
+      need: geminiValue,
+      geminiWeight: weights.gemini,
+      notebooklmWeight: weights.notebooklm,
       geminiRawScore100: roundToTenth(geminiRawScore100),
       notebookRawScore100: roundToTenth(notebookRawScore100),
       geminiScore100: normalizeRawScore100(geminiRawScore100),
