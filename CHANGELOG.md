@@ -2,6 +2,12 @@
 
 ## [Sin publicar]
 
+## [0.1.1] - 2026-06-24
+
+### Corregido
+
+- La prueba de regresión histórica ya no depende de un archivo situado fuera del repositorio y puede ejecutarse en CI.
+
 ## [0.1.0] - 2026-06-24
 
 ### Añadido
