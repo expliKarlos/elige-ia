@@ -35,6 +35,21 @@ test("el modo detallado permite limitar el informe a una categoría", async ({ p
   await expect(page.locator("#progressText")).toContainText("0 de 6");
 });
 
+test("el informe de categoría compara baremaciones y muestra la necesidad", async ({ page }) => {
+  await page.goto("/index.html");
+  await expect(page.locator(".question-card")).toHaveCount(103);
+  for (const criterionId of ["c01q01", "c01q02", "c01q03", "c01q04", "c01q05", "c01q06"]) {
+    await page.locator(`#card-${criterionId} input[value="4"]`).check();
+  }
+  await page.locator('[data-category-evaluate="0"]').click();
+  await expect(page.locator("#categoryDashboard")).toHaveClass(/is-visible/);
+  await expect(page.locator("#categoryDashboard .criterion-comparison-row")).toHaveCount(6);
+  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("Necesidad 4/4");
+  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("9/10");
+  await expect(page.locator("#categoryDashboard .criterion-comparison-row").first()).toContainText("5/10");
+  await expectNoSeriousAxeViolations(page, "comparativa de baremaciones por categoría");
+});
+
 test("la versión reducida completa el diagnóstico y detecta bloqueos", async ({ page }) => {
   await page.goto("/index-reducida.html");
   await expect(page.locator(".reduced-category")).toHaveCount(18);

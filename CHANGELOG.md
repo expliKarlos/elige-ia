@@ -11,6 +11,7 @@
 ### Corregido
 
 - El modo detallado ya no muestra el contador histórico de dos respuestas por criterio.
+- El informe de categoría compara ahora las baremaciones Gemini/NotebookLM sobre 10 y muestra por separado la necesidad indicada sobre 4.
 
 ## [0.3.0] - 2026-06-24
 
