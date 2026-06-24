@@ -14,7 +14,7 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 - [x] Confirmar JSON como único formato de intercambio.
 - [x] Confirmar exportación independiente de pesos.
 - [x] Adoptar GNU AGPLv3 para el código.
-- [x] Mantener por ahora la identidad visual La Salle.
+- [x] Adoptar la identidad visual expliCarlos.
 
 ### Punto de control
 
@@ -77,7 +77,7 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 ### Tarea 3.1: Montar la interfaz desde JSON
 
 - [x] Crear `index.html`, `css/app.css` y `js/app.js`.
-- [x] Conservar identidad La Salle, categorías y comportamiento responsive.
+- [x] Conservar las categorías y el comportamiento responsive al aplicar la identidad expliCarlos.
 - [x] Mostrar un error recuperable si el JSON no puede cargarse.
 
 ### Tarea 3.2: Recuperar los flujos de encuesta
@@ -118,15 +118,48 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 ### Tarea 6.1: Automatización
 
-- [ ] Ejecutar validación y pruebas en GitHub Actions.
-- [ ] Publicar GitHub Pages únicamente si las comprobaciones pasan.
-- [ ] Documentar configuración del repositorio.
+- [x] Ejecutar validación, pruebas unitarias, E2E y accesibilidad en GitHub Actions.
+- [x] Preparar la publicación de GitHub Pages únicamente si las comprobaciones pasan.
+- [x] Documentar configuración, publicación y reversión del repositorio.
+- [ ] Conectar el remoto, activar GitHub Pages y verificar la primera publicación.
 
 ### Tarea 6.2: Experiencia de fork
 
-- [ ] Documentar personalización de datos y tratamiento independiente de la marca.
-- [ ] Confirmar rutas relativas bajo nombres de repositorio diferentes.
-- [ ] Añadir guía de ejecución local y solución de problemas.
+- [x] Documentar personalización de datos y tratamiento independiente de la marca.
+- [x] Confirmar rutas relativas bajo nombres de repositorio diferentes mediante el empaquetado `_site/`.
+- [x] Añadir guía de ejecución local y solución de problemas.
+
+## Fase 7 — Interpretación de resultados
+
+### Tarea 7.1: Contrato interpretativo
+
+- [x] Definir bandas individuales de idoneidad y diferencias comparativas.
+- [x] Cubrir las 36 combinaciones posibles entre los niveles de Gemini y NotebookLM.
+- [x] Documentar casos de referencia como 36–41, 53–71 y 87–92.
+- [x] Registrar la matriz en `data/result-interpretations.v1.json`.
+
+### Tarea 7.2: Riesgos e integración
+
+- [x] Identificar criterios de privacidad y no uso que no pueden compensarse con la puntuación global.
+- [x] Incorporar polaridad y severidad al contrato del cuestionario y al evaluador interpretativo.
+- [x] Implementar el evaluador que combine puntuaciones, respuestas crudas y matriz.
+- [x] Mostrar informes interpretativos en la interfaz después de validar los bloqueos.
+
+## Fase 8 — Preparación de producción y validación
+
+### Tarea 8.1: Puertas de calidad
+
+- [x] Comprobar sintaxis, JSON, formato y enlaces provisionales.
+- [x] Automatizar los flujos críticos en Chromium de escritorio y móvil.
+- [x] Incorporar axe y corregir infracciones graves de contraste.
+- [x] Auditar dependencias y automatizar sus actualizaciones.
+
+### Tarea 8.2: Evidencia metodológica
+
+- [x] Documentar el protocolo de calibración y sus criterios de aceptación.
+- [ ] Ejecutar el piloto con casos reales y evaluadores expertos.
+- [ ] Ajustar pesos y bandas únicamente si la evidencia lo justifica.
+- [ ] Aprobar y versionar la primera matriz interpretativa no provisional.
 
 ## Riesgos y mitigaciones
 

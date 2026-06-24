@@ -647,6 +647,13 @@
           "id": "c11q02",
           "label": "Uso con cuenta personal de alumnado",
           "description": "No recomendable como práctica institucional ordinaria.",
+          "risk": {
+            "polarity": "risk",
+            "severity": "conditional",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "El uso institucional con cuentas personales del alumnado requiere revisar política, edad y permisos."
+          },
           "defaultWeights": {
             "gemini": 3,
             "notebooklm": 3
@@ -656,6 +663,13 @@
           "id": "c11q03",
           "label": "Datos personales de alumnado",
           "description": "No debe usarse salvo base jurídica, minimización y validación expresa.",
+          "risk": {
+            "polarity": "contraindication",
+            "severity": "blocking",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "No introducir datos personales del alumnado sin base jurídica, minimización y validación expresa."
+          },
           "defaultWeights": {
             "gemini": 1,
             "notebooklm": 1
@@ -665,6 +679,13 @@
           "id": "c11q04",
           "label": "Informes psicopedagógicos o salud",
           "description": "No recomendable.",
+          "risk": {
+            "polarity": "contraindication",
+            "severity": "blocking",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "No utilizar informes psicopedagógicos o datos de salud."
+          },
           "defaultWeights": {
             "gemini": 1,
             "notebooklm": 1
@@ -701,6 +722,13 @@
           "id": "c11q08",
           "label": "Datos de evaluación nominal",
           "description": "No recomendable para corrección o análisis individual identificable.",
+          "risk": {
+            "polarity": "contraindication",
+            "severity": "blocking",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "No utilizar datos nominales de evaluación para corrección o análisis individual identificable."
+          },
           "defaultWeights": {
             "gemini": 2,
             "notebooklm": 2
@@ -1054,6 +1082,13 @@
           "id": "c18q01",
           "label": "Prueba individual sin ayudas",
           "description": "No conviene ninguna.",
+          "risk": {
+            "polarity": "contraindication",
+            "severity": "blocking",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "Una prueba individual sin ayudas excluye el uso de ambas herramientas."
+          },
           "defaultWeights": {
             "gemini": 1,
             "notebooklm": 1
@@ -1063,6 +1098,13 @@
           "id": "c18q02",
           "label": "Datos sensibles o identificables",
           "description": "No conviene ninguna.",
+          "risk": {
+            "polarity": "contraindication",
+            "severity": "blocking",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "La presencia de datos sensibles o identificables excluye el uso de ambas herramientas."
+          },
           "defaultWeights": {
             "gemini": 1,
             "notebooklm": 1
@@ -1072,6 +1114,13 @@
           "id": "c18q03",
           "label": "Tarea básica de automatización cognitiva",
           "description": "No conviene si impide consolidar cálculo, lectura, escritura o memoria básica.",
+          "risk": {
+            "polarity": "risk",
+            "severity": "conditional",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "Evitar el uso si sustituye la consolidación de capacidades cognitivas básicas."
+          },
           "defaultWeights": {
             "gemini": 2,
             "notebooklm": 2
@@ -1081,6 +1130,13 @@
           "id": "c18q04",
           "label": "Falta de dispositivos o acceso desigual",
           "description": "No conviene implantar como obligatoria si aumenta brechas.",
+          "risk": {
+            "polarity": "risk",
+            "severity": "conditional",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "No implantar como obligatoria si aumenta la brecha de acceso."
+          },
           "defaultWeights": {
             "gemini": 3,
             "notebooklm": 3
@@ -1090,6 +1146,13 @@
           "id": "c18q05",
           "label": "Docente sin formación mínima",
           "description": "No conviene como uso autónomo del alumnado.",
+          "risk": {
+            "polarity": "risk",
+            "severity": "conditional",
+            "triggerAnswerMinimum": 3,
+            "scope": "both_tools",
+            "message": "Sin formación docente mínima no procede el uso autónomo por el alumnado."
+          },
           "defaultWeights": {
             "gemini": 4,
             "notebooklm": 4

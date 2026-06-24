@@ -30,6 +30,16 @@ test("todos los identificadores son únicos y los pesos están entre 1 y 10", as
   assert.equal(validation.valid, true);
 });
 
+test("los criterios sensibles declaran polaridad, severidad y umbral", async () => {
+  const questionnaire = await loadQuestionnaire();
+  const risks = questionnaire.categories.flatMap((category) => category.criteria).filter((criterion) => criterion.risk);
+
+  assert.ok(risks.length >= 9);
+  assert.ok(risks.some((criterion) => criterion.risk.severity === "blocking"));
+  assert.ok(risks.some((criterion) => criterion.risk.severity === "conditional"));
+  assert.equal(validateQuestionnaire(questionnaire).valid, true);
+});
+
 test("el validador acepta pesos decimales y rechaza valores fuera de rango", () => {
   const fixture = {
     schemaVersion: "1.0",
@@ -57,6 +67,39 @@ test("el validador acepta pesos decimales y rechaza valores fuera de rango", () 
   assert.match(invalid.errors.join("\n"), /defaultWeights\.gemini/);
 });
 
+test("el validador rechaza metadatos de riesgo ambiguos", () => {
+  const fixture = {
+    schemaVersion: "1.0",
+    questionnaireId: "fixture",
+    questionnaireVersion: "1.0.0",
+    categories: [{
+      id: "category",
+      label: "Categoría",
+      color: "#003DA5",
+      defaultWeight: 1,
+      criteria: [{
+        id: "criterion",
+        label: "Criterio",
+        description: "Descripción",
+        defaultWeights: { gemini: 2, notebooklm: 2 },
+        risk: {
+          polarity: "unknown",
+          severity: "critical",
+          triggerAnswerMinimum: 5,
+          scope: "one_tool",
+          message: ""
+        }
+      }]
+    }]
+  };
+
+  const validation = validateQuestionnaire(fixture);
+  assert.equal(validation.valid, false);
+  assert.match(validation.errors.join("\n"), /risk\.polarity/);
+  assert.match(validation.errors.join("\n"), /risk\.severity/);
+  assert.match(validation.errors.join("\n"), /triggerAnswerMinimum/);
+});
+
 test("el JSON conserva textos, colores e importancias de eleccion_2.html", async () => {
   const questionnaire = await loadQuestionnaire();
   const source = await readFile(new URL("../../eleccion_2.html", import.meta.url), "utf8");
@@ -82,7 +125,12 @@ test("el JSON conserva textos, colores e importancias de eleccion_2.html", async
   const extractedData = questionnaire.categories.map(category => ({
     label: category.label,
     color: category.color,
-    criteria: category.criteria
+    criteria: category.criteria.map(criterion => ({
+      id: criterion.id,
+      label: criterion.label,
+      description: criterion.description,
+      defaultWeights: criterion.defaultWeights
+    }))
   }));
 
   assert.deepEqual(extractedData, legacyData);

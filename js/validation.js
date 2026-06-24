@@ -2,6 +2,9 @@ const WEIGHT_MINIMUM = 1;
 const WEIGHT_MAXIMUM = 10;
 const HEX_COLOR = /^#[0-9A-F]{6}$/i;
 const IDENTIFIER = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const RISK_POLARITIES = new Set(["risk", "contraindication"]);
+const RISK_SEVERITIES = new Set(["conditional", "blocking"]);
+const RISK_SCOPES = new Set(["both_tools", "per_tool"]);
 
 export function validateQuestionnaire(questionnaire) {
   const errors = [];
@@ -50,10 +53,28 @@ export function validateQuestionnaire(questionnaire) {
       if (!requireObject(criterion.defaultWeights, `${criterionPath}.defaultWeights`, errors)) return;
       requireWeight(criterion.defaultWeights.gemini, `${criterionPath}.defaultWeights.gemini`, errors);
       requireWeight(criterion.defaultWeights.notebooklm, `${criterionPath}.defaultWeights.notebooklm`, errors);
+      if (criterion.risk !== undefined) validateRisk(criterion.risk, `${criterionPath}.risk`, errors);
     });
   });
 
   return { valid: errors.length === 0, errors };
+}
+
+function validateRisk(risk, path, errors) {
+  if (!requireObject(risk, path, errors)) return;
+  if (!RISK_POLARITIES.has(risk.polarity)) {
+    errors.push(`${path}.polarity debe ser "risk" o "contraindication".`);
+  }
+  if (!RISK_SEVERITIES.has(risk.severity)) {
+    errors.push(`${path}.severity debe ser "conditional" o "blocking".`);
+  }
+  if (!Number.isInteger(risk.triggerAnswerMinimum) || risk.triggerAnswerMinimum < 1 || risk.triggerAnswerMinimum > 4) {
+    errors.push(`${path}.triggerAnswerMinimum debe ser un entero entre 1 y 4.`);
+  }
+  if (!RISK_SCOPES.has(risk.scope)) {
+    errors.push(`${path}.scope debe ser "both_tools" o "per_tool".`);
+  }
+  requireNonEmptyString(risk.message, `${path}.message`, errors);
 }
 
 function requireObject(value, path, errors) {

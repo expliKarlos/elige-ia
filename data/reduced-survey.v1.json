@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "mode": "category-weighted",
+  "title": "Diagnóstico rápido por categorías",
+  "scale": [
+    { "value": 1, "label": "No encaja", "description": "La herramienta apenas responde a las necesidades de esta categoría." },
+    { "value": 2, "label": "Encaje limitado", "description": "Responde parcialmente, con carencias relevantes." },
+    { "value": 3, "label": "Buen encaje", "description": "Responde de forma suficiente a la mayoría de las necesidades." },
+    { "value": 4, "label": "Encaje excelente", "description": "Responde de forma sólida y completa a esta categoría." }
+  ],
+  "safetyChecks": [
+    {
+      "criterionId": "c11q03",
+      "prompt": "¿El uso previsto incluye datos personales identificables del alumnado?"
+    },
+    {
+      "criterionId": "c11q04",
+      "prompt": "¿Se utilizarán informes psicopedagógicos, información de salud u otros datos especialmente sensibles?"
+    },
+    {
+      "criterionId": "c11q08",
+      "prompt": "¿Se introducirán datos nominales de evaluación para corregir o analizar casos individuales?"
+    },
+    {
+      "criterionId": "c18q01",
+      "prompt": "¿La actividad es una prueba individual en la que no están permitidas ayudas externas?"
+    },
+    {
+      "criterionId": "c18q02",
+      "prompt": "¿La tarea requiere introducir información sensible o identificable?"
+    }
+  ]
+}

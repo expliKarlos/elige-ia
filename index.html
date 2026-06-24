@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Encuesta ponderada para elegir entre Gemini y NotebookLM.">
+  <meta name="description" content="Encuesta ponderada de Gemini vs NotebookLM - Edición Premium Avant-Garde La Mesa Clara.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>¿Qué herramienta utilizo? · Gemini vs NotebookLM</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23003DA5'/%3E%3Cpath d='M32 10l5.4 14.7 15.6.6-12.3 9.6 4.2 15L32 41.3 19.1 50l4.2-15L11 25.3l15.6-.6z' fill='none' stroke='%23F0B323' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <title>¿Qué herramienta utilizo? · expliCarlos (Avant-Garde)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F3A5F'/%3E%3Cpath d='M32 12l4.8 13.2 14 .5-11 8.6 3.8 13.5-11.6-7.8-11.6 7.8 3.8-13.5-11-8.6 14-.5z' fill='none' stroke='%23D9825B' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
@@ -14,12 +14,41 @@
 
   <div class="app-shell">
     <header class="hero" aria-labelledby="page-title">
-      <svg class="brand-star" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-        <path d="M60 8 73.2 43.8 111 45.4 81.3 68.8 91.5 105.2 60 84.3 28.5 105.2 38.7 68.8 9 45.4 46.8 43.8Z" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Elementos visuales de dibujo técnico (Avant-Garde) -->
+      <div class="blueprint-crosshair tl" aria-hidden="true">+</div>
+      <div class="blueprint-crosshair tr" aria-hidden="true">+</div>
+      <div class="blueprint-crosshair bl" aria-hidden="true">+</div>
+      <div class="blueprint-crosshair br" aria-hidden="true">+</div>
+      <div class="blueprint-metadata ml" aria-hidden="true">SYS.ID: GEMINI_VS_NOTEBOOK // R-01</div>
+      <div class="blueprint-metadata mr" aria-hidden="true">SCALE: 1:100 // PLOT: OK</div>
+      <div class="blueprint-metadata bl_text" aria-hidden="true">[COORD: 41°23'N / 2°10'E]</div>
+      <div class="blueprint-metadata br_text" aria-hidden="true">REV: 2026.06 // OPERATIONAL</div>
+
+      <!-- Esquema técnico vectorial animado en segundo plano -->
+      <svg class="hero-blueprint-svg" viewBox="0 0 200 200" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="100" cy="100" r="80" stroke-dasharray="2 3" />
+        <circle cx="100" cy="100" r="50" />
+        <circle cx="100" cy="100" r="20" stroke-dasharray="1 1" />
+        <line x1="20" y1="100" x2="180" y2="100" stroke-dasharray="4 4" />
+        <line x1="100" y1="20" x2="100" y2="180" stroke-dasharray="4 4" />
+        <path d="M50,50 L150,150" stroke-dasharray="2 2" />
+        <path d="M150,50 L50,150" stroke-dasharray="2 2" />
+        <polygon points="100,60 135,120 65,120" stroke-dasharray="1 2" />
+        <polygon points="100,140 135,80 65,80" stroke-dasharray="1 2" />
       </svg>
-      <div class="eyebrow">Matriz operativa · Encuesta interactiva</div>
-      <h1 id="page-title">¿Qué herramienta utilizo?</h1>
-      <p>Evalúa cada criterio por separado para las dos herramientas. La encuesta se muestra por categorías para reducir longitud visual. El resultado se normaliza automáticamente a una escala de 0 a 100.</p>
+
+      <div class="eyebrow">ENCUESTA INTERACTIVA - MATRIZ OPERATIVA</div>
+      <div class="hero-title-group">
+        <h1 id="page-title">
+          <span class="hero-title-top">
+            <span class="hero-title-name">Gemini</span>
+            <span class="hero-title-vs" aria-label="versus">vs</span>
+            <span class="hero-title-name">NotebookLM</span>
+          </span>
+          <span class="hero-main-title">¿Qué herramienta utilizo?</span>
+        </h1>
+      </div>
+      <p class="hero-description">Evalúa cada criterio por separado para ambas herramientas y obtén su puntuación sobre un total de 100 puntos.</p>
       <div class="hero-stats" aria-label="Resumen de la encuesta">
         <div class="stat-tile"><strong id="statCats">0</strong><span>categorías</span></div>
         <div class="stat-tile"><strong id="statQuestions">0</strong><span>preguntas</span></div>
@@ -28,7 +57,8 @@
       </div>
     </header>
 
-    <section class="scale-card" aria-labelledby="scale-title">
+    <section class="scale-card" aria-labelledby="scale-title" style="display: none;">
+      <!-- La escala de valoración ahora está integrada contextualmente en las opciones de respuesta -->
       <h2 id="scale-title">Escala de valoración</h2>
       <div class="scale-list">
         <div class="scale-item"><strong>1</strong><span>No corresponde</span></div>
@@ -48,25 +78,19 @@
           <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
         </div>
         <button type="button" class="btn btn-ghost" id="configBtn" aria-expanded="false" aria-controls="categoryConfig">Categorías y pesos</button>
-        <button type="button" class="btn btn-ghost" id="resetBtn">Reiniciar</button>
+
+        <!-- Botón unificado para acceder al modal de Datos y Configuración -->
+        <button type="button" class="btn btn-ghost" id="openDataDialogBtn" aria-label="Datos y copia de seguridad">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 6px; vertical-align: middle;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Datos y Copia
+        </button>
+
         <button type="button" class="btn btn-primary" id="finishBtn">Finalizar encuesta</button>
       </div>
     </div>
-
-    <section class="data-exchange" aria-labelledby="data-exchange-title">
-      <div>
-        <p class="data-exchange-kicker">Datos bajo tu control</p>
-        <h2 id="data-exchange-title">Guardar, compartir o recuperar</h2>
-        <p>Los archivos se procesan únicamente en este navegador y no se envían a ningún servidor.</p>
-      </div>
-      <div class="data-exchange-actions">
-        <button type="button" class="btn btn-ghost" id="exportSessionBtn">Descargar sesión JSON</button>
-        <button type="button" class="btn btn-ghost" id="exportWeightsBtn">Descargar pesos JSON</button>
-        <button type="button" class="btn btn-primary" id="importJsonBtn">Importar JSON</button>
-        <input class="sr-only" type="file" id="importJsonFile" accept="application/json,.json" aria-label="Seleccionar archivo JSON para importar">
-      </div>
-      <p class="data-exchange-status" id="dataExchangeStatus" role="status" aria-live="polite"></p>
-    </section>
 
     <section class="category-config" id="categoryConfig" aria-labelledby="category-config-title"></section>
 
@@ -82,14 +106,67 @@
         <section class="survey" id="surveyRoot" aria-label="Preguntas de la encuesta por categoría"></section>
       </div>
     </main>
+
+    <footer class="app-footer">
+      <img src="./img/expliCarlos_logo.png" alt="expliCarlos" class="footer-logo">
+      <span class="footer-tagline">Entenderlo cambia cómo lo ves.</span>
+      <div class="footer-meta-line">
+        <span>&copy; expliCarlos</span>
+        <span class="footer-meta-sep">|</span>
+        <span>Repositorio GitHub pendiente de publicación</span>
+        <span class="footer-meta-sep">|</span>
+        <span>Versión: GEMINI_VS_NOTEBOOK // R-01 (2026.06)</span>
+        <span class="footer-meta-sep">|</span>
+        <span>&copy; Contenido: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener" class="footer-meta-link">CC BY-SA 4.0</a></span>
+        <span class="footer-meta-sep">|</span>
+        <span>&lt;/&gt; Código: <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener" class="footer-meta-link">AGPLv3</a></span>
+      </div>
+    </footer>
   </div>
 
+  <!-- Ventana Modal: Datos bajo tu control (Propuesta 1) -->
+  <dialog class="data-dialog" id="dataDialog" aria-labelledby="dataDialogTitle">
+    <div class="data-dialog-head">
+      <div>
+        <p>Ajustes locales</p>
+        <h2 id="dataDialogTitle">Datos y Configuración</h2>
+      </div>
+      <button type="button" class="btn data-dialog-close" id="closeDataDialogBtn" aria-label="Cerrar ventana">×</button>
+    </div>
+    <div class="data-dialog-body">
+      <p>Todas las operaciones se realizan exclusivamente en este navegador. Tus archivos nunca son enviados a servidores externos.</p>
+
+      <section class="data-dialog-section">
+        <h3>Copia de Seguridad y Transferencia</h3>
+        <p>Guarda tu sesión con las respuestas actuales, o exporta únicamente las ponderaciones de categorías y criterios en un archivo JSON.</p>
+        <div class="data-dialog-actions">
+          <button type="button" class="btn btn-ghost" id="exportSessionBtn">Descargar sesión JSON</button>
+          <button type="button" class="btn btn-ghost" id="exportWeightsBtn">Descargar pesos JSON</button>
+          <button type="button" class="btn btn-primary" id="importJsonBtn">Importar JSON</button>
+          <input class="sr-only" type="file" id="importJsonFile" accept="application/json,.json" aria-label="Seleccionar archivo JSON para importar">
+        </div>
+      </section>
+
+      <section class="data-dialog-section data-dialog-danger">
+        <h3>Zona de Peligro</h3>
+        <p>Restablece la encuesta a su estado inicial: borra las respuestas, selecciona todas las categorías y recupera los pesos predeterminados.</p>
+        <div class="data-dialog-actions">
+          <button type="button" class="btn btn-danger" id="resetBtn">Reiniciar encuesta</button>
+        </div>
+      </section>
+
+      <p class="data-dialog-status" id="dataExchangeStatus" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <!-- Modal para Visualización de Categorías Individuales -->
   <div class="category-dashboard" id="categoryDashboard" aria-hidden="true">
     <section class="category-dashboard-dialog" role="dialog" aria-modal="true" aria-labelledby="categoryDashboardTitle" tabindex="-1">
       <div id="categoryDashboardContent"></div>
     </section>
   </div>
 
+  <!-- Modal para Confirmación de Importación de Archivos -->
   <dialog class="import-dialog" id="importDialog" aria-labelledby="importDialogTitle">
     <div class="import-dialog-head">
       <div><p>Vista previa segura</p><h2 id="importDialogTitle">Confirmar importación</h2></div>
@@ -110,6 +187,10 @@
       </div>
     </div>
   </dialog>
+
   <script type="module" src="./js/app.js"></script>
+
+  <!-- Guión de optimizaciones de Experiencia de Usuario (UX/UI) de origen local seguro (Previene bloqueo CSP) -->
+  <script type="module" src="./js/ux.js"></script>
 </body>
 </html>

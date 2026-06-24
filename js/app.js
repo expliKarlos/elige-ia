@@ -7,15 +7,21 @@ import {
 } from "./scoring.js";
 import { validateQuestionnaire } from "./validation.js";
 import {
+  interpretSurveyResults,
+  validateInterpretationMatrix
+} from "./interpretation.js";
+import {
   createSessionDocument,
   createWeightsDocument,
   parseImportText,
   serializeJson
 } from "./import-export.js";
 
-const questionnaire = await loadQuestionnaire();
+const applicationData = await loadApplicationData();
+const questionnaire = applicationData?.questionnaire;
+const interpretationMatrix = applicationData?.interpretationMatrix;
 
-if (questionnaire) {
+if (questionnaire && interpretationMatrix) {
   const MATRIX = questionnaire.categories.map(category => ({
     id: category.id,
     category: category.label,
@@ -127,8 +133,12 @@ if (questionnaire) {
       }
 
       function ensureActiveCategory() {
+        const firstSelected = MATRIX.findIndex((_, idx) => getCategoryPreference(idx).included);
+        const fallback = firstSelected !== -1 ? firstSelected : 0;
         if (!Number.isInteger(state.activeCategoryIndex) || state.activeCategoryIndex < 0 || state.activeCategoryIndex >= MATRIX.length) {
-          state.activeCategoryIndex = 0;
+          state.activeCategoryIndex = fallback;
+        } else if (!getCategoryPreference(state.activeCategoryIndex).included) {
+          state.activeCategoryIndex = fallback;
         }
       }
 
@@ -217,8 +227,11 @@ if (questionnaire) {
 
       function renderCategoryNav() {
         const nav = $("#categoryNav");
-        nav.innerHTML = MATRIX.map((category, index) => {
-          const pref = getCategoryPreference(index);
+        const selectedCategories = MATRIX.map((category, index) => {
+          return { category, index, pref: getCategoryPreference(index) };
+        }).filter(item => item.pref.included);
+
+        let html = selectedCategories.map(({ category, index, pref }) => {
           const categoryWeight = getCategoryWeight(index);
           return `
             <button type="button" class="cat-link" style="--cat:${category.color}" data-category-index="${index}" aria-label="Abrir categoría ${escapeAttr(category.category)}">
@@ -227,12 +240,28 @@ if (questionnaire) {
                 <span class="cat-name">${escapeHtml(category.category)}</span>
                 <span class="cat-metrics" aria-hidden="true">
                   <span class="cat-metric" id="catQuestions-${index}">0/${category.items.length}</span>
-                  <span class="cat-metric" id="catWeight-${index}">${pref.included ? formatWeight(categoryWeight) + "×" : "Off"}</span>
+                  <span class="cat-metric" id="catWeight-${index}">${formatWeight(categoryWeight)}×</span>
                 </span>
               </span>
             </button>
           `;
         }).join("");
+
+        const unselectedCount = MATRIX.length - selectedCategories.length;
+        if (unselectedCount > 0) {
+          html += `
+            <div class="category-nav-warning" role="alert">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>Hay <strong>${unselectedCount}</strong> ${unselectedCount === 1 ? "categoría" : "categorías"} sin seleccionar.</span>
+            </div>
+          `;
+        }
+
+        nav.innerHTML = html;
       }
 
       function renderCategoryControls() {
@@ -240,6 +269,9 @@ if (questionnaire) {
         const activeCount = getActiveCategories().length;
         const effectiveWeights = getEffectiveWeights();
         const modifiedCount = Object.keys(state.weightOverrides.categories).length + Object.keys(state.weightOverrides.criteria).length;
+        const allIncluded = MATRIX.every((_, idx) => getCategoryPreference(idx).included);
+        const toggleAllLabel = allIncluded ? "Desmarcar todas" : "Marcar todas";
+
         panel.innerHTML = `
           <div class="category-config-head">
             <div>
@@ -247,6 +279,7 @@ if (questionnaire) {
               <p>Activa las categorías relevantes y ajusta pesos decimales entre 1 y 10. Los resultados se recalculan con la configuración efectiva.</p>
             </div>
             <div class="category-config-actions">
+              <button type="button" class="btn btn-ghost" id="toggleAllCategoriesBtn">${toggleAllLabel}</button>
               <button type="button" class="btn btn-soft" id="resetAllWeights" ${modifiedCount ? "" : "disabled"}>Restaurar todos los pesos</button>
               <button type="button" class="btn btn-dark" id="closeConfigBtn">Cerrar</button>
             </div>
@@ -329,6 +362,21 @@ if (questionnaire) {
             persistWeightChange();
           });
         });
+        $("#toggleAllCategoriesBtn")?.addEventListener("click", () => {
+          const allIncludedNow = MATRIX.every((_, idx) => getCategoryPreference(idx).included);
+          const targetState = !allIncludedNow;
+          MATRIX.forEach((_, idx) => {
+            getCategoryPreference(idx).included = targetState;
+          });
+          saveState();
+          renderCategoryNav();
+          renderCategoryControls();
+          renderSurvey();
+          updateProgress();
+          updateNavState();
+          refreshResultsIfVisible();
+        });
+
         $("#resetAllWeights")?.addEventListener("click", () => {
           if (!confirm("¿Restaurar todos los pesos predeterminados? Las respuestas no se modificarán.")) return;
           state.weightOverrides = { categories: {}, criteria: {} };
@@ -505,11 +553,17 @@ if (questionnaire) {
       }
 
       function getPreviousCategoryIndex(currentIndex) {
-        return currentIndex > 0 ? currentIndex - 1 : null;
+        for (let i = currentIndex - 1; i >= 0; i--) {
+          if (getCategoryPreference(i).included) return i;
+        }
+        return null;
       }
 
       function getNextCategoryIndex(currentIndex) {
-        return currentIndex < MATRIX.length - 1 ? currentIndex + 1 : null;
+        for (let i = currentIndex + 1; i < MATRIX.length; i++) {
+          if (getCategoryPreference(i).included) return i;
+        }
+        return null;
       }
 
       function setActiveCategory(index, options = {}) {
@@ -546,15 +600,21 @@ if (questionnaire) {
         $("#configBtn").addEventListener("click", () => toggleCategoryConfig());
         $("#finishBtn").addEventListener("click", finalizeSurvey);
         $("#resetBtn").addEventListener("click", () => {
-          const shouldReset = confirm("¿Quieres borrar todas las respuestas de esta encuesta? Se mantendrá la selección de categorías y pesos.");
+          const shouldReset = confirm("¿Quieres reiniciar la encuesta? Se borrarán las respuestas y se restaurarán todas las categorías y pesos predeterminados.");
           if (!shouldReset) return;
-          state.answers = {};
+          const initialState = normaliseState({});
+          Object.assign(state, initialState);
           saveState();
           $("#resultsPanel").classList.remove("is-visible");
           $("#validationPanel").classList.remove("is-visible");
+          renderCategoryNav();
+          renderCategoryControls();
           renderSurvey();
           updateProgress();
           updateNavState();
+          toggleCategoryConfig(false);
+          const dataDialog = $("#dataDialog");
+          if (dataDialog?.open) dataDialog.close();
           $("#contenido")?.scrollIntoView({ behavior: "smooth", block: "start" });
         });
 
@@ -576,6 +636,7 @@ if (questionnaire) {
         });
         document.addEventListener("keydown", event => {
           if (event.key === "Escape" && $("#categoryDashboard").classList.contains("is-visible")) closeCategoryDashboard();
+          if (event.key === "Escape" && $("#validationPanel").classList.contains("is-visible")) closeValidationPanel();
         });
       }
 
@@ -714,11 +775,20 @@ if (questionnaire) {
         }
 
         const results = calculateCategoryResults(categoryIndex);
+        const interpretation = interpretSurveyResults({
+          matrix: interpretationMatrix,
+          questionnaire,
+          answers: state.answers,
+          results,
+          context: {
+            isComplete: true,
+            scope: "category",
+            categoryIds: [category.id],
+            weightOverrideCount: Number(Boolean(state.weightOverrides.categories[category.id]))
+              + category.items.filter(item => state.weightOverrides.criteria[item.id]).length
+          }
+        });
         const modal = $("#categoryDashboard");
-        const diff = results.diff;
-        let verdict = "Ambas herramientas obtienen un resultado equilibrado en esta categoría.";
-        if (diff >= 3) verdict = `Gemini destaca por ${formatScore(diff)} puntos sobre 100 en esta categoría.`;
-        if (diff <= -3) verdict = `NotebookLM destaca por ${formatScore(Math.abs(diff))} puntos sobre 100 en esta categoría.`;
         $("#categoryDashboardContent").innerHTML = `
           <header class="category-dashboard-head" style="border-bottom:6px solid ${results.color}">
             <div><p class="category-dashboard-kicker">Resultado de una sola categoría</p><h2 id="categoryDashboardTitle">${escapeHtml(results.category)}</h2></div>
@@ -729,9 +799,9 @@ if (questionnaire) {
               ${renderCategoryScoreCard("Gemini", "gemini", results.geminiScore100, results.gemini, results.maxGemini)}
               ${renderCategoryScoreCard("NotebookLM", "notebook", results.notebookScore100, results.notebook, results.maxNotebook)}
             </div>
-            <p class="category-dashboard-verdict">${escapeHtml(verdict)}</p>
+            ${renderCategoryInterpretationSummary(interpretation)}
             <div class="category-radar-panel">
-              <div class="category-radar">${renderSingleCategoryRadar(results)}</div>
+              <div class="category-radar">${renderSingleCategoryRadar(results, "dashboard")}</div>
               <aside class="category-radar-copy">
                 <h3>Comparativa por criterio</h3>
                 <p>Cada eje representa un criterio de esta categoría. La escala va de 0 a 100: cuanto más lejos del centro, mayor es la valoración indicada.</p>
@@ -750,8 +820,24 @@ if (questionnaire) {
         return `<article class="category-score-card" style="--tool:var(--${tool})"><h3>${label}</h3><div class="category-score-value">${formatScore(score)}<small>/100</small></div><div class="category-score-meta">${fmt.format(raw)} puntos ponderados de ${fmt.format(maximum)} posibles</div><div class="bar" aria-hidden="true"><span style="width:${Math.min(score, 100)}%"></span></div></article>`;
       }
 
-      function renderSingleCategoryRadar(results) {
+      function renderCategoryInterpretationSummary(interpretation) {
+        const signals = interpretation.signals.length
+          ? `<ul>${interpretation.signals.map(signal => `<li><strong>${escapeHtml(signal.criterionLabel)}:</strong> ${escapeHtml(signal.message)}</li>`).join("")}</ul>`
+          : "";
+        return `
+          <section class="category-dashboard-verdict is-${escapeAttr(interpretation.status)}">
+            <strong>${escapeHtml(interpretation.jointProfile?.summary || "Resultado no interpretable.")}</strong>
+            <p>${escapeHtml(interpretation.primaryMessage)}</p>
+            <small>${escapeHtml(interpretation.comparison.band?.label || "Sin clasificación comparativa")}</small>
+            ${signals}
+          </section>`;
+      }
+
+      function renderSingleCategoryRadar(results, contextId = "breakdown") {
         const rows = results.criteria;
+        const idSuffix = `${contextId}-${String(results.categoryId).replace(/[^a-z0-9-]/gi, "-")}`;
+        const titleId = `singleRadarTitle-${idSuffix}`;
+        const descriptionId = `singleRadarDesc-${idSuffix}`;
         const size = 600;
         const center = 300;
         const radius = 190;
@@ -771,7 +857,7 @@ if (questionnaire) {
           const label = row.criterion.length > 24 ? row.criterion.slice(0, 22) + "…" : row.criterion;
           return `<text x="${labelX.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" fill="#FFFFFF" font-size="11" font-weight="800"><title>${escapeHtml(row.criterion)}</title>${escapeHtml(label)}</text>`;
         }).join("");
-        return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="singleRadarTitle singleRadarDesc"><title id="singleRadarTitle">Radar de ${escapeHtml(results.category)}</title><desc id="singleRadarDesc">Comparación de Gemini y NotebookLM por criterio, normalizada de cero a cien.</desc>${grid}${axes}<polygon points="${pointsFor("geminiScore100")}" fill="rgba(124,58,237,.30)" stroke="var(--gemini)" stroke-width="4"/><polygon points="${pointsFor("notebookScore100")}" fill="rgba(14,165,233,.25)" stroke="var(--notebook)" stroke-width="4"/>${labels}</svg>`;
+        return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="${titleId} ${descriptionId}"><title id="${titleId}">Radar de ${escapeHtml(results.category)}</title><desc id="${descriptionId}">Comparación de Gemini y NotebookLM por criterio, normalizada de cero a cien.</desc>${grid}${axes}<polygon points="${pointsFor("geminiScore100")}" fill="rgba(124,58,237,.30)" stroke="var(--gemini)" stroke-width="4"/><polygon points="${pointsFor("notebookScore100")}" fill="rgba(14,165,233,.25)" stroke="var(--notebook)" stroke-width="4"/>${labels}</svg>`;
       }
 
       function closeCategoryDashboard() {
@@ -860,7 +946,10 @@ if (questionnaire) {
         const panel = $("#validationPanel");
         const first = pending[0];
         panel.innerHTML = `
-          <h2>Faltan respuestas por completar</h2>
+          <div class="validation-head">
+            <h2>Faltan respuestas por completar</h2>
+            <button type="button" class="validation-close" id="closeValidationBtn" aria-label="Cerrar aviso de respuestas pendientes">×</button>
+          </div>
           <p>Quedan ${pending.length} preguntas incompletas. El botón abre la categoría correspondiente y enfoca la primera pregunta pendiente.</p>
           <button type="button" class="btn btn-primary" id="goFirstPending">Ir a la primera pendiente</button>
           <ul class="validation-list">
@@ -870,6 +959,7 @@ if (questionnaire) {
         `;
         panel.classList.add("is-visible");
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        $("#closeValidationBtn").addEventListener("click", closeValidationPanel);
         $("#goFirstPending").addEventListener("click", () => {
           setActiveCategory(first.categoryIndex, { scroll: false });
           updateProgress();
@@ -880,6 +970,14 @@ if (questionnaire) {
             card?.scrollIntoView({ behavior: "smooth", block: "center" });
           }, 60);
         });
+        $("#closeValidationBtn").focus({ preventScroll: true });
+      }
+
+      function closeValidationPanel() {
+        const panel = $("#validationPanel");
+        panel.classList.remove("is-visible");
+        panel.innerHTML = "";
+        $("#finishBtn")?.focus({ preventScroll: true });
       }
 
       function calculateResults() {
@@ -896,13 +994,17 @@ if (questionnaire) {
       }
 
       function renderResults(results) {
-        const diff = results.diff;
-        let winnerText = "Resultado equilibrado: ambas herramientas tienen un encaje similar según las respuestas introducidas.";
-        if (diff >= 3) winnerText = `Gemini queda por encima por ${formatScore(diff)} puntos sobre 100. Conviene revisar especialmente tareas creativas, conversacionales o de prototipado.`;
-        if (diff <= -3) winnerText = `NotebookLM queda por encima por ${formatScore(Math.abs(diff))} puntos sobre 100. Conviene revisar especialmente tareas con fuentes, citas, estudio guiado y trazabilidad.`;
-
         const activeRows = results.categories.filter(row => row.included);
         const excludedRows = results.categories.filter(row => !row.included);
+        const weightOverrideCount = Object.keys(state.weightOverrides.categories).length
+          + Object.keys(state.weightOverrides.criteria).length;
+        const interpretation = interpretSurveyResults({
+          matrix: interpretationMatrix,
+          questionnaire,
+          answers: state.answers,
+          results,
+          context: { isComplete: true, weightOverrideCount }
+        });
 
         $("#resultsPanel").innerHTML = `
           <div class="results-head">
@@ -914,12 +1016,14 @@ if (questionnaire) {
               <h3>Gemini</h3>
               <div class="score-value">${formatScore(results.geminiScore100)}</div>
               <div class="score-sub">${fmt.format(results.gemini)} puntos de ${fmt.format(results.maxGemini)} posibles</div>
+              <div class="score-band">${escapeHtml(interpretation.tools.gemini.band.label)}</div>
               <div class="bar" aria-hidden="true"><span style="width:${Math.min(results.geminiScore100, 100)}%"></span></div>
             </article>
             <article class="score-card" style="--tool:var(--notebook)">
               <h3>NotebookLM</h3>
               <div class="score-value">${formatScore(results.notebookScore100)}</div>
               <div class="score-sub">${fmt.format(results.notebook)} puntos de ${fmt.format(results.maxNotebook)} posibles</div>
+              <div class="score-band">${escapeHtml(interpretation.tools.notebookLm.band.label)}</div>
               <div class="bar" aria-hidden="true"><span style="width:${Math.min(results.notebookScore100, 100)}%"></span></div>
             </article>
           </div>
@@ -927,24 +1031,22 @@ if (questionnaire) {
             <div class="result-meta"><strong>${results.activeCategoryCount}</strong><span>categorías incluidas</span></div>
             <div class="result-meta"><strong>${formatWeight(results.categoryWeightTotal)}×</strong><span>suma de pesos de categoría</span></div>
             <div class="result-meta"><strong>${results.excludedCategoryCount}</strong><span>categorías excluidas</span></div>
-            <div class="result-meta"><strong>${Object.keys(state.weightOverrides.categories).length + Object.keys(state.weightOverrides.criteria).length}</strong><span>grupos de pesos modificados</span></div>
+            <div class="result-meta"><strong>${weightOverrideCount}</strong><span>grupos de pesos modificados</span></div>
           </div>
-          <div class="winner">${escapeHtml(winnerText)}</div>
+          ${renderInterpretationReport(interpretation)}
           <div class="breakdown-actions">
             <button type="button" class="btn btn-dark" id="breakdownBtn" aria-expanded="false" aria-controls="categoryDetails">Ver desglose por categoría</button>
           </div>
           <section class="category-details" id="categoryDetails" hidden>
-            <div class="radar-panel">
-              <div class="radar-card">${renderRadarChart(activeRows)}</div>
-              <aside class="legend-card">
-                <h3>Lectura del radar</h3>
-                <p>Cada eje representa una categoría incluida. Cuanto más lejos del centro, mayor puntuación normalizada de la herramienta en esa categoría.</p>
-                <div class="radar-legend-item"><span class="legend-dot" style="--legend:var(--gemini)"></span><span>Gemini</span></div>
-                <div class="radar-legend-item"><span class="legend-dot" style="--legend:var(--notebook)"></span><span>NotebookLM</span></div>
-              </aside>
+            <div class="category-breakdown-list">
+              ${renderCategoryBreakdownSections(activeRows)}
             </div>
-            ${renderCategoryTable(activeRows, excludedRows)}
+            ${renderExcludedCategorySummary(excludedRows)}
           </section>
+          <div class="pdf-actions">
+            <button type="button" class="btn btn-primary" id="printReportBtn">Guardar informe como PDF</button>
+            <p>Se abrirá el diálogo de impresión con una versión del informe sin navegación lateral.</p>
+          </div>
         `;
 
         $("#breakdownBtn")?.addEventListener("click", event => {
@@ -955,6 +1057,100 @@ if (questionnaire) {
           event.currentTarget.textContent = isHidden ? "Ocultar desglose por categoría" : "Ver desglose por categoría";
           if (isHidden) details.scrollIntoView({ behavior: "smooth", block: "start" });
         });
+        $("#printReportBtn")?.addEventListener("click", printReport);
+      }
+
+      function renderInterpretationReport(interpretation) {
+        const titleByStatus = {
+          ready: "Interpretación del resultado",
+          conditional: "Resultado condicionado",
+          blocked: "Uso no recomendado",
+          not_interpretable: "Resultado no interpretable"
+        };
+        const signals = interpretation.signals.length
+          ? `<div class="interpretation-signals"><h4>Condiciones detectadas</h4><ul>${interpretation.signals.map(signal => `<li class="is-${escapeAttr(signal.severity)}"><strong>${escapeHtml(signal.criterionLabel)}:</strong> ${escapeHtml(signal.message)}</li>`).join("")}</ul></div>`
+          : "";
+        const disclosures = interpretation.disclosures.length
+          ? `<ul class="interpretation-disclosures">${interpretation.disclosures.map(item => `<li>${escapeHtml(item.message)}</li>`).join("")}</ul>`
+          : "";
+        return `
+          <section class="interpretation-report is-${escapeAttr(interpretation.status)}" aria-labelledby="interpretation-title">
+            <div class="interpretation-heading">
+              <p>Lectura conjunta · ${escapeHtml(interpretation.comparison.band?.label || "Sin clasificación")}</p>
+              <h3 id="interpretation-title">${titleByStatus[interpretation.status]}</h3>
+            </div>
+            <p class="interpretation-primary">${escapeHtml(interpretation.primaryMessage)}</p>
+            ${signals}
+            <div class="interpretation-actions"><h4>Actuación sugerida</h4><ul>${interpretation.recommendedActions.map(action => `<li>${escapeHtml(action)}</li>`).join("")}</ul></div>
+            ${disclosures}
+          </section>`;
+      }
+
+      function renderCategoryBreakdownSections(rows) {
+        return rows.map((row, position) => {
+          const categoryIndex = MATRIX.findIndex(category => category.id === row.categoryId);
+          const categoryResults = calculateCategoryResults(categoryIndex);
+          const category = MATRIX[categoryIndex];
+          const interpretation = interpretSurveyResults({
+            matrix: interpretationMatrix,
+            questionnaire,
+            answers: state.answers,
+            results: categoryResults,
+            context: {
+              isComplete: true,
+              scope: "category",
+              categoryIds: [category.id],
+              weightOverrideCount: Number(Boolean(state.weightOverrides.categories[category.id]))
+                + category.items.filter(item => state.weightOverrides.criteria[item.id]).length
+            }
+          });
+
+          return `
+            <article class="category-breakdown-card" style="--cat:${escapeAttr(row.color)}">
+              <header class="category-breakdown-head">
+                <div>
+                  <p>Categoría ${position + 1} de ${rows.length}</p>
+                  <h3>${escapeHtml(row.category)}</h3>
+                </div>
+                <span>${row.questionCount} criterios · peso ${formatWeight(row.relevance)}×</span>
+              </header>
+              <div class="category-score-grid">
+                ${renderCategoryScoreCard("Gemini", "gemini", categoryResults.geminiScore100, categoryResults.gemini, categoryResults.maxGemini)}
+                ${renderCategoryScoreCard("NotebookLM", "notebook", categoryResults.notebookScore100, categoryResults.notebook, categoryResults.maxNotebook)}
+              </div>
+              ${renderCategoryInterpretationSummary(interpretation)}
+              <div class="category-breakdown-radar">
+                <div class="category-radar">${renderSingleCategoryRadar(categoryResults)}</div>
+                <aside>
+                  <h4>Comparativa por criterio</h4>
+                  <p>Cada eje corresponde a un criterio de ${escapeHtml(row.category)}. La extensión de cada área muestra la valoración de Gemini y NotebookLM.</p>
+                  <div class="dashboard-legend"><span><i style="--legend:var(--gemini)"></i>Gemini</span><span><i style="--legend:var(--notebook)"></i>NotebookLM</span></div>
+                </aside>
+              </div>
+            </article>`;
+        }).join("");
+      }
+
+      function renderExcludedCategorySummary(rows) {
+        if (!rows.length) return "";
+        return `
+          <section class="excluded-category-summary">
+            <h3>Categorías excluidas</h3>
+            <p>No participan en la puntuación ni en los gráficos anteriores.</p>
+            <ul>${rows.map(row => `<li>${escapeHtml(row.category)} · peso configurado ${formatWeight(row.relevance)}×</li>`).join("")}</ul>
+          </section>`;
+      }
+
+      function printReport() {
+        const details = $("#categoryDetails");
+        const wasHidden = details?.hasAttribute("hidden") ?? true;
+        details?.removeAttribute("hidden");
+
+        const restore = () => {
+          if (wasHidden) details?.setAttribute("hidden", "");
+        };
+        window.addEventListener("afterprint", restore, { once: true });
+        window.print();
       }
 
       function renderRadarChart(rows) {
@@ -1071,14 +1267,23 @@ if (questionnaire) {
       }
 }
 
-async function loadQuestionnaire() {
+async function loadApplicationData() {
   try {
-    const response = await fetch("./data/questionnaire.v1.json");
-    if (!response.ok) throw new Error(`Respuesta HTTP ${response.status}.`);
-    const data = await response.json();
-    const validation = validateQuestionnaire(data);
-    if (!validation.valid) throw new Error(validation.errors.join(" "));
-    return data;
+    const [questionnaireResponse, interpretationResponse] = await Promise.all([
+      fetch("./data/questionnaire.v1.json"),
+      fetch("./data/result-interpretations.v1.json")
+    ]);
+    if (!questionnaireResponse.ok) throw new Error(`Cuestionario: respuesta HTTP ${questionnaireResponse.status}.`);
+    if (!interpretationResponse.ok) throw new Error(`Interpretaciones: respuesta HTTP ${interpretationResponse.status}.`);
+    const [questionnaire, interpretationMatrix] = await Promise.all([
+      questionnaireResponse.json(),
+      interpretationResponse.json()
+    ]);
+    const questionnaireValidation = validateQuestionnaire(questionnaire);
+    if (!questionnaireValidation.valid) throw new Error(questionnaireValidation.errors.join(" "));
+    const interpretationValidation = validateInterpretationMatrix(interpretationMatrix);
+    if (!interpretationValidation.valid) throw new Error(interpretationValidation.errors.join(" "));
+    return { questionnaire, interpretationMatrix };
   } catch (error) {
     renderLoadError(error instanceof Error ? error.message : String(error));
     return null;
@@ -1089,8 +1294,8 @@ function renderLoadError(detail) {
   document.body.innerHTML = `
     <main class="load-error" role="alert">
       <p class="load-error-kicker">No se ha podido iniciar la encuesta</p>
-      <h1>Revisa el archivo del cuestionario</h1>
-      <p>La aplicación no ha podido cargar o validar <code>data/questionnaire.v1.json</code>.</p>
+      <h1>Revisa los archivos de datos</h1>
+      <p>La aplicación no ha podido cargar o validar el cuestionario o la matriz de interpretación.</p>
       <details><summary>Detalle técnico</summary><pre>${escapeForError(detail)}</pre></details>
       <button type="button" class="btn btn-primary" id="retryLoad">Intentar de nuevo</button>
     </main>`;

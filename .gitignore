@@ -1,6 +1,9 @@
 node_modules/
 dist/
 coverage/
+_site/
+playwright-report/
+test-results/
 .env
 .env.*
 !.env.example
@@ -9,3 +12,4 @@ coverage/
 Thumbs.db
 .idea/
 .vscode/
+.tools/

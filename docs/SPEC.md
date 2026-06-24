@@ -24,6 +24,7 @@ El usuario principal es una persona o institución que necesita determinar qué 
 - Exportación e importación JSON.
 - Exportación independiente de la configuración de pesos.
 - Resultado global y resultado por categoría normalizados a 100.
+- Diagnóstico rápido independiente, ponderado por categorías y con controles críticos de seguridad.
 - Validación de archivos importados.
 - Compatibilidad con rutas relativas de GitHub Pages.
 - Pruebas del motor de cálculo, validación y flujos principales.
@@ -71,9 +72,10 @@ css/app.css                  Identidad visual y responsive
 js/app.js                    Orquestación e interfaz
 js/scoring.js                Motor puro de cálculo
 js/storage.js                Persistencia local
-js/import-export.js          JSON y XML
+js/import-export.js          Importación y exportación JSON
 js/validation.js             Validación y migración
 data/questionnaire.v1.json   Preguntas y pesos predeterminados
+data/result-interpretations.v1.json  Matriz versionada de interpretación
 schemas/                     Contratos documentados de intercambio
 scripts/                     Validadores ejecutables
 tests/                       Pruebas unitarias y de integración
@@ -139,6 +141,12 @@ La configuración de pesos también podrá descargarse como un JSON independient
 - Cada puntuación se normalizará sobre su máximo posible y se expresará entre 0 y 100.
 - Los cálculos globales y parciales utilizarán una única implementación del motor.
 - Los datos incompletos no producirán un resultado definitivo sin advertencia explícita.
+- Con la escala 1–4, una sesión completa produce puntuaciones entre 25 y 100; un valor inferior a 25 no es interpretable.
+- La interpretación combinará nivel absoluto, perfil conjunto y diferencia, en ese orden.
+- Las contraindicaciones de privacidad y no uso prevalecerán sobre las puntuaciones globales y no podrán compensarse mediante una media.
+- Excluir una categoría que contenga controles de riesgo conservará la comparación, pero condicionará cualquier decisión de adopción hasta completar esos controles.
+- El evaluador interpretativo aplicará polaridad y severidad por criterio antes de emitir recomendaciones.
+- La posición dentro de la horquilla efectiva podrá calcularse internamente como `(puntuación - 25) / 75 × 100`, pero no se mostrará en el informe principal.
 
 ## Estilo de código
 
@@ -162,9 +170,9 @@ export function scoreTo100(value, maximum) {
 
 - Unitarias: normalización, ponderación, validación y serialización JSON.
 - Integración: carga del cuestionario y restauración de una sesión.
-- Navegador: completar categoría, cambiar pesos, calcular, exportar e importar.
+- Navegador: Playwright verifica reinicio, diagnóstico reducido y bloqueos en escritorio y móvil.
 - Regresión: misma entrada y pesos que `eleccion_2.html` deben producir el mismo resultado.
-- Accesibilidad: navegación por teclado, nombres accesibles y cierre de diálogos.
+- Accesibilidad: auditoría axe sin infracciones graves o críticas en las entradas principales, además de navegación por teclado, nombres accesibles y cierre de diálogos.
 
 ## Límites operativos
 
@@ -183,7 +191,7 @@ export function scoreTo100(value, maximum) {
 - Cambiar límites permitidos para los pesos.
 - Incorporar telemetría, servicios externos o almacenamiento remoto.
 - Cambiar la licencia GNU AGPLv3 adoptada para el proyecto.
-- Retirar o sustituir la identidad visual La Salle.
+- Retirar o sustituir la identidad visual expliCarlos.
 
 ### No hacer
 
@@ -208,7 +216,8 @@ export function scoreTo100(value, maximum) {
 - Pesos de criterio: números decimales entre 1 y 10, ambos incluidos.
 - Intercambio: exclusivamente JSON; XML queda fuera de alcance.
 - Exportaciones: sesión completa y configuración de pesos por separado.
-- Marca: la implementación mantendrá por ahora la identidad visual La Salle.
+- Marca: la implementación utilizará la identidad visual expliCarlos.
 - Licencia del código: GNU Affero General Public License, versión 3 (`AGPL-3.0-only`).
+- Licencia del contenido: Creative Commons Atribución-CompartirIgual 4.0 Internacional (`CC BY-SA 4.0`).
 
-La licencia del código no concede por sí misma derechos de uso sobre nombres, logotipos ni otros signos identificativos de La Salle. Su tratamiento deberá documentarse separadamente para la publicación y los forks.
+Las licencias del código y del contenido no conceden por sí mismas derechos sobre el nombre, el logotipo ni otros signos identificativos de expliCarlos.

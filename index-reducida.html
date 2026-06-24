@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Diagnóstico rápido por categorías para elegir entre Gemini y NotebookLM.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Diagnóstico rápido · Gemini vs NotebookLM · expliCarlos</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F3A5F'/%3E%3Cpath d='M32 12l4.8 13.2 14 .5-11 8.6 3.8 13.5-11.6-7.8-11.6 7.8 3.8-13.5-11-8.6 14-.5z' fill='none' stroke='%23D9825B' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="stylesheet" href="./css/reduced.css">
+</head>
+<body class="reduced-mode">
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+  <div class="app-shell reduced-shell">
+    <header class="hero reduced-hero" aria-labelledby="page-title">
+      <div class="blueprint-crosshair tl" aria-hidden="true">+</div>
+      <div class="blueprint-crosshair tr" aria-hidden="true">+</div>
+      <div class="blueprint-metadata ml" aria-hidden="true">MODE: CATEGORY_WEIGHTED // QUICK-01</div>
+      <svg class="hero-blueprint-svg" viewBox="0 0 200 200" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="100" cy="100" r="80" stroke-dasharray="2 3"></circle>
+        <circle cx="100" cy="100" r="50"></circle>
+        <line x1="20" y1="100" x2="180" y2="100" stroke-dasharray="4 4"></line>
+        <line x1="100" y1="20" x2="100" y2="180" stroke-dasharray="4 4"></line>
+      </svg>
+      <p class="eyebrow">DIAGNÓSTICO RÁPIDO · 18 CATEGORÍAS</p>
+      <h1 id="page-title">
+        <span class="hero-title-top"><span class="hero-title-name">Gemini</span><span class="hero-title-vs">vs</span><span class="hero-title-name">NotebookLM</span></span>
+        <span class="hero-main-title">Evaluación reducida</span>
+      </h1>
+      <p class="hero-description">Valora el encaje general de cada herramienta por categoría y ajusta cuánto debe influir cada ámbito en el resultado.</p>
+      <div class="hero-stats" aria-label="Resumen del diagnóstico">
+        <div class="stat-tile"><strong id="statCats">18</strong><span>categorías</span></div>
+        <div class="stat-tile"><strong>36</strong><span>valoraciones</span></div>
+        <div class="stat-tile"><strong>5</strong><span>controles críticos</span></div>
+        <div class="stat-tile"><strong>≈ 8 min</strong><span>duración estimada</span></div>
+      </div>
+    </header>
+
+    <section class="quick-notice" aria-labelledby="quick-notice-title">
+      <div><span aria-hidden="true">Q</span></div>
+      <div>
+        <h2 id="quick-notice-title">Un diagnóstico orientativo, no una evaluación detallada</h2>
+        <p>Esta versión resume cada categoría en una sola valoración por herramienta. Sirve para orientar la elección inicial; si el resultado es ajustado, condicionado o de alto impacto, conviene completar la evaluación detallada.</p>
+      </div>
+      <a class="btn btn-ghost" href="./index.html">Ir a la versión completa</a>
+    </section>
+
+    <div class="toolbar reduced-toolbar" aria-label="Progreso y acciones">
+      <div class="toolbar-inner">
+        <div class="progress-wrap">
+          <div class="progress-meta"><span id="progressText">0 de 41 respuestas</span><span id="progressPercent">0%</span></div>
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <button type="button" class="btn btn-ghost" id="resetReducedBtn">Reiniciar</button>
+        <button type="button" class="btn btn-primary" id="finishReducedBtn">Obtener diagnóstico</button>
+      </div>
+    </div>
+
+    <main id="contenido" class="reduced-main">
+      <section class="validation-panel" id="reducedValidation" role="alert" aria-live="assertive"></section>
+      <section class="results reduced-results" id="reducedResults" aria-labelledby="results-title"></section>
+
+      <section class="reduced-intro" aria-labelledby="instructions-title">
+        <p class="section-kicker">PASO 1</p>
+        <h2 id="instructions-title">Valora cada categoría</h2>
+        <p>Indica cuánto encaja cada herramienta con tus necesidades. El peso expresa la importancia de la categoría: 1 significa influencia mínima y 10 influencia máxima.</p>
+        <div class="compact-scale" id="reducedScale" aria-label="Escala de valoración"></div>
+      </section>
+
+      <section class="reduced-survey" id="reducedSurveyRoot" aria-label="Valoración por categorías" aria-busy="true"></section>
+
+      <section class="safety-section" aria-labelledby="safety-title">
+        <p class="section-kicker">PASO 2 · OBLIGATORIO</p>
+        <h2 id="safety-title">Comprobación de seguridad</h2>
+        <p>Estas preguntas no suman puntos. Detectan situaciones que pueden impedir el uso de ambas herramientas aunque la puntuación sea alta.</p>
+        <div class="safety-list" id="safetyRoot" aria-busy="true"></div>
+      </section>
+
+      <div class="reduced-finish">
+        <button type="button" class="btn btn-primary" id="finishReducedBottomBtn">Obtener diagnóstico rápido</button>
+        <p>El cálculo se realiza exclusivamente en este navegador.</p>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <img src="./img/expliCarlos_logo.png" alt="expliCarlos" class="footer-logo">
+      <span class="footer-tagline">Entenderlo cambia cómo lo ves.</span>
+      <div class="footer-meta-line">
+        <span>Versión reducida: CATEGORY_WEIGHTED // QUICK-01</span><span class="footer-meta-sep">|</span>
+        <span>Contenido: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener" class="footer-meta-link">CC BY-SA 4.0</a></span><span class="footer-meta-sep">|</span>
+        <span>Código: <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener" class="footer-meta-link">AGPLv3</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="./js/app-reducida.js"></script>
+</body>
+</html>

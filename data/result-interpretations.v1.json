@@ -1,0 +1,417 @@
+{
+  "schemaVersion": "1.0.0",
+  "matrixId": "gemini-vs-notebooklm-result-interpretations",
+  "matrixVersion": "1.0.0",
+  "locale": "es-ES",
+  "status": "active-provisional-thresholds",
+  "title": "Matriz de interpretación de resultados de Gemini y NotebookLM",
+  "purpose": "Interpretar conjuntamente la idoneidad absoluta de cada herramienta, la diferencia entre ambas y las contraindicaciones que no pueden compensarse mediante una media.",
+  "scoreModel": {
+    "scaleMinimum": 0,
+    "scaleMaximum": 100,
+    "minimumValidCompleteScore": 25,
+    "displayPrecisionDecimals": 1,
+    "differenceFormula": "geminiScore100 - notebookLmScore100",
+    "absoluteDifferenceFormula": "abs(geminiScore100 - notebookLmScore100)",
+    "importantNote": "Con la escala actual de respuestas 1-4, una encuesta completa no puede producir una puntuación inferior a 25. Los valores de 0 a 24,9 indican datos incompletos, incompatibles o un método de cálculo diferente."
+  },
+  "interpretationPipeline": [
+    {
+      "priority": 1,
+      "step": "validate",
+      "description": "Comprobar versión, integridad, respuestas completas y rango de las puntuaciones."
+    },
+    {
+      "priority": 2,
+      "step": "applyGuardrails",
+      "description": "Evaluar primero las respuestas crudas de privacidad, seguridad y casos de no uso. Un bloqueo prevalece sobre cualquier puntuación global."
+    },
+    {
+      "priority": 3,
+      "step": "classifyIndividualScores",
+      "description": "Asignar una banda de idoneidad independiente a Gemini y NotebookLM."
+    },
+    {
+      "priority": 4,
+      "step": "classifyJointSuitability",
+      "description": "Buscar la combinación ordenada de ambas bandas en jointSuitabilityMatrix."
+    },
+    {
+      "priority": 5,
+      "step": "classifyDifference",
+      "description": "Interpretar la magnitud y dirección de la diferencia sin sustituir el perfil conjunto."
+    },
+    {
+      "priority": 6,
+      "step": "addCategoryEvidence",
+      "description": "Añadir categorías fuertes, débiles, excluidas y pesos modificados cuando estén disponibles."
+    }
+  ],
+  "individualBands": [
+    {
+      "id": "not_interpretable",
+      "rank": 0,
+      "range": { "minInclusive": 0, "maxExclusive": 25 },
+      "status": "invalid",
+      "label": "No interpretable",
+      "interpretation": "La puntuación no es posible con una encuesta completa en la escala actual.",
+      "recommendedActions": [
+        "No emitir una recomendación.",
+        "Comprobar respuestas incompletas, versión del cuestionario y método de cálculo."
+      ]
+    },
+    {
+      "id": "very_low",
+      "rank": 1,
+      "range": { "minInclusive": 25, "maxExclusive": 40 },
+      "status": "unsuitable",
+      "label": "Idoneidad muy baja",
+      "interpretation": "La herramienta presenta un encaje insuficiente con las necesidades declaradas.",
+      "recommendedActions": [
+        "No utilizarla como solución principal.",
+        "Revisar el propósito o considerar una alternativa diferente."
+      ]
+    },
+    {
+      "id": "limited",
+      "rank": 2,
+      "range": { "minInclusive": 40, "maxExclusive": 55 },
+      "status": "limited",
+      "label": "Idoneidad limitada",
+      "interpretation": "La herramienta cubre solo una parte de las necesidades y no alcanza un encaje suficiente como opción principal.",
+      "recommendedActions": [
+        "Limitar el uso a tareas concretas y no críticas.",
+        "Revisar las categorías que reducen la puntuación."
+      ]
+    },
+    {
+      "id": "conditional",
+      "rank": 3,
+      "range": { "minInclusive": 55, "maxExclusive": 70 },
+      "status": "conditional",
+      "label": "Idoneidad condicional",
+      "interpretation": "La herramienta puede ser útil si se acota el uso y se establecen condiciones de supervisión.",
+      "recommendedActions": [
+        "Realizar un piloto de alcance limitado.",
+        "Definir revisión humana y medidas para las categorías débiles."
+      ]
+    },
+    {
+      "id": "suitable",
+      "rank": 4,
+      "range": { "minInclusive": 70, "maxExclusive": 85 },
+      "status": "suitable",
+      "label": "Adecuada",
+      "interpretation": "La herramienta presenta un buen encaje general para el propósito evaluado.",
+      "recommendedActions": [
+        "Puede adoptarse para el propósito evaluado.",
+        "Aplicar las salvaguardas y revisar las excepciones por categoría."
+      ]
+    },
+    {
+      "id": "very_suitable",
+      "rank": 5,
+      "range": { "minInclusive": 85, "maxInclusive": 100 },
+      "status": "very_suitable",
+      "label": "Muy adecuada",
+      "interpretation": "La herramienta presenta un encaje especialmente sólido con las necesidades declaradas.",
+      "recommendedActions": [
+        "Puede utilizarse como opción principal.",
+        "Mantener revisión humana, seguimiento y cumplimiento de los bloqueos."
+      ]
+    }
+  ],
+  "differenceBands": [
+    {
+      "id": "near_tie",
+      "range": { "minInclusive": 0, "maxExclusive": 5 },
+      "label": "Resultados muy próximos",
+      "interpretation": "La diferencia no aporta una ventaja operativa clara; debe decidir el nivel absoluto, las categorías y el contexto."
+    },
+    {
+      "id": "slight",
+      "range": { "minInclusive": 5, "maxExclusive": 10 },
+      "label": "Preferencia leve",
+      "interpretation": "Existe una ligera preferencia, subordinada al nivel absoluto de ambas herramientas."
+    },
+    {
+      "id": "relevant",
+      "range": { "minInclusive": 10, "maxExclusive": 20 },
+      "label": "Ventaja relevante",
+      "interpretation": "La herramienta mejor puntuada responde apreciablemente mejor al contexto, siempre que su nivel absoluto sea suficiente."
+    },
+    {
+      "id": "clear",
+      "range": { "minInclusive": 20, "maxInclusive": 30 },
+      "label": "Ventaja clara",
+      "interpretation": "La diferencia favorece claramente a una herramienta, pero no convierte una puntuación baja en adecuada."
+    },
+    {
+      "id": "marked",
+      "range": { "minExclusive": 30, "maxInclusive": 100 },
+      "label": "Ventaja muy marcada",
+      "interpretation": "Las herramientas presentan niveles de encaje muy distintos; deben mantenerse los bloqueos y requisitos mínimos."
+    }
+  ],
+  "directionRules": [
+    {
+      "id": "gemini_ahead",
+      "condition": "difference > 0",
+      "preferredTool": "gemini",
+      "textTemplate": "Gemini obtiene {absoluteDifference} puntos más que NotebookLM."
+    },
+    {
+      "id": "tie",
+      "condition": "difference == 0",
+      "preferredTool": null,
+      "textTemplate": "Ambas herramientas obtienen la misma puntuación."
+    },
+    {
+      "id": "notebooklm_ahead",
+      "condition": "difference < 0",
+      "preferredTool": "notebookLm",
+      "textTemplate": "NotebookLM obtiene {absoluteDifference} puntos más que Gemini."
+    }
+  ],
+  "jointProfiles": [
+    {
+      "id": "not_interpretable",
+      "classification": "invalid",
+      "summary": "El resultado conjunto no es interpretable porque al menos una puntuación es incompatible con una encuesta completa.",
+      "recommendedActions": ["Corregir o completar los datos antes de comparar."]
+    },
+    {
+      "id": "neither",
+      "classification": "neither",
+      "summary": "Ninguna herramienta alcanza un nivel suficiente para recomendarla como solución principal.",
+      "recommendedActions": ["No decidir por la diferencia.", "Replantear el caso o buscar otra alternativa."]
+    },
+    {
+      "id": "gemini_conditional_only",
+      "classification": "gemini_conditional_only",
+      "summary": "Solo Gemini ofrece un encaje condicional; NotebookLM queda por debajo del mínimo operativo.",
+      "recommendedActions": ["Pilotar Gemini con alcance limitado.", "No presentar NotebookLM como alternativa equivalente."]
+    },
+    {
+      "id": "notebooklm_conditional_only",
+      "classification": "notebooklm_conditional_only",
+      "summary": "Solo NotebookLM ofrece un encaje condicional; Gemini queda por debajo del mínimo operativo.",
+      "recommendedActions": ["Pilotar NotebookLM con alcance limitado.", "No presentar Gemini como alternativa equivalente."]
+    },
+    {
+      "id": "gemini_suitable_only",
+      "classification": "gemini_primary",
+      "summary": "Gemini es adecuada y NotebookLM no alcanza un encaje suficiente.",
+      "recommendedActions": ["Usar Gemini como opción principal.", "Revisar los bloqueos antes de implantar."]
+    },
+    {
+      "id": "notebooklm_suitable_only",
+      "classification": "notebooklm_primary",
+      "summary": "NotebookLM es adecuada y Gemini no alcanza un encaje suficiente.",
+      "recommendedActions": ["Usar NotebookLM como opción principal.", "Revisar los bloqueos antes de implantar."]
+    },
+    {
+      "id": "both_conditional",
+      "classification": "both_conditional",
+      "summary": "Ambas herramientas requieren un uso acotado, supervisado o experimental.",
+      "recommendedActions": ["Realizar un piloto comparativo.", "No adoptar ninguna sin medidas de mitigación."]
+    },
+    {
+      "id": "gemini_primary_notebooklm_conditional",
+      "classification": "gemini_primary_notebooklm_alternative",
+      "summary": "Gemini es adecuada; NotebookLM solo resulta recomendable bajo condiciones.",
+      "recommendedActions": ["Priorizar Gemini.", "Reservar NotebookLM para los casos concretos donde destaque por categoría."]
+    },
+    {
+      "id": "notebooklm_primary_gemini_conditional",
+      "classification": "notebooklm_primary_gemini_alternative",
+      "summary": "NotebookLM es adecuada; Gemini solo resulta recomendable bajo condiciones.",
+      "recommendedActions": ["Priorizar NotebookLM.", "Reservar Gemini para los casos concretos donde destaque por categoría."]
+    },
+    {
+      "id": "both_suitable",
+      "classification": "both",
+      "summary": "Ambas herramientas son adecuadas; la diferencia expresa preferencia, no exclusión.",
+      "recommendedActions": ["Elegir según categorías prioritarias, flujo de trabajo y restricciones.", "Considerar un uso complementario."]
+    },
+    {
+      "id": "both_very_suitable",
+      "classification": "both_very_suitable",
+      "summary": "Ambas herramientas presentan una idoneidad muy alta; la diferencia es secundaria frente a factores operativos.",
+      "recommendedActions": ["Decidir por trazabilidad, fuentes, creatividad, integración y coste operativo.", "Considerar ambas como opciones válidas."]
+    }
+  ],
+  "jointSuitabilityMatrix": [
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "very_low", "profileId": "not_interpretable" },
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "limited", "profileId": "not_interpretable" },
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "conditional", "profileId": "not_interpretable" },
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "suitable", "profileId": "not_interpretable" },
+    { "geminiBandId": "not_interpretable", "notebookLmBandId": "very_suitable", "profileId": "not_interpretable" },
+
+    { "geminiBandId": "very_low", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "very_low", "notebookLmBandId": "very_low", "profileId": "neither" },
+    { "geminiBandId": "very_low", "notebookLmBandId": "limited", "profileId": "neither" },
+    { "geminiBandId": "very_low", "notebookLmBandId": "conditional", "profileId": "notebooklm_conditional_only" },
+    { "geminiBandId": "very_low", "notebookLmBandId": "suitable", "profileId": "notebooklm_suitable_only" },
+    { "geminiBandId": "very_low", "notebookLmBandId": "very_suitable", "profileId": "notebooklm_suitable_only" },
+
+    { "geminiBandId": "limited", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "limited", "notebookLmBandId": "very_low", "profileId": "neither" },
+    { "geminiBandId": "limited", "notebookLmBandId": "limited", "profileId": "neither" },
+    { "geminiBandId": "limited", "notebookLmBandId": "conditional", "profileId": "notebooklm_conditional_only" },
+    { "geminiBandId": "limited", "notebookLmBandId": "suitable", "profileId": "notebooklm_suitable_only" },
+    { "geminiBandId": "limited", "notebookLmBandId": "very_suitable", "profileId": "notebooklm_suitable_only" },
+
+    { "geminiBandId": "conditional", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "conditional", "notebookLmBandId": "very_low", "profileId": "gemini_conditional_only" },
+    { "geminiBandId": "conditional", "notebookLmBandId": "limited", "profileId": "gemini_conditional_only" },
+    { "geminiBandId": "conditional", "notebookLmBandId": "conditional", "profileId": "both_conditional" },
+    { "geminiBandId": "conditional", "notebookLmBandId": "suitable", "profileId": "notebooklm_primary_gemini_conditional" },
+    { "geminiBandId": "conditional", "notebookLmBandId": "very_suitable", "profileId": "notebooklm_primary_gemini_conditional" },
+
+    { "geminiBandId": "suitable", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "suitable", "notebookLmBandId": "very_low", "profileId": "gemini_suitable_only" },
+    { "geminiBandId": "suitable", "notebookLmBandId": "limited", "profileId": "gemini_suitable_only" },
+    { "geminiBandId": "suitable", "notebookLmBandId": "conditional", "profileId": "gemini_primary_notebooklm_conditional" },
+    { "geminiBandId": "suitable", "notebookLmBandId": "suitable", "profileId": "both_suitable" },
+    { "geminiBandId": "suitable", "notebookLmBandId": "very_suitable", "profileId": "both_suitable" },
+
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "not_interpretable", "profileId": "not_interpretable" },
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "very_low", "profileId": "gemini_suitable_only" },
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "limited", "profileId": "gemini_suitable_only" },
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "conditional", "profileId": "gemini_primary_notebooklm_conditional" },
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "suitable", "profileId": "both_suitable" },
+    { "geminiBandId": "very_suitable", "notebookLmBandId": "very_suitable", "profileId": "both_very_suitable" }
+  ],
+  "guardrails": [
+    {
+      "id": "complete_session_required",
+      "priority": 1000,
+      "condition": "completedResponses == requiredResponses",
+      "effectWhenFalse": "not_interpretable",
+      "message": "La interpretación global requiere todas las respuestas de las categorías incluidas."
+    },
+    {
+      "id": "minimum_complete_score",
+      "priority": 990,
+      "condition": "geminiScore100 >= 25 && notebookLmScore100 >= 25",
+      "effectWhenFalse": "validation_error",
+      "message": "Una puntuación inferior a 25 es incompatible con una encuesta completa en la escala 1-4."
+    },
+    {
+      "id": "risk_categories_required",
+      "priority": 985,
+      "condition": "all questionnaire categories containing criterion.risk are included",
+      "effectWhenFalse": "not_interpretable",
+      "message": "No se emite una recomendación si se excluyen categorías necesarias para evaluar riesgos o contraindicaciones."
+    },
+    {
+      "id": "blocking_contraindication",
+      "priority": 980,
+      "condition": "any questionnaire criterion.risk severity=blocking has max(geminiAnswer, notebookLmAnswer) >= triggerAnswerMinimum",
+      "effectWhenTrue": "block_recommendation",
+      "message": "Existe una contraindicación que prevalece sobre las puntuaciones globales."
+    },
+    {
+      "id": "conditional_risk",
+      "priority": 970,
+      "condition": "any questionnaire criterion.risk severity=conditional has max(geminiAnswer, notebookLmAnswer) >= triggerAnswerMinimum",
+      "effectWhenTrue": "conditional_recommendation",
+      "message": "La recomendación requiere medidas de mitigación explícitas."
+    },
+    {
+      "id": "configuration_disclosure",
+      "priority": 100,
+      "condition": "categoriesExcluded > 0 || weightOverrides > 0",
+      "effectWhenTrue": "disclose_configuration",
+      "message": "El informe debe indicar categorías excluidas y pesos modificados."
+    },
+    {
+      "id": "critical_category_review",
+      "priority": 90,
+      "condition": "any included critical category score < 55",
+      "effectWhenTrue": "require_human_review",
+      "message": "Una puntuación global alta no debe ocultar una categoría crítica baja."
+    }
+  ],
+  "referenceCases": [
+    {
+      "id": "limited-vs-suitable-53-71",
+      "scores": { "gemini": 53, "notebookLm": 71 },
+      "geminiBandId": "limited",
+      "notebookLmBandId": "suitable",
+      "absoluteDifference": 18,
+      "differenceBandId": "relevant",
+      "jointProfileId": "notebooklm_suitable_only",
+      "interpretation": "NotebookLM es adecuada y obtiene una ventaja relevante. Gemini solo presenta idoneidad limitada y no debe tratarse como alternativa equivalente."
+    },
+    {
+      "id": "very-low-vs-limited-36-41",
+      "scores": { "gemini": 36, "notebookLm": 41 },
+      "geminiBandId": "very_low",
+      "notebookLmBandId": "limited",
+      "absoluteDifference": 5,
+      "differenceBandId": "slight",
+      "jointProfileId": "neither",
+      "interpretation": "La diferencia es leve, pero lo decisivo es que ninguna herramienta alcanza idoneidad suficiente."
+    },
+    {
+      "id": "very-suitable-vs-very-suitable-87-92",
+      "scores": { "gemini": 87, "notebookLm": 92 },
+      "geminiBandId": "very_suitable",
+      "notebookLmBandId": "very_suitable",
+      "absoluteDifference": 5,
+      "differenceBandId": "slight",
+      "jointProfileId": "both_very_suitable",
+      "interpretation": "Ambas herramientas son muy adecuadas. La ligera ventaja de NotebookLM es secundaria y la decisión debe apoyarse en categorías y factores operativos."
+    },
+    {
+      "id": "conditional-vs-suitable-64-72",
+      "scores": { "gemini": 64, "notebookLm": 72 },
+      "geminiBandId": "conditional",
+      "notebookLmBandId": "suitable",
+      "absoluteDifference": 8,
+      "differenceBandId": "slight",
+      "jointProfileId": "notebooklm_primary_gemini_conditional",
+      "interpretation": "NotebookLM es adecuada y Gemini es una alternativa condicionada; la diferencia leve no elimina esa diferencia de nivel."
+    },
+    {
+      "id": "very-low-vs-suitable-35-75",
+      "scores": { "gemini": 35, "notebookLm": 75 },
+      "geminiBandId": "very_low",
+      "notebookLmBandId": "suitable",
+      "absoluteDifference": 40,
+      "differenceBandId": "marked",
+      "jointProfileId": "notebooklm_suitable_only",
+      "interpretation": "NotebookLM es la única opción con encaje razonable y la ventaja es muy marcada."
+    },
+    {
+      "id": "conditional-vs-conditional-58-63",
+      "scores": { "gemini": 58, "notebookLm": 63 },
+      "geminiBandId": "conditional",
+      "notebookLmBandId": "conditional",
+      "absoluteDifference": 5,
+      "differenceBandId": "slight",
+      "jointProfileId": "both_conditional",
+      "interpretation": "Ambas requieren piloto y supervisión. La preferencia leve por NotebookLM no justifica una adopción sin condiciones."
+    },
+    {
+      "id": "very-low-vs-very-low-25-38",
+      "scores": { "gemini": 25, "notebookLm": 38 },
+      "geminiBandId": "very_low",
+      "notebookLmBandId": "very_low",
+      "absoluteDifference": 13,
+      "differenceBandId": "relevant",
+      "jointProfileId": "neither",
+      "interpretation": "Aunque NotebookLM presenta una ventaja relevante, ninguna herramienta alcanza un nivel suficiente."
+    }
+  ],
+  "guardrailNotes": [
+    "Las puntuaciones expresan ajuste a respuestas y ponderaciones, no probabilidad de éxito ni calidad objetiva.",
+    "No utilizar la expresión diferencia estadísticamente significativa: no existe inferencia estadística en este modelo.",
+    "Las contraindicaciones no pueden compensarse con puntuaciones altas en otros criterios.",
+    "Los límites de banda son decisiones interpretativas provisionales y deben revisarse con evidencia de uso real.",
+    "El evaluador interpretativo aplica la polaridad y severidad declaradas en cada criterio antes de emitir una recomendación."
+  ]
+}
