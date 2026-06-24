@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "questionnaireId": "gemini-vs-notebooklm",
-  "questionnaireVersion": "1.0.0",
+  "questionnaireVersion": "1.1.0",
   "title": "¿Qué herramienta utilizo?",
   "scale": [
     {

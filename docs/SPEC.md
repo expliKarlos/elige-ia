@@ -90,7 +90,7 @@ Cada categoría y criterio tendrá un identificador estable. Los textos visibles
 {
   "schemaVersion": "1.0",
   "questionnaireId": "gemini-vs-notebooklm",
-  "questionnaireVersion": "1.0.0",
+  "questionnaireVersion": "1.1.0",
   "categories": [
     {
       "id": "pedagogical-purpose",
@@ -119,7 +119,7 @@ Una exportación de sesión incluirá como mínimo:
 {
   "formatVersion": "1.0",
   "questionnaireId": "gemini-vs-notebooklm",
-  "questionnaireVersion": "1.0.0",
+  "questionnaireVersion": "1.1.0",
   "exportedAt": "2026-06-23T18:30:00Z",
   "weights": {},
   "answers": {},
@@ -141,12 +141,13 @@ La configuración de pesos también podrá descargarse como un JSON independient
 - Cada puntuación se normalizará sobre su máximo posible y se expresará entre 0 y 100.
 - Los cálculos globales y parciales utilizarán una única implementación del motor.
 - Los datos incompletos no producirán un resultado definitivo sin advertencia explícita.
-- Con la escala 1–4, una sesión completa produce puntuaciones entre 25 y 100; un valor inferior a 25 no es interpretable.
+- Con la escala 1–4, una sesión completa produce una puntuación bruta entre 25 y 100.
+- La puntuación publicada se reescalará mediante `(puntuación bruta - 25) / 75 × 100` para ocupar el intervalo real 0–100.
 - La interpretación combinará nivel absoluto, perfil conjunto y diferencia, en ese orden.
 - Las contraindicaciones de privacidad y no uso prevalecerán sobre las puntuaciones globales y no podrán compensarse mediante una media.
 - Excluir una categoría que contenga controles de riesgo conservará la comparación, pero condicionará cualquier decisión de adopción hasta completar esos controles.
 - El evaluador interpretativo aplicará polaridad y severidad por criterio antes de emitir recomendaciones.
-- La posición dentro de la horquilla efectiva podrá calcularse internamente como `(puntuación - 25) / 75 × 100`, pero no se mostrará en el informe principal.
+- La puntuación bruta se conservará en resultados exportados para permitir auditoría, pero las bandas y recomendaciones utilizarán exclusivamente la puntuación reescalada.
 
 ## Estilo de código
 
@@ -162,7 +163,9 @@ export function scoreTo100(value, maximum) {
     return 0;
   }
 
-  return Math.round((value / maximum) * 1000) / 10;
+  const rawScore = (value / maximum) * 100;
+  const normalizedScore = ((rawScore - 25) / 75) * 100;
+  return Math.round(Math.min(Math.max(normalizedScore, 0), 100) * 10) / 10;
 }
 ```
 

@@ -1008,21 +1008,21 @@ if (questionnaire && interpretationMatrix) {
 
         $("#resultsPanel").innerHTML = `
           <div class="results-head">
-            <h2 id="results-title">Resultados normalizados sobre 100</h2>
-            <p>El total bruto suma cada respuesta multiplicada por la ponderación de la matriz y por el peso de categoría. Después se divide por la puntuación máxima posible de las categorías incluidas.</p>
+            <h2 id="results-title">Resultados en escala real de 0 a 100</h2>
+            <p>La puntuación bruta 25–100 se reescala linealmente a 0–100. Las bandas y recomendaciones utilizan exclusivamente esta puntuación reescalada.</p>
           </div>
           <div class="score-grid">
             <article class="score-card" style="--tool:var(--gemini)">
               <h3>Gemini</h3>
               <div class="score-value">${formatScore(results.geminiScore100)}</div>
-              <div class="score-sub">${fmt.format(results.gemini)} puntos de ${fmt.format(results.maxGemini)} posibles</div>
+              <div class="score-sub">Puntuación bruta ${formatScore(results.geminiRawScore100)} · ${fmt.format(results.gemini)} puntos de ${fmt.format(results.maxGemini)} posibles</div>
               <div class="score-band">${escapeHtml(interpretation.tools.gemini.band.label)}</div>
               <div class="bar" aria-hidden="true"><span style="width:${Math.min(results.geminiScore100, 100)}%"></span></div>
             </article>
             <article class="score-card" style="--tool:var(--notebook)">
               <h3>NotebookLM</h3>
               <div class="score-value">${formatScore(results.notebookScore100)}</div>
-              <div class="score-sub">${fmt.format(results.notebook)} puntos de ${fmt.format(results.maxNotebook)} posibles</div>
+              <div class="score-sub">Puntuación bruta ${formatScore(results.notebookRawScore100)} · ${fmt.format(results.notebook)} puntos de ${fmt.format(results.maxNotebook)} posibles</div>
               <div class="score-band">${escapeHtml(interpretation.tools.notebookLm.band.label)}</div>
               <div class="bar" aria-hidden="true"><span style="width:${Math.min(results.notebookScore100, 100)}%"></span></div>
             </article>

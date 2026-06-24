@@ -53,12 +53,12 @@ test("incluye casos de referencia que distinguen nivel absoluto y diferencia", a
   const matrix = await loadMatrix();
   const examples = new Map(matrix.referenceCases.map((entry) => [entry.id, entry]));
 
-  assert.deepEqual(examples.get("limited-vs-suitable-53-71")?.scores, { gemini: 53, notebookLm: 71 });
-  assert.equal(examples.get("very-low-vs-limited-36-41")?.differenceBandId, "slight");
-  assert.equal(examples.get("very-suitable-vs-very-suitable-87-92")?.differenceBandId, "slight");
+  assert.deepEqual(examples.get("limited-vs-suitable-37-3-61-3")?.scores, { gemini: 37.3, notebookLm: 61.3 });
+  assert.equal(examples.get("very-low-vs-limited-14-7-21-3")?.differenceBandId, "slight");
+  assert.equal(examples.get("very-suitable-vs-very-suitable-82-7-89-3")?.differenceBandId, "slight");
   assert.notEqual(
-    examples.get("very-low-vs-limited-36-41")?.jointProfileId,
-    examples.get("very-suitable-vs-very-suitable-87-92")?.jointProfileId
+    examples.get("very-low-vs-limited-14-7-21-3")?.jointProfileId,
+    examples.get("very-suitable-vs-very-suitable-82-7-89-3")?.jointProfileId
   );
 });
 
@@ -79,7 +79,7 @@ test("los casos de referencia son coherentes con las bandas y la matriz", async 
     assert.equal(example.jointProfileId, jointEntry?.profileId, example.id);
     assert.equal(
       example.absoluteDifference,
-      Math.abs(example.scores.gemini - example.scores.notebookLm),
+      Math.abs(example.difference),
       example.id
     );
   }

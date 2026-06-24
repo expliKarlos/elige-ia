@@ -135,7 +135,7 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 
 - [x] Definir bandas individuales de idoneidad y diferencias comparativas.
 - [x] Cubrir las 36 combinaciones posibles entre los niveles de Gemini y NotebookLM.
-- [x] Documentar casos de referencia como 36–41, 53–71 y 87–92.
+- [x] Documentar y migrar los casos de referencia a la escala real 0–100.
 - [x] Registrar la matriz en `data/result-interpretations.v1.json`.
 
 ### Tarea 7.2: Riesgos e integración

@@ -253,12 +253,12 @@ if (applicationData) {
     panel.innerHTML = `
       <header class="results-head">
         <p class="section-kicker">DIAGNÓSTICO RÁPIDO</p>
-        <h2 id="results-title">Resultado normalizado sobre 100</h2>
-        <p>La puntuación combina la valoración global y el peso asignado a cada categoría incluida.</p>
+        <h2 id="results-title">Resultado en escala real de 0 a 100</h2>
+        <p>La puntuación bruta 25–100 se reescala linealmente a 0–100. Las bandas y recomendaciones utilizan exclusivamente esta puntuación reescalada.</p>
       </header>
       <div class="score-grid">
-        ${renderScoreCard("Gemini", "gemini", results.geminiScore100, results.gemini, results.maxGemini, interpretation.tools.gemini.band)}
-        ${renderScoreCard("NotebookLM", "notebook", results.notebookScore100, results.notebook, results.maxNotebook, interpretation.tools.notebookLm.band)}
+        ${renderScoreCard("Gemini", "gemini", results.geminiScore100, results.geminiRawScore100, results.gemini, results.maxGemini, interpretation.tools.gemini.band)}
+        ${renderScoreCard("NotebookLM", "notebook", results.notebookScore100, results.notebookRawScore100, results.notebook, results.maxNotebook, interpretation.tools.notebookLm.band)}
       </div>
       <div class="result-meta-grid">
         <div class="result-meta"><strong>${results.activeCategoryCount}</strong><span>categorías incluidas</span></div>
@@ -282,12 +282,12 @@ if (applicationData) {
     $("#printReducedBtn").addEventListener("click", () => window.print());
   }
 
-  function renderScoreCard(label, tool, score, raw, maximum, band) {
+  function renderScoreCard(label, tool, score, rawScore, points, maximum, band) {
     return `
       <article class="score-card" style="--tool:var(--${tool})">
         <h3>${label}</h3>
         <div class="score-value">${formatScore(score)}</div>
-        <div class="score-sub">${formatScore(raw)} puntos ponderados de ${formatScore(maximum)} posibles</div>
+        <div class="score-sub">Puntuación bruta ${formatScore(rawScore)} · ${formatScore(points)} puntos ponderados de ${formatScore(maximum)} posibles</div>
         <div class="score-band">${escapeHtml(band?.label || "Sin clasificación")}</div>
         <div class="bar" aria-hidden="true"><span style="width:${Math.min(score, 100)}%"></span></div>
       </article>`;

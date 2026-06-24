@@ -1,4 +1,4 @@
-const DEFAULT_EFFECTIVE_MINIMUM = 25;
+const DEFAULT_EFFECTIVE_MINIMUM = 0;
 const DEFAULT_EFFECTIVE_MAXIMUM = 100;
 
 export function validateInterpretationMatrix(matrix) {
@@ -41,8 +41,11 @@ export function interpretSurveyResults({ matrix, questionnaire, answers, results
   const maximum = matrix.scoreModel.scaleMaximum;
   const geminiScore = Number(results.geminiScore100);
   const notebookLmScore = Number(results.notebookScore100);
-  const absoluteDifference = roundToTenth(Math.abs(geminiScore - notebookLmScore));
-  const difference = roundToTenth(geminiScore - notebookLmScore);
+  const reportedDifference = Number(results.diff);
+  const difference = Number.isFinite(reportedDifference)
+    ? roundToTenth(reportedDifference)
+    : roundToTenth(geminiScore - notebookLmScore);
+  const absoluteDifference = roundToTenth(Math.abs(difference));
   const geminiBand = findRange(matrix.individualBands, geminiScore);
   const notebookLmBand = findRange(matrix.individualBands, notebookLmScore);
   const differenceBand = findRange(matrix.differenceBands, absoluteDifference);
@@ -95,7 +98,7 @@ export function interpretSurveyResults({ matrix, questionnaire, answers, results
       minimum,
       maximum,
       span: maximum - minimum,
-      explanation: `La escala completa observable va de ${minimum} a ${maximum}; los pesos modifican la influencia, no estos extremos.`
+      explanation: `La puntuación se presenta en una escala real de ${minimum} a ${maximum}, reescalada desde el intervalo bruto 25–100.`
     },
     tools: {
       gemini: createToolInterpretation(geminiScore, geminiBand, minimum, maximum),

@@ -26,12 +26,15 @@ function createAnswers(valueFor) {
 
 test("reescalada las respuestas completas desde el intervalo bruto 25–100 al intervalo real 0–100", () => {
   const minimum = calculateSurveyResults(questionnaire, createAnswers(() => 1));
+  const middle = calculateSurveyResults(questionnaire, createAnswers(() => 2));
   const maximum = calculateSurveyResults(questionnaire, createAnswers(() => 4));
 
   assert.equal(minimum.geminiRawScore100, 25);
   assert.equal(minimum.notebookRawScore100, 25);
   assert.equal(minimum.geminiScore100, 0);
   assert.equal(minimum.notebookScore100, 0);
+  assert.equal(middle.geminiRawScore100, 50);
+  assert.equal(middle.geminiScore100, 33.3);
   assert.equal(maximum.geminiRawScore100, 100);
   assert.equal(maximum.notebookRawScore100, 100);
   assert.equal(maximum.geminiScore100, 100);
