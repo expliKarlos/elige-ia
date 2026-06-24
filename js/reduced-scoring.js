@@ -1,6 +1,8 @@
 const MINIMUM_WEIGHT = 1;
 const MAXIMUM_WEIGHT = 10;
 const MAXIMUM_RATING = 4;
+const RAW_SCORE_MINIMUM = 25;
+const RAW_SCORE_SPAN = 75;
 
 export function calculateReducedResults(questionnaire, ratings, options = {}) {
   assertQuestionnaire(questionnaire);
@@ -27,6 +29,8 @@ export function calculateReducedResults(questionnaire, ratings, options = {}) {
       color: category.color,
       weight,
       included,
+      geminiRawScore100: 0,
+      notebookRawScore100: 0,
       geminiScore100: 0,
       notebookScore100: 0
     };
@@ -34,8 +38,12 @@ export function calculateReducedResults(questionnaire, ratings, options = {}) {
     if (included) {
       const gemini = readRating(ratings, category.id, "gemini");
       const notebookLm = readRating(ratings, category.id, "notebooklm");
-      row.geminiScore100 = scoreTo100(gemini);
-      row.notebookScore100 = scoreTo100(notebookLm);
+      const geminiRawScore100 = rawScoreTo100(gemini, MAXIMUM_RATING);
+      const notebookRawScore100 = rawScoreTo100(notebookLm, MAXIMUM_RATING);
+      row.geminiRawScore100 = roundToTenth(geminiRawScore100);
+      row.notebookRawScore100 = roundToTenth(notebookRawScore100);
+      row.geminiScore100 = normalizeRawScore100(geminiRawScore100);
+      row.notebookScore100 = normalizeRawScore100(notebookRawScore100);
       totals.gemini += gemini * weight;
       totals.notebook += notebookLm * weight;
       totals.maxGemini += MAXIMUM_RATING * weight;
@@ -53,9 +61,13 @@ export function calculateReducedResults(questionnaire, ratings, options = {}) {
     throw new RangeError("Debe incluirse al menos una categoría.");
   }
 
-  totals.geminiScore100 = weightedScoreTo100(totals.gemini, totals.maxGemini);
-  totals.notebookScore100 = weightedScoreTo100(totals.notebook, totals.maxNotebook);
-  totals.diff = roundToTenth(totals.geminiScore100 - totals.notebookScore100);
+  const geminiRawScore100 = rawScoreTo100(totals.gemini, totals.maxGemini);
+  const notebookRawScore100 = rawScoreTo100(totals.notebook, totals.maxNotebook);
+  totals.geminiRawScore100 = roundToTenth(geminiRawScore100);
+  totals.notebookRawScore100 = roundToTenth(notebookRawScore100);
+  totals.geminiScore100 = normalizeRawScore100(geminiRawScore100);
+  totals.notebookScore100 = normalizeRawScore100(notebookRawScore100);
+  totals.diff = roundToTenth(((geminiRawScore100 - notebookRawScore100) / RAW_SCORE_SPAN) * 100);
   return totals;
 }
 
@@ -121,12 +133,13 @@ function assertQuestionnaire(questionnaire) {
   }
 }
 
-function scoreTo100(value) {
-  return roundToTenth((value / MAXIMUM_RATING) * 100);
+function normalizeRawScore100(rawScore) {
+  const normalized = ((rawScore - RAW_SCORE_MINIMUM) / RAW_SCORE_SPAN) * 100;
+  return roundToTenth(Math.min(Math.max(normalized, 0), 100));
 }
 
-function weightedScoreTo100(value, maximum) {
-  return maximum > 0 ? roundToTenth((value / maximum) * 100) : 0;
+function rawScoreTo100(value, maximum) {
+  return maximum > 0 ? (value / maximum) * 100 : 0;
 }
 
 function roundToTenth(value) {

@@ -2,6 +2,8 @@ const TOOLS = ["gemini", "notebooklm"];
 const ANSWER_TOOL = { gemini: "gemini", notebooklm: "notebook" };
 const MINIMUM_WEIGHT = 1;
 const MAXIMUM_WEIGHT = 10;
+const RAW_SCORE_MINIMUM = 25;
+const RAW_SCORE_SPAN = 75;
 
 export function calculateSurveyResults(questionnaire, answers, options = {}) {
   const effectiveWeights = resolveWeightConfig(questionnaire, options.weightOverrides);
@@ -43,9 +45,7 @@ export function calculateSurveyResults(questionnaire, answers, options = {}) {
     totals.categories.push(row);
   });
 
-  totals.geminiScore100 = scoreTo100(totals.gemini, totals.maxGemini);
-  totals.notebookScore100 = scoreTo100(totals.notebook, totals.maxNotebook);
-  totals.diff = roundToTenth(totals.geminiScore100 - totals.notebookScore100);
+  completeScores(totals);
   return totals;
 }
 
@@ -73,17 +73,19 @@ export function calculateCategoryResult(questionnaire, categoryId, answers, opti
     result.notebook += notebookValue * weights.notebooklm;
     result.maxGemini += 4 * weights.gemini;
     result.maxNotebook += 4 * weights.notebooklm;
+    const geminiRawScore100 = rawScoreTo100(geminiValue, 4);
+    const notebookRawScore100 = rawScoreTo100(notebookValue, 4);
     result.criteria.push({
       criterion: criterion.label,
       criterionId: criterion.id,
-      geminiScore100: scoreTo100(geminiValue, 4),
-      notebookScore100: scoreTo100(notebookValue, 4)
+      geminiRawScore100: roundToTenth(geminiRawScore100),
+      notebookRawScore100: roundToTenth(notebookRawScore100),
+      geminiScore100: normalizeRawScore100(geminiRawScore100),
+      notebookScore100: normalizeRawScore100(notebookRawScore100)
     });
   });
 
-  result.geminiScore100 = scoreTo100(result.gemini, result.maxGemini);
-  result.notebookScore100 = scoreTo100(result.notebook, result.maxNotebook);
-  result.diff = roundToTenth(result.geminiScore100 - result.notebookScore100);
+  completeScores(result);
   return result;
 }
 
@@ -146,8 +148,13 @@ export function resetCategoryWeight(overrides = {}, categoryId) {
 }
 
 export function scoreTo100(value, maximum) {
-  if (!Number.isFinite(value) || !Number.isFinite(maximum) || maximum <= 0) return 0;
-  return roundToTenth((value / maximum) * 100);
+  return normalizeRawScore100(rawScoreTo100(value, maximum));
+}
+
+export function normalizeRawScore100(rawScore) {
+  if (!Number.isFinite(rawScore)) return 0;
+  const normalized = ((rawScore - RAW_SCORE_MINIMUM) / RAW_SCORE_SPAN) * 100;
+  return roundToTenth(Math.min(Math.max(normalized, 0), 100));
 }
 
 function createCategoryRow(category, included, relevance) {
@@ -162,6 +169,8 @@ function createCategoryRow(category, included, relevance) {
     notebook: 0,
     maxGemini: 0,
     maxNotebook: 0,
+    geminiRawScore100: 0,
+    notebookRawScore100: 0,
     geminiScore100: 0,
     notebookScore100: 0,
     diff: 0
@@ -179,9 +188,22 @@ function addCriterionScores(row, criterion, answers, effectiveWeights, multiplie
 }
 
 function completeCategoryScores(row) {
-  row.geminiScore100 = scoreTo100(row.gemini, row.maxGemini);
-  row.notebookScore100 = scoreTo100(row.notebook, row.maxNotebook);
-  row.diff = roundToTenth(row.geminiScore100 - row.notebookScore100);
+  completeScores(row);
+}
+
+function completeScores(target) {
+  const geminiRawScore100 = rawScoreTo100(target.gemini, target.maxGemini);
+  const notebookRawScore100 = rawScoreTo100(target.notebook, target.maxNotebook);
+  target.geminiRawScore100 = roundToTenth(geminiRawScore100);
+  target.notebookRawScore100 = roundToTenth(notebookRawScore100);
+  target.geminiScore100 = normalizeRawScore100(geminiRawScore100);
+  target.notebookScore100 = normalizeRawScore100(notebookRawScore100);
+  target.diff = roundToTenth(((geminiRawScore100 - notebookRawScore100) / RAW_SCORE_SPAN) * 100);
+}
+
+function rawScoreTo100(value, maximum) {
+  if (!Number.isFinite(value) || !Number.isFinite(maximum) || maximum <= 0) return 0;
+  return (value / maximum) * 100;
 }
 
 function readAnswer(answers, criterionId, tool) {
