@@ -157,6 +157,7 @@ Evolucionar la encuesta standalone hacia una aplicación estática modular, repr
 ### Tarea 8.2: Evidencia metodológica
 
 - [x] Documentar el protocolo de calibración y sus criterios de aceptación.
+- [x] Automatizar la validación, las métricas y el informe de calibración sin publicar los casos reales.
 - [ ] Ejecutar el piloto con casos reales y evaluadores expertos.
 - [ ] Ajustar pesos y bandas únicamente si la evidencia lo justifica.
 - [ ] Aprobar y versionar la primera matriz interpretativa no provisional.

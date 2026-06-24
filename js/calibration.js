@@ -189,7 +189,7 @@ function rateStatus(rate, minimum) {
 }
 
 function validateRecommendation(value, path, errors) {
-  if (value !== undefined && !RECOMMENDATIONS.has(value)) {
+  if (!RECOMMENDATIONS.has(value)) {
     errors.push(`${path} contiene una recomendación desconocida.`);
   }
 }

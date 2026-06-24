@@ -39,6 +39,7 @@ Los umbrales interpretativos están versionados, pero siguen siendo provisionale
 - [Hoja de ruta](ROADMAP.md)
 - [Preparación y publicación](docs/RELEASE.md)
 - [Calibración metodológica](docs/CALIBRATION.md)
+- [Informe de calibración actual](reports/calibration/report.html)
 - [Decisión de arquitectura y despliegue](docs/decisions/ADR-001-static-pages.md)
 
 ## Inicio rápido
