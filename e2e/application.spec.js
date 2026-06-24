@@ -31,7 +31,8 @@ test("la versión reducida completa el diagnóstico y detecta bloqueos", async (
   await expect(page.locator("#progressText")).toHaveText("41 de 41 respuestas");
   await page.getByRole("button", { name: "Obtener diagnóstico", exact: true }).click();
   await expect(page.locator("#reducedResults")).toHaveClass(/is-visible/);
-  await expect(page.locator(".score-value")).toHaveText(["75", "100"]);
+  await expect(page.locator(".score-value")).toHaveText(["66,7", "100"]);
+  await expect(page.locator(".score-sub").first()).toContainText("Puntuación bruta 75");
   await expect(page.locator(".reduced-radar svg")).toHaveCount(1);
   await expectNoSeriousAxeViolations(page, "resultado del diagnóstico reducido");
 

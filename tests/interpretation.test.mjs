@@ -15,16 +15,16 @@ const matrix = JSON.parse(
   await readFile(new URL("../data/result-interpretations.v1.json", import.meta.url), "utf8")
 );
 
-const resultFixture = (gemini, notebookLm) => ({
+const resultFixture = (gemini, notebookLm, difference = Math.round((gemini - notebookLm) * 10) / 10) => ({
   geminiScore100: gemini,
   notebookScore100: notebookLm,
-  diff: Math.round((gemini - notebookLm) * 10) / 10,
+  diff: difference,
   excludedCategoryCount: 0
 });
 
-test("sitúa una puntuación dentro de la horquilla efectiva 25–100", () => {
-  assert.equal(positionInEffectiveRange(25), 0);
-  assert.equal(positionInEffectiveRange(62.5), 50);
+test("sitúa directamente una puntuación en la escala real 0–100", () => {
+  assert.equal(positionInEffectiveRange(0), 0);
+  assert.equal(positionInEffectiveRange(50), 50);
   assert.equal(positionInEffectiveRange(100), 100);
 });
 
@@ -41,14 +41,14 @@ test("distingue una diferencia leve con baja idoneidad de otra con alta idoneida
     matrix,
     questionnaire,
     answers: {},
-    results: resultFixture(36, 41),
+    results: resultFixture(14.7, 21.3, -6.7),
     context: { isComplete: true, weightOverrideCount: 0 }
   });
   const high = interpretSurveyResults({
     matrix,
     questionnaire,
     answers: {},
-    results: resultFixture(87, 92),
+    results: resultFixture(82.7, 89.3, -6.7),
     context: { isComplete: true, weightOverrideCount: 0 }
   });
 
@@ -60,12 +60,12 @@ test("distingue una diferencia leve con baja idoneidad de otra con alta idoneida
   assert.equal(high.recommendation, "both");
 });
 
-test("interpreta 53–71 atendiendo al nivel y a la diferencia", () => {
+test("interpreta 37,3–61,3 atendiendo al nivel y a la diferencia reescalada", () => {
   const interpretation = interpretSurveyResults({
     matrix,
     questionnaire,
     answers: {},
-    results: resultFixture(53, 71),
+    results: resultFixture(37.3, 61.3, -24),
     context: { isComplete: true, weightOverrideCount: 0 }
   });
 
@@ -81,7 +81,7 @@ test("una contraindicación bloqueante prevalece sobre dos puntuaciones altas", 
     matrix,
     questionnaire,
     answers: { "c18q02:gemini": 4, "c18q02:notebook": 4 },
-    results: resultFixture(91, 94),
+    results: resultFixture(88, 92, -4),
     context: { isComplete: true, weightOverrideCount: 0 }
   });
 
@@ -96,7 +96,7 @@ test("un riesgo condicional conserva el resultado pero exige mitigación", () =>
     matrix,
     questionnaire,
     answers: { "c18q04:gemini": 3, "c18q04:notebook": 3 },
-    results: resultFixture(74, 79),
+    results: resultFixture(65.3, 72, -6.7),
     context: { isComplete: true, weightOverrideCount: 2 }
   });
 
@@ -106,19 +106,19 @@ test("un riesgo condicional conserva el resultado pero exige mitigación", () =>
   assert.ok(interpretation.disclosures.some((item) => item.id === "weight_overrides"));
 });
 
-test("no interpreta sesiones incompletas ni puntuaciones completas inferiores a 25", () => {
+test("no interpreta sesiones incompletas ni puntuaciones fuera de 0–100", () => {
   const incomplete = interpretSurveyResults({
     matrix,
     questionnaire,
     answers: {},
-    results: resultFixture(60, 70),
+    results: resultFixture(46.7, 60),
     context: { isComplete: false, weightOverrideCount: 0 }
   });
   const invalidRange = interpretSurveyResults({
     matrix,
     questionnaire,
     answers: {},
-    results: resultFixture(20, 70),
+    results: resultFixture(-0.1, 60),
     context: { isComplete: true, weightOverrideCount: 0 }
   });
 
@@ -132,7 +132,7 @@ test("conserva la comparación y condiciona la adopción si faltan categorías d
     questionnaire,
     answers: {},
     results: {
-      ...resultFixture(82, 88),
+      ...resultFixture(76, 84, -8),
       excludedCategoryCount: 1,
       categories: [{ categoryId: "privacidad", included: false }]
     },
@@ -146,13 +146,13 @@ test("conserva la comparación y condiciona la adopción si faltan categorías d
   assert.ok(interpretation.recommendedActions.some((action) => /categorías de riesgo/i.test(action)));
 });
 
-test("interpreta 40,7–83,9 como ventaja muy marcada de NotebookLM", () => {
+test("interpreta 20,9–78,5 como ventaja muy marcada de NotebookLM", () => {
   const interpretation = interpretSurveyResults({
     matrix,
     questionnaire,
     answers: {},
     results: {
-      ...resultFixture(40.7, 83.9),
+      ...resultFixture(20.9, 78.5, -57.6),
       excludedCategoryCount: 2,
       categories: [
         { categoryId: "privacidad", included: false },
@@ -166,17 +166,17 @@ test("interpreta 40,7–83,9 como ventaja muy marcada de NotebookLM", () => {
   assert.equal(interpretation.recommendation, "notebookLm");
   assert.equal(interpretation.tools.gemini.band.id, "limited");
   assert.equal(interpretation.tools.notebookLm.band.id, "suitable");
-  assert.equal(interpretation.comparison.absoluteDifference, 43.2);
+  assert.equal(interpretation.comparison.absoluteDifference, 57.6);
   assert.equal(interpretation.comparison.band.id, "marked");
   assert.equal(interpretation.jointProfile.id, "notebooklm_suitable_only");
-  assert.match(interpretation.primaryMessage, /NotebookLM.*83,9.*Adecuada/i);
-  assert.match(interpretation.primaryMessage, /Gemini.*40,7.*Idoneidad limitada/i);
-  assert.match(interpretation.primaryMessage, /43,2.*Ventaja muy marcada/i);
+  assert.match(interpretation.primaryMessage, /NotebookLM.*78,5.*Adecuada/i);
+  assert.match(interpretation.primaryMessage, /Gemini.*20,9.*Idoneidad limitada/i);
+  assert.match(interpretation.primaryMessage, /57,6.*Ventaja muy marcada/i);
   assert.match(interpretation.primaryMessage, /provisional|pendiente/i);
 });
 
 test("interpreta todas las combinaciones válidas de niveles individuales", () => {
-  const representativeScores = [32, 47, 62, 77, 92];
+  const representativeScores = [9.3, 29.3, 49.3, 69.3, 89.3];
 
   for (const gemini of representativeScores) {
     for (const notebookLm of representativeScores) {
@@ -202,7 +202,7 @@ test("la interpretación de una categoría solo evalúa los riesgos de esa categ
     matrix,
     questionnaire,
     answers: { "c18q02:gemini": 4, "c18q02:notebook": 4 },
-    results: resultFixture(72, 77),
+    results: resultFixture(62.7, 69.3, -6.7),
     context: {
       isComplete: true,
       scope: "category",

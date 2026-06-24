@@ -53,7 +53,7 @@
   "technicalChecks": {
     "referenceCases": 7,
     "matrixCombinations": 36,
-    "automatedTests": 54
+    "automatedTests": 55
   },
   "evidenceLevel": "technical-precalibration-only",
   "visualOmissionReason": "No se genera un gráfico hasta disponer de métricas de campo con denominadores distintos de cero."

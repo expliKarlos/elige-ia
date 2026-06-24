@@ -19,7 +19,7 @@ La matriz versionada [`data/result-interpretations.v1.json`](data/result-interpr
 
 Si se excluye una categoría que contiene controles de riesgo, la comparación de puntuaciones continúa siendo válida, pero la adopción queda marcada como provisional hasta evaluar esos riesgos. Una contraindicación contestada afirmativamente sigue bloqueando la recomendación de ambas herramientas.
 
-Con respuestas completas, la escala observable es 25–100: responder `1` en todos los criterios produce 25 porque cada respuesta se divide por el máximo `4`. El informe se centra en la puntuación y su interpretación, sin mostrar cálculos auxiliares de horquilla.
+Con respuestas completas, el motor calcula primero una puntuación bruta de 25–100 y la reescala linealmente mediante `(puntuación bruta - 25) / 75 × 100`. El resultado mostrado e interpretado utiliza así una escala real de 0–100; la puntuación bruta se conserva solo para trazabilidad.
 
 Los umbrales interpretativos están versionados, pero siguen siendo provisionales hasta completar el protocolo de calibración con evidencia de uso real.
 

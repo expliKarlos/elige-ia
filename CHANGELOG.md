@@ -2,9 +2,17 @@
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-06-24
+
 ### Añadido
 
 - Pipeline reproducible de calibración con métricas, controles de privacidad e informe técnico.
+
+### Cambiado
+
+- Reescalado lineal de la puntuación bruta 25–100 a una escala real 0–100.
+- Migración de bandas, diferencias y casos interpretativos a la nueva escala.
+- Conservación de las puntuaciones brutas como datos de auditoría.
 
 ## [0.1.1] - 2026-06-24
 
