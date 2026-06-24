@@ -1,14 +1,44 @@
 export function renderCalibrationReport({ generatedAt, validation, metrics, technicalChecks }) {
-  const fieldStatus = metrics.realCaseCount >= 30
+  const hasFieldSample = metrics.realCaseCount >= 30;
+  const fieldStatus = hasFieldSample
     ? "Muestra de campo disponible"
     : "Evidencia de campo insuficiente";
+  const technicalSummary = hasFieldSample
+    ? `La infraestructura de calibración es reproducible y la muestra alcanza el mínimo previsto: ${metrics.realCaseCount} casos reales. Las métricas con denominador disponible pueden estimarse; los criterios sin evidencia explícita permanecen como no evaluables.`
+    : `La infraestructura de calibración es reproducible y las comprobaciones técnicas están operativas. La validez de campo no puede estimarse todavía: hay ${metrics.realCaseCount} casos reales frente al mínimo de 30 y, por tanto, los porcentajes dependientes de consenso se mantienen como no evaluables.`;
+  const findingsTitle = hasFieldSample
+    ? "La muestra permite contrastar el acuerdo con el criterio experto"
+    : "La implementación es comprobable; la validez externa sigue abierta";
+  const limitationsTitle = hasFieldSample
+    ? "La evidencia pendiente limita la aceptación definitiva"
+    : "La ausencia de observaciones impide estimar validez externa";
+  const nextStepsTitle = hasFieldSample
+    ? "La siguiente decisión es completar los criterios no evaluables"
+    : "La siguiente decisión es iniciar la captura controlada";
+  const nextSteps = hasFieldSample
+    ? [
+        "Documentar por caso si existía una contraindicación crítica y si fue detectada.",
+        "Revisar los casos sin mayoría experta antes de modificar pesos o umbrales.",
+        "Ejecutar y registrar la prueba de sensibilidad ante variaciones de peso inferiores al 5%.",
+        "Retirar la marca provisional solo tras cumplir todos los criterios y obtener aprobación pedagógica, técnica y de privacidad."
+      ]
+    : [
+        "Registrar 30 casos anonimizados sin indicar previamente la herramienta esperada.",
+        "Obtener tres dictámenes independientes por caso.",
+        "Ejecutar npm run calibrate después de cada lote y revisar discrepancias antes de cambiar pesos o umbrales.",
+        "Retirar la marca provisional solo tras cumplir criterios y obtener aprobación pedagógica, técnica y de privacidad."
+      ];
+  const evidenceSummary = hasFieldSample
+    ? "Los dictámenes independientes permiten estimar acuerdo experto y contrastar las recomendaciones automáticas. Las comprobaciones técnicas siguen midiendo coherencia interna y no sustituyen la revisión metodológica de los resultados de campo."
+    : `La matriz contiene ${technicalChecks.referenceCases} casos de referencia y ${technicalChecks.matrixCombinations} combinaciones conjuntas, verificadas por ${technicalChecks.automatedTests} pruebas automatizadas. Estas comprobaciones demuestran coherencia interna, no acuerdo con decisiones expertas reales.`;
   const rows = [
     ["Casos reales", String(metrics.realCaseCount), "≥ 30"],
+    ["Acuerdo entre evaluadores", formatRate(metrics.expertAgreement), "Descriptivo"],
     ["Acuerdo automático-consenso", formatRate(metrics.automaticConsensusAgreement), "≥ 80%"],
     ["Concordancia detallada-reducida", formatRate(metrics.detailedReducedConcordance), "≥ 75%"],
     ["Detección de contraindicaciones", formatRate(metrics.criticalContraindicationDetection), "100%"],
     ["Recomendaciones definitivas incompletas", String(metrics.incompleteDefinitiveCases), "0"],
-    ["Violaciones de estabilidad de pesos", String(metrics.weightSensitivityViolations), "0"]
+    ["Estabilidad de pesos", formatWeightStability(metrics), "0 violaciones"]
   ];
 
   return `<!doctype html>
@@ -47,12 +77,12 @@ export function renderCalibrationReport({ generatedAt, validation, metrics, tech
     <section data-contract-section="technical-summary">
       <h2>Resumen técnico</h2>
       <p><span class="status">${fieldStatus}</span></p>
-      <p class="summary">La infraestructura de calibración es reproducible y las comprobaciones técnicas están operativas. La validez de campo no puede estimarse todavía: hay ${metrics.realCaseCount} casos reales frente al mínimo de 30 y, por tanto, los porcentajes dependientes de consenso se mantienen como no evaluables.</p>
+      <p class="summary">${technicalSummary}</p>
     </section>
 
     <section data-contract-section="key-findings">
-      <h2>La implementación es comprobable; la validez externa sigue abierta</h2>
-      <p>La matriz contiene ${technicalChecks.referenceCases} casos de referencia y ${technicalChecks.matrixCombinations} combinaciones conjuntas, verificadas por ${technicalChecks.automatedTests} pruebas automatizadas. Estas comprobaciones demuestran coherencia interna, no acuerdo con decisiones expertas reales.</p>
+      <h2>${findingsTitle}</h2>
+      <p>${evidenceSummary}</p>
       <table>
         <thead><tr><th>Métrica de campo</th><th>Resultado</th><th>Criterio inicial</th></tr></thead>
         <tbody>${rows.map(([name, value, target]) => `<tr><td>${name}</td><td>${value}</td><td>${target}</td></tr>`).join("")}</tbody>
@@ -76,18 +106,15 @@ estabilidad = 0 cambios fuera de umbral ante variaciones de peso &lt; 5%</pre>
     </section>
 
     <section data-contract-section="limitations-uncertainty-and-robustness-checks">
-      <h2>La ausencia de observaciones impide estimar validez externa</h2>
+      <h2>${limitationsTitle}</h2>
       <p>${escapeHtml(validation.warnings.join(" ") || "No se detectaron advertencias estructurales.")} No se han fabricado recomendaciones expertas ni respuestas para completar artificialmente la muestra.</p>
       <p>Las pruebas de cobertura de bandas, prioridad de bloqueos, sesiones incompletas y coherencia de casos de referencia funcionan como controles de robustez interna. No sustituyen el pilotaje con docentes y responsables de tecnología y privacidad.</p>
     </section>
 
     <section data-contract-section="recommended-next-steps">
-      <h2>La siguiente decisión es iniciar la captura controlada</h2>
+      <h2>${nextStepsTitle}</h2>
       <ol>
-        <li>Registrar 30 casos anonimizados sin indicar previamente la herramienta esperada.</li>
-        <li>Obtener tres dictámenes independientes por caso.</li>
-        <li>Ejecutar <code>npm run calibrate</code> después de cada lote y revisar discrepancias antes de cambiar pesos o umbrales.</li>
-        <li>Retirar la marca provisional solo tras cumplir criterios y obtener aprobación pedagógica, técnica y de privacidad.</li>
+        ${nextSteps.map((step) => `<li>${escapeHtml(step).replace("npm run calibrate", "<code>npm run calibrate</code>")}</li>`).join("\n        ")}
       </ol>
     </section>
 
@@ -107,6 +134,13 @@ estabilidad = 0 cambios fuera de umbral ante variaciones de peso &lt; 5%</pre>
 function formatRate(metric) {
   if (metric.rate === null) return `No evaluable (0/${metric.denominator})`;
   return `${(metric.rate * 100).toFixed(1)}% (${metric.numerator}/${metric.denominator})`;
+}
+
+function formatWeightStability(metrics) {
+  if (metrics.weightSensitivityEvaluatedCases < metrics.realCaseCount) {
+    return `No evaluable (${metrics.weightSensitivityEvaluatedCases}/${metrics.realCaseCount} casos)`;
+  }
+  return `${metrics.weightSensitivityViolations} violaciones`;
 }
 
 function formatDate(value) {

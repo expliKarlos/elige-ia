@@ -108,6 +108,15 @@ test("no convierte la ausencia de casos reales en porcentajes engañosos", () =>
   assert.equal(metrics.acceptance.overall, "insufficient_evidence");
 });
 
+test("no aprueba la estabilidad de pesos sin pruebas de sensibilidad por caso", () => {
+  const entry = observedCase({ weightSensitivity: undefined });
+
+  const metrics = calculateCalibrationMetrics({ schemaVersion: "1.0", cases: [entry] });
+
+  assert.equal(metrics.weightSensitivityEvaluatedCases, 0);
+  assert.equal(metrics.acceptance.criteria.weightStability, "not_evaluable");
+});
+
 test("el informe técnico conserva el contrato y explicita la evidencia insuficiente", () => {
   const dataset = { schemaVersion: "1.0", cases: [] };
   const validation = validateCalibrationDataset(dataset);
@@ -133,4 +142,25 @@ test("el informe técnico conserva el contrato y explicita la evidencia insufici
   assert.match(report, /Evidencia de campo insuficiente/);
   assert.match(report, /No evaluable/);
   assert.doesNotMatch(report, /NaN|null%/);
+});
+
+test("el informe de campo no conserva mensajes propios de una muestra vacía", () => {
+  const cases = Array.from({ length: 30 }, (_, index) => observedCase({
+    id: `case-${String(index + 1).padStart(3, "0")}`
+  }));
+  const dataset = { schemaVersion: "1.0", cases };
+  const validation = validateCalibrationDataset(dataset);
+  const metrics = calculateCalibrationMetrics(dataset);
+  const report = renderCalibrationReport({
+    generatedAt: "2026-06-24T00:00:00.000Z",
+    validation,
+    metrics,
+    technicalChecks: { referenceCases: 7, matrixCombinations: 36, automatedTests: 56 }
+  });
+
+  assert.match(report, /Muestra de campo disponible/);
+  assert.match(report, /30 casos reales/);
+  assert.doesNotMatch(report, /La validez de campo no puede estimarse todavía/);
+  assert.doesNotMatch(report, /La ausencia de observaciones/);
+  assert.doesNotMatch(report, /iniciar la captura controlada/);
 });

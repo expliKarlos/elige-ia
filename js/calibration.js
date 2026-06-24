@@ -88,6 +88,7 @@ export function calculateCalibrationMetrics(dataset) {
   let falseNegativeCases = 0;
   let incompleteDefinitiveCases = 0;
   let weightSensitivityViolations = 0;
+  let weightSensitivityEvaluatedCases = 0;
 
   for (const entry of cases) {
     const ratings = (entry.expertRatings || []).map((rating) => rating.recommendation);
@@ -121,9 +122,13 @@ export function calculateCalibrationMetrics(dataset) {
     if (entry.incomplete === true && entry.detailed?.status !== "not_interpretable") {
       incompleteDefinitiveCases += 1;
     }
-    if (entry.weightSensitivity?.withinFivePercentChanged === true
-      && entry.weightSensitivity?.nearThreshold !== true) {
-      weightSensitivityViolations += 1;
+    if (typeof entry.weightSensitivity?.withinFivePercentChanged === "boolean"
+      && typeof entry.weightSensitivity?.nearThreshold === "boolean") {
+      weightSensitivityEvaluatedCases += 1;
+      if (entry.weightSensitivity.withinFivePercentChanged === true
+        && entry.weightSensitivity.nearThreshold !== true) {
+        weightSensitivityViolations += 1;
+      }
     }
   }
 
@@ -136,7 +141,8 @@ export function calculateCalibrationMetrics(dataset) {
     falsePositiveCases,
     falseNegativeCases,
     incompleteDefinitiveCases,
-    weightSensitivityViolations
+    weightSensitivityViolations,
+    weightSensitivityEvaluatedCases
   };
   metrics.acceptance = evaluateAcceptance(metrics);
   return metrics;
@@ -149,7 +155,10 @@ function evaluateAcceptance(metrics) {
     incompleteSafety: metrics.incompleteDefinitiveCases === 0 ? "met" : "not_met",
     expertAgreement: rateStatus(metrics.automaticConsensusAgreement.rate, 0.8),
     reducedConcordance: rateStatus(metrics.detailedReducedConcordance.rate, 0.75),
-    weightStability: metrics.weightSensitivityViolations === 0 ? "met" : "not_met"
+    weightStability: metrics.realCaseCount > 0
+      && metrics.weightSensitivityEvaluatedCases < metrics.realCaseCount
+      ? "not_evaluable"
+      : metrics.weightSensitivityViolations === 0 ? "met" : "not_met"
   };
   const evaluated = Object.values(criteria).filter((status) => status !== "not_evaluable");
   const overall = evaluated.includes("not_met") && metrics.realCaseCount > 0
