@@ -4,13 +4,15 @@ import { expect, test } from "@playwright/test";
 test("la encuesta completa restaura su estado inicial", async ({ page }) => {
   page.on("dialog", (dialog) => dialog.accept());
   await page.goto("/index.html");
-  await page.getByRole("button", { name: "Categorías y pesos" }).click();
+  await expect(page.locator(".question-card")).toHaveCount(103);
+  await page.locator("#openCategorySelectionBtn").click();
+  await expect(page.locator("#categoryConfig")).toHaveClass(/is-visible/);
   await page.locator('input[data-pref-index="0"]').uncheck();
   await page.locator("#categoryWeight-1").fill("7.5");
   await page.locator("#categoryWeight-1").press("Enter");
   await page.getByRole("button", { name: "Datos y copia de seguridad" }).click();
   await page.getByRole("button", { name: "Reiniciar encuesta" }).click();
-  await page.getByRole("button", { name: "Categorías y pesos" }).click();
+  await page.locator("#openCategorySelectionBtn").click();
 
   await expect(page.locator('input[data-pref-type="included"]:checked')).toHaveCount(18);
   await expect(page.locator(".cat-link")).toHaveCount(18);
@@ -20,6 +22,17 @@ test("la encuesta completa restaura su estado inicial", async ({ page }) => {
   await expect(page.locator(".question-card").first().getByRole("radio")).toHaveCount(4);
   await expect(page.locator(".question-card").first().getByRole("heading", { level: 3 })).toContainText("¿Necesitas que tus resultados sean creativos?");
   await expectNoSeriousAxeViolations(page, "encuesta completa con configuración abierta");
+});
+
+test("el modo detallado permite limitar el informe a una categoría", async ({ page }) => {
+  await page.goto("/index.html");
+  await expect(page.locator(".question-card")).toHaveCount(103);
+  await page.locator("#openCategorySelectionBtn").click();
+  await expect(page.locator("#categoryConfig")).toHaveClass(/is-visible/);
+  await page.getByRole("button", { name: "Desmarcar todas" }).click();
+  await page.locator('input[data-pref-index="0"]').check();
+  await expect(page.locator("#selectedCategoryCount")).toHaveText("1 categoría seleccionada");
+  await expect(page.locator("#progressText")).toContainText("0 de 6");
 });
 
 test("la versión reducida completa el diagnóstico y detecta bloqueos", async ({ page }) => {
